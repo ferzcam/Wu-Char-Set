@@ -1,0 +1,93 @@
+-- This file has been generated from package.yaml by hpack version 0.28.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 53dd4a7acd8ade173a39eac25004715c97d5308eda32dd85c431115e6b383c27
+
+name:           Wu-Char-Set
+version:        0.0.0
+homepage:       https://github.com/ferynando7/Wu-Char-Set#readme
+bug-reports:    https://github.com/ferynando7/Wu-Char-Set/issues
+author:         Fernando Zhapa
+maintainer:     Fernando Zhapa
+--license:        MIT
+build-type:     Simple
+cabal-version:  >= 1.10
+extra-source-files:
+    CHANGELOG.md
+--    LICENSE.md
+    package.yaml
+    README.md
+    stack.yaml
+
+source-repository head
+  type: git
+  location: https://github.com/ferynando7/Wu-Char-Set
+
+
+
+library
+  exposed-modules:
+      Example
+      Polynomial.Monomial
+      Polynomial.Prelude
+      Arithmetic.Numbers
+      Arithmetic.Matrix
+      Core
+  other-modules:
+      Paths_Wu_Char_Set
+  hs-source-dirs:
+      library
+  ghc-options:  -Wall,
+                -freverse-errors
+  build-depends:
+      base , containers, numeric-prelude, semiring-simple, algebra
+  default-language: Haskell2010
+
+
+
+
+executable Wu-Char-Set
+  main-is: Main.hs
+  other-modules:
+      Paths_Wu_Char_Set
+  hs-source-dirs:
+      executable
+  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N -freverse-errors
+  build-depends:
+      Wu-Char-Set
+    , base
+  default-language: Haskell2010
+
+test-suite Wu-Char-Set-test-suite
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_Wu_Char_Set
+      TPolynomial.TMonomial
+      TPolynomial.TPrelude
+  hs-source-dirs:
+      test-suite
+  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N -freverse-errors  -Wname-shadowing
+  build-depends:
+      Wu-Char-Set
+    , base
+    , tasty
+    , tasty-hspec
+    , tasty-hunit
+    , containers
+  default-language: Haskell2010
+
+benchmark Wu-Char-Set-benchmarks
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_Wu_Char_Set
+  hs-source-dirs:
+      benchmark
+  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N -freverse-errors
+  build-depends:
+      Wu-Char-Set
+    , base
+    , criterion
+  default-language: Haskell2010

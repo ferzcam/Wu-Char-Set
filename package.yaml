@@ -24,9 +24,8 @@ library:
   dependencies:
   - base
   - containers
-  - numeric-prelude
-  - semiring-simple
   - algebra
+  - computational-algebra
   extra-deps:
   source-dirs: library
 

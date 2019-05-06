@@ -1,0 +1,52 @@
+!!!PLEASE PROGRAM IN ENGLISH!!!!
+
+
+
+
+Functions to develop:
+
+    FERNANDO
+        charSet
+        classVarDeg
+        drop
+        replace
+
+    OSCAR
+        analizeS
+        maxNpseudo
+        polysVar
+
+    ANTHONY
+        existOneDegPoly
+        leadingTerm
+        pseudoRemainder
+
+
+---------------------------------------------------
+charSet :: [poly] -> [poly] -> Ordinal n -> [poly]
+charSet [] a _ = a
+charSet p a var
+    | lenS == 0 = charSet p a (var+1)
+    | lenS == 1 = charSet (p\s) (a++s) (var+1)
+    | otherwise = case (existOneDegPoly s) of
+                    Just poly -> charSet (c++rem) (a++poly) (var+1)
+                    Nothing -> charSet (c++r++newS) a var
+
+    where
+        c = not s
+        s = foo p var
+        lenS = length s
+        rem = pseudos (s\poly) poly
+        (newS, r) = analizeS s var
+
+
+analizeS :: [poly] -> Ordinal n -> ([poly], poly)
+analizeS ls@(x:y:z) var
+        | deg r var > 1 = analizeS newls var
+        | deg r var == 1 = (newls, [])
+        | deg r var == 0 = (newS\max, r)
+        where
+            (r, max) = maxNpseudo x y var
+            newls = replace r max ls
+
+

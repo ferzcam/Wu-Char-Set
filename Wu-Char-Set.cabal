@@ -41,7 +41,7 @@ library
   ghc-options:  -Wall,
                 -freverse-errors
   build-depends:
-      base , containers, numeric-prelude, semiring-simple, algebra
+      base , containers, algebra, computational-algebra
   default-language: Haskell2010
 
 

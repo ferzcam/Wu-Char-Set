@@ -25,20 +25,9 @@ library:
   - base
   - containers
   - algebra
-  - computational-algebra
+  - sized
   extra-deps:
   source-dirs: library
-
-
-  haddock: true
-  haddock-arguments:
-    haddock-args:     # Additional arguments passed to haddock, --haddock-arguments
-      - "--latex"
-    # haddock-args:
-    # - "--css=/home/user/my-css"
-  open-haddocks: false    # --open
-  haddock-deps: true     # if unspecified, defaults to true if haddock is set
-  haddock-internal: true
 
 
 executables:

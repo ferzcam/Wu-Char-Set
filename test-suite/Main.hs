@@ -2,6 +2,8 @@
 -- combine many different types of tests into one suite. See its website for
 -- help: <http://documentup.com/feuerbach/tasty>.
 import Test.Tasty
+import TPolynomial.TPrelude
+
 
 main :: IO ()
 main = do
@@ -12,6 +14,6 @@ main = do
 allTests ::   TestTree
 allTests = testGroup "Tasty tests" [
 
-        testGroup "List of tests:" []
+        testGroup "List of tests:" [testsPrelude]
     ]
 

@@ -62,7 +62,11 @@ testLeadingTerms = testCase "Test for leading term" $ do
     leadingTerm s2 0 @?= ((snd &&& fst) $ (head . MS.toList._terms) x^2)
     leadingTerm s2 1 @?= ((snd &&& fst) $ (head . MS.toList._terms) y^2)
 
+testPseudoRemainder :: TestTree
+testPseudoRemainder = testCase "Test for pseudo remainder" $ do
+    snd (pseudoRemainder (x^2 + y^2 - 1) (-x*y^2 + x + 1) 0) @?= (x :: Polynomial' Lex 2) 
+    snd (pseudoRemainder (x^2 + y^2 - 1) (-x*y^2 + x + 1) 1) @?= (x :: Polynomial' Lex 2) 
 
 
 testsPrelude :: TestTree
-testsPrelude = testGroup "Test for Prelude of Polynomials" [testDropPolys, testLeadingTerms]
+testsPrelude = testGroup "Test for Prelude of Polynomials" [testDropPolys, testPseudoRemainder]

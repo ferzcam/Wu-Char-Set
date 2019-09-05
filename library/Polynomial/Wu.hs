@@ -15,14 +15,14 @@ charSet p a var
     | lenS == 0 = trace "EEEEEEE lens 0" charSet p a (var+1)
     | lenS == 1 = trace "EEEEEEE lens 1" charSet c (a++s) (var+1)
     | otherwise = case (existOneDegPoly s var) of
-                    Just poly -> trace "EEEEEEE Just" charSet (c ++ (rem poly)) (a++[poly]) (var+1)
+                    Just poly -> trace ("EEEEEEE Just" ++ show poly) charSet (c ++ (rem poly)) (a++[poly]) (var+1)
                     Nothing ->  trace ("EEEEEEE Nothing" ++ show (c++r++newS)) charSet (c++r++newS) a var
 
     where
         c = trace "EEEEEEE in C" dropPolys p s -- p/s
         s = trace ("EEEEEEE in S") filter (flip varInPoly var) p 
         lenS = length s
-        rem poly = trace ("EEEEEEE in rem") pseudoRemainders (dropPolys s [poly]) poly var
+        rem poly = trace ("EEEEEEE in rem" ++ show (dropPolys s [poly]) ++ show poly) pseudoRemainders (dropPolys s [poly]) poly var
         (newS, r) = trace ("EEEEEEE in (news, r)" ++ show s) analizeS s var
 
 analizeS :: (IsMonomialOrder n ord, KnownNat n) => [Polynomial' ord n] -> Int -> ([Polynomial' ord n], [Polynomial' ord n])

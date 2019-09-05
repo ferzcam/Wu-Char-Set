@@ -64,6 +64,7 @@ tests:
     - Wu-Char-Set
     - tasty
     - tasty-hspec
+    - sized
     - tasty-hunit
     ghc-options:
     - -rtsopts

@@ -6,7 +6,7 @@ import Algebra.Prelude hiding ((+), (*), (-), (^))
 import Test.Tasty
 import Test.Tasty.HUnit as HU
 import Polynomial.Prelude
-    
+import Data.Sized.Builtin as S (toList)
 
 xl = var 0
 yl = var 1
@@ -20,6 +20,8 @@ p1L = xl + yl^4 + zl^3 :: Polynomial' Lex 3
 p2L = xl^2*yl - zl :: Polynomial' Lex 3
 p3L = xl*yl + xl*yl*zl :: Polynomial' Lex 3
 p4L = xl*yl*zl
+p5L = xl*yl^2 + yl^3*zl^4  :: Polynomial' Lex 3
+p6L = xl^3*yl^2*zl^4 + xl^3 * yl^2 * zl :: Polynomial' Lex 3
 
 p1Gr = xg + yg^4 + zg^3 :: Polynomial' Grevlex 3
 p2Gr = xg^2*yg^3 - zg :: Polynomial' Grevlex 3
@@ -39,7 +41,17 @@ testDropPolys :: TestTree
 testDropPolys = testCase "Test for dropping polys" $ do
     dropPolys [p1L,p2L,p3L] [p4L,p3L] @?= [p1L, p2L]
 
+-- testExistOneDegPoly :: TestTree
+-- testExistOneDegPoly = testCase "Test for existeOneDegPoly" $ do 
+
+testLeadingMonomial :: TestTree
+testLeadingMonomial = testCase "Test for the LeadingMonomial'" $ do
+       ( S.toList $ getMonomial $ leadingMonomial' p5L) @?= [1,2,0]
+       ( S.toList $ getMonomial $ leadingMonomial' p6L) @?= [3,2,4]
+       
+       
+
 --testReplacePoly :: TestTree
 
 testsPrelude :: TestTree
-testsPrelude = testGroup "Test for Prelude of Polynomials" [testDropPolys]
+testsPrelude = testGroup "Test for Prelude of Polynomials" [testDropPolys, testLeadingMonomial]

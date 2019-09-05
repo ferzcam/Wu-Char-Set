@@ -28,7 +28,7 @@ charSet [] a _ = a
 charSet p a var
     | lenS == 0 = charSet p a (var+1)
     | lenS == 1 = charSet (p\s) (a++s) (var+1)
-    | otherwise = case (existOneDegPoly s) of
+    | otherwise = case (existOneDegPoly s var) of
                     Just poly -> charSet (c++rem) (a++poly) (var+1)
                     Nothing -> charSet (c++r++newS) a var
 

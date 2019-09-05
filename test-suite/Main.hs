@@ -3,6 +3,7 @@
 -- help: <http://documentup.com/feuerbach/tasty>.
 import Test.Tasty
 import TPolynomial.TPrelude
+import TPolynomial.TWu
 
 
 main :: IO ()
@@ -14,6 +15,6 @@ main = do
 allTests ::   TestTree
 allTests = testGroup "Tasty tests" [
 
-        testGroup "List of tests:" [testsPrelude]
+        testGroup "List of tests:" [testsPrelude, testsWu]
     ]
 

@@ -39,7 +39,7 @@ library
   ghc-options:  -Wall,
                 -freverse-errors
   build-depends:
-      base , containers, algebra, computational-algebra, sized
+      base , containers, algebra, computational-algebra, sized, type-natural
   default-language: Haskell2010
 
 

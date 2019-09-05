@@ -1,10 +1,11 @@
-{-#LANGUAGE DataKinds#-}
+{-#LANGUAGE DataKinds, NoImplicitPrelude #-}
 
 module TPolynomial.TPrelude (testsPrelude) where 
 
-import Algebra.Prelude hiding ((+), (*), (-), (^))
+import Algebra.Prelude hiding (leadingTerm)
 import Test.Tasty
 import Test.Tasty.HUnit as HU
+import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
     
 
@@ -15,6 +16,19 @@ zl = var 2
 xg = var 0
 yg = var 1
 zg = var 2
+
+
+x = var 0
+y = var 1 
+
+s1,s2,r1,r2:: Polynomial'  Lex 2
+s1 = y^2 -  x^2 -  x^3
+s2 = y^2 +  x^2 - 1
+
+r1 = x*y^2 + 2*y^2 - x - 1
+r2 = y^4 + y^2 - 1
+
+
 
 p1L = xl + yl^4 + zl^3 :: Polynomial' Lex 3
 p2L = xl^2*yl - zl :: Polynomial' Lex 3
@@ -41,5 +55,14 @@ testDropPolys = testCase "Test for dropping polys" $ do
 
 --testReplacePoly :: TestTree
 
+testLeadingTerms :: TestTree
+testLeadingTerms = testCase "Test for leading term" $ do
+    leadingTerm s1 0 @?= ((snd &&& fst) $ (head . MS.toList._terms) (-x^3))
+    leadingTerm s1 1 @?= ((snd &&& fst) $ (head . MS.toList._terms) y^2)
+    leadingTerm s2 0 @?= ((snd &&& fst) $ (head . MS.toList._terms) x^2)
+    leadingTerm s2 1 @?= ((snd &&& fst) $ (head . MS.toList._terms) y^2)
+
+
+
 testsPrelude :: TestTree
-testsPrelude = testGroup "Test for Prelude of Polynomials" [testDropPolys]
+testsPrelude = testGroup "Test for Prelude of Polynomials" [testDropPolys, testLeadingTerms]

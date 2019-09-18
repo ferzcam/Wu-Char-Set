@@ -11,6 +11,7 @@ import Data.Maybe
 import Debug.Trace
 
 type Polynomial' ord n = OrderedPolynomial Rational ord n
+--type Polynomial' ord n = OrderedPolynomial k ord n
 
 -- -- | Returns the position of the class variable. Monomial ordering must be defined correctly.
 -- classVarDeg ::  Polynomial' ord n -> Int
@@ -56,21 +57,24 @@ pseudoRemainder :: (IsOrder n ord, KnownNat n, IsMonomialOrder n ord)
 pseudoRemainder f g var = trace ("EEEEE PSEUDO REM " ++ show f ++ "       " ++ show g) findQR 0 f g var m d
         where 
                 m = classVarDeg g var
-                d = leadingCoeff g var
+                d = simplifyMonomial factors
+                factors = chooseTermsWithVar g var        
 
 
 
 
 findQR :: (IsMonomialOrder n ord, KnownNat n) 
-        => Polynomial' ord n -> Polynomial' ord n -> Polynomial' ord n -> Int -> Int -> Rational -> (Polynomial' ord n, Polynomial' ord n)
+        => Polynomial' ord n -> Polynomial' ord n -> Polynomial' ord n -> Int -> Int -> Polynomial' ord n -> (Polynomial' ord n, Polynomial' ord n)
 findQR q r g var m d
         | r == 0 || classVarDeg r var < m = (q,r)
         | otherwise = let
                         arity = (length . S.toList . getMonomial . fst . head . MS.toList . _terms) r
                         newMonomial = mon var ((classVarDeg r var)-m) arity
                         x = Polynomial $ MS.fromList [(newMonomial ,1)]
-                        newR = d!*r - (leadingCoeff r var)!*g*x
-                        newQ = d!*q + (leadingCoeff r var)!*x
+                        factors = chooseTermsWithVar r var
+                        lc_r = simplifyMonomial factors
+                        newR = d*r - (lc_r)*g*x
+                        newQ = d*q + (lc_r)*x
                         in findQR newQ newR g var m d
 
 -- trace ("EEEEEEE LEADING TERM" ++ (show pol) ++ "     " ++ show polToList)
@@ -89,8 +93,6 @@ leadingCoeff :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n) => Polynomial
 leadingCoeff pol var = trace "EEEEEEE leading Coeff" fst $ leadingTerm pol var
 
 
-
-
 toMonomial :: (KnownNat n) => [Int] -> OrderedMonomial ord n
 toMonomial a = orderMonomial Proxy (fromList sing a)
 
@@ -106,3 +108,39 @@ insertAt :: Int -> Int-> [Int] -> [Int]
 insertAt z y xs = as ++ (y:(tail bs))
                         where (as,bs) = splitAt z xs
 -----
+
+----------------------------------------FUNCIONES EXTRAS PARA OBTENER DE MANERA ADECUADA EL LC-------------------------
+chooseTermsWithVar :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n) => Polynomial' ord n -> Int -> Polynomial' ord n
+chooseTermsWithVar pol var
+                | not $ varInPoly pol var = chooseTermsWithVar pol (var + 1)
+                | otherwise = foldr' foo 0 idxs
+                where
+                        deg_pol = classVarDeg pol var
+                        idxs = findIndices (\x -> x!!var == deg_pol) (map (S.toList . getMonomial) (MS.keys $ _terms pol))
+                        foo = \idx acc -> acc + toPolynomial (snd $ auxMonom pol idx , fst $ auxMonom pol idx)
+                        auxMonom = \poly idx -> MS.elemAt idx $ _terms poly
+
+simplifyMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n)   =>  Polynomial' ord n ->  Polynomial' ord n
+simplifyMonomial pol = pol // (1, commonMonomial pol)
+
+-- Funcion que intentará dividir un polinomio por un monomio
+(//) :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n) 
+            =>  Polynomial' ord n  -> (Rational, OrderedMonomial ord n) ->  Polynomial' ord n
+pol // (coeff, mon) = Algebra.Prelude.sum $ map toPolynomial $ map (`tryDiv'` (coeff, mon)) (map (snd &&& fst) terms)
+            where
+                    terms = MS.toList $ _terms pol
+
+-- Funcion que obtiene el gcd de un polinomio, en este caso se refiere al termino en comun de todos los monomios que conforman el polinomio
+commonMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n) 
+        =>  Polynomial' ord n  -> OrderedMonomial ord n
+commonMonomial pol  = foldr' foo (last monomials) (init monomials)
+                        where
+                                foo = \monomial acc -> gcdMonomial acc monomial
+                                monomials = MS.keys $ _terms pol
+
+
+tryDiv' :: (Rational, OrderedMonomial ord n) -> (Rational, OrderedMonomial ord n) -> (Rational, OrderedMonomial ord n)
+tryDiv' (a, f) (b, g)
+        | g `divs` f = ((a / b), OrderedMonomial $ zipWithSame (-) (getMonomial f) (getMonomial g))
+        | otherwise  = error "cannot divide."
+---------------------------------------------------------------------------------------------------------------------------------------------

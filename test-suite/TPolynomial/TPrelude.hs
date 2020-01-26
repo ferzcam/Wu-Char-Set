@@ -64,9 +64,9 @@ testLeadingTerms = testCase "Test for leading term" $ do
 
 testPseudoRemainder :: TestTree
 testPseudoRemainder = testCase "Test for pseudo remainder" $ do
-    snd (pseudoRemainder (x^2 + y^2 - 1) (-x*y^2 + x + 1) 0) @?= (x :: Polynomial' Lex 2) 
-    snd (pseudoRemainder (x^2 + y^2 - 1) (-x*y^2 + x + 1) 1) @?= (x :: Polynomial' Lex 2) 
+    snd (pseudoRemainder (x^2 + y^2 - 1) (-x*y^2 + x + 1) 0) @?= y^6 - 3*y^4 + 3*y^2 
+    snd (pseudoRemainder (x^2 + y^2 - 1) (-x*y^2 + x + 1) 1) @?= - x^3 - 1
 
 
 testsPrelude :: TestTree
-testsPrelude = testGroup "Test for Prelude of Polynomials" [testDropPolys, testPseudoRemainder]
+testsPrelude = testGroup "Test for Prelude of Polynomials" [testDropPolys,testPseudoRemainder]

@@ -6,15 +6,14 @@ import TPolynomial.TPrelude
 import TPolynomial.TWu
 
 
+
 main :: IO ()
 main = do
     defaultMain allTests
 
-
-
 allTests ::   TestTree
 allTests = testGroup "Tasty tests" [
 
-        testGroup "List of tests:" [testsPrelude, testsWu]
+        testGroup "List of tests:" [testsPrelude,testsWu]
     ]
 

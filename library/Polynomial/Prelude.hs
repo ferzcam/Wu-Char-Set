@@ -54,10 +54,11 @@ pseudoRemainders polys poly var = map (\p -> snd $ pseudoRemainder p poly var) p
 
 pseudoRemainder :: (IsOrder n ord, KnownNat n, IsMonomialOrder n ord) 
         => Polynomial' ord n -> Polynomial' ord n -> Int -> (Polynomial' ord n, Polynomial' ord n)
-pseudoRemainder f g var = trace ("EEEEE PSEUDO REM " ++ show f ++ "       " ++ show g) findQR 0 f g var m d
+pseudoRemainder f g var = findQR 0 f g var m d
+--trace ("EEEEE PSEUDO REM " ++ show f ++ "       " ++ show g) 
         where 
                 m = classVarDeg g var
-                d = simplifyMonomial factors
+                d = simplifyMonomial factors var
                 factors = chooseTermsWithVar g var        
 
 
@@ -72,10 +73,10 @@ findQR q r g var m d
                         newMonomial = mon var ((classVarDeg r var)-m) arity
                         x = Polynomial $ MS.fromList [(newMonomial ,1)]
                         factors = chooseTermsWithVar r var
-                        lc_r = simplifyMonomial factors
-                        newR = d*r - (lc_r)*g*x
+                        lc_r = simplifyMonomial factors var
+                        newR =  d*r - (lc_r)*g*x
                         newQ = d*q + (lc_r)*x
-                        in findQR newQ newR g var m d
+                        in trace ( "Old r:"++ show r ++ "\t Old q:" ++ show q ++ "\n d = " ++ show d ++ "\nNew r:" ++ show newR ++ "\n New q:" ++ show newQ )findQR newQ newR g var m d
 
 -- trace ("EEEEEEE LEADING TERM" ++ (show pol) ++ "     " ++ show polToList)
 -- Assumes that the polynomial containns variable. The ordering will be Lexicographical
@@ -120,8 +121,22 @@ chooseTermsWithVar pol var
                         foo = \idx acc -> acc + toPolynomial (snd $ auxMonom pol idx , fst $ auxMonom pol idx)
                         auxMonom = \poly idx -> MS.elemAt idx $ _terms poly
 
-simplifyMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n)   =>  Polynomial' ord n ->  Polynomial' ord n
-simplifyMonomial pol = pol // (1, commonMonomial pol)
+simplifyMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n)   =>  Polynomial' ord n -> Int -> Polynomial' ord n
+simplifyMonomial pol var 
+        | length (_terms pol) == 1 = Polynomial $ MS.fromList [(toMonomial $ (replaceZero listMon var), coeff)]
+        | otherwise = pol // (1, commonMonomial pol)
+        where 
+                listMon = ( S.toList . getMonomial . fst ) uniqueTerm
+                uniqueTerm = (head  . MS.toList . _terms) pol
+                coeff = snd uniqueTerm
+
+
+
+replaceZero :: (Num a) => [a] -> Int -> [a]
+replaceZero (x:xs) position
+        | position == 0 = 0:xs
+        | otherwise = (x:(replaceZero xs (position-1)) )
+
 
 -- Funcion que intentará dividir un polinomio por un monomio
 (//) :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n) 

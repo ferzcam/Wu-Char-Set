@@ -6,6 +6,7 @@
 import Example
 
 
+
 -- import Algebra.Prelude hiding (Rational, map, findIndex, drop)
 -- import qualified Data.Map.Strict as MS
 -- import qualified Data.Sized.Builtin as S (toList)

@@ -13,7 +13,7 @@ x = var 0
 y = var 1 
 
 s1,s2,r1,r2:: Polynomial'  Lex 2
-s1 = y^2 +  x^2 +  x^3
+s1 = y^2 -  x^2 -   x^3
 s2 = y^2 +  x^2 - 1
 
 r1 = x*y^2 + 2*y^2 - x - 1

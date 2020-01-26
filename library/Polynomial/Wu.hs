@@ -10,17 +10,17 @@ import Debug.Trace
 -- | Algorithm to get characteristic set from a set of polynomials.
 charSet :: (IsMonomialOrder n ord, KnownNat n) 
     => [Polynomial' ord n] -> [ Polynomial' ord n] -> Int -> [ Polynomial' ord n]
-charSet [] a _ = map (flip simplifyMonomial (-1) ) a
+charSet [] a _ = map (`simplifyMonomial` (-1) ) a
 charSet p a var
     | lenS == 0 = charSet p a (var+1)
     | lenS == 1 = charSet c (a++s) (var+1)
-    | otherwise = case (existOneDegPoly s var) of
-                    Just poly -> charSet (c ++ (rem poly)) (a++[poly]) (var+1)
+    | otherwise = case existOneDegPoly s var of
+                    Just poly -> charSet (c ++ rem poly) (a++[poly]) (var+1)
                     Nothing -> charSet (c++r++newS) a var
 
     where
         c = dropPolys p s -- p/s
-        s =  filter (flip varInPoly var) p 
+        s =  filter (`varInPoly` var) p 
         lenS = length s
         rem poly =  pseudoRemainders (dropPolys s [poly]) poly var
         (newS, r) = analizeS s var

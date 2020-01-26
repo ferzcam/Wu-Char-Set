@@ -35,17 +35,17 @@ varInPoly pol var
 
 -- | Given two sets polys1 and polys2. Returns polys1/polys2                        
 dropPolys :: Eq poly => [poly] -> [poly] -> [poly]                       
-dropPolys polys1 polys2 = [p | p <- polys1 , not (elem p polys2)]
+dropPolys polys1 polys2 = [p | p <- polys1 , p `notElem` polys2]
 
 -- | Given a set polys of polynomials containing p and a polynomial q. Returns the set P with q instead p. 
 replacePoly :: Eq poly => [poly] -> poly -> poly -> [poly]
-replacePoly polys p q = q:(dropPolys polys [p])
+replacePoly polys p q = q : dropPolys polys [p]
 
 
 existOneDegPoly :: [Polynomial' ord n] -> Int -> Maybe (Polynomial' ord n)
-existOneDegPoly polys var = find (isOneDeg) polys
+existOneDegPoly polys var = find isOneDeg polys
         where
-            isOneDeg poly = any (==1) ( ((map ((!! var) . S.toList . getMonomial . fst)) . MS.toList . _terms) poly) 
+            isOneDeg poly = elem 1 (((map ((!! var) . S.toList . getMonomial . fst)) . MS.toList . _terms) poly) 
 
 pseudoRemainders :: (IsMonomialOrder n ord, KnownNat n) => 
         [Polynomial' ord n] -> Polynomial' ord n -> Int -> [Polynomial' ord n]
@@ -70,13 +70,13 @@ findQR q r g var m d
         | r == 0 || classVarDeg r var < m = (q,r)
         | otherwise = let
                         arity = (length . S.toList . getMonomial . fst . head . MS.toList . _terms) r
-                        newMonomial = mon var ((classVarDeg r var)-m) arity
+                        newMonomial = mon var ((classVarDeg r var) - m) arity
                         x = Polynomial $ MS.fromList [(newMonomial ,1)]
                         factors = chooseTermsWithVar r var
                         lc_r = simplifyMonomial factors var
-                        newR =  d*r - (lc_r)*g*x
-                        newQ = d*q + (lc_r)*x
-                        in trace ( "Old r:"++ show r ++ "\t Old q:" ++ show q ++ "\n d = " ++ show d ++ "\nNew r:" ++ show newR ++ "\n New q:" ++ show newQ )findQR newQ newR g var m d
+                        newR =  d*r - lc_r*g*x
+                        newQ = d*q + lc_r*x
+                        in findQR newQ newR g var m d
 
 -- trace ("EEEEEEE LEADING TERM" ++ (show pol) ++ "     " ++ show polToList)
 -- Assumes that the polynomial containns variable. The ordering will be Lexicographical
@@ -85,7 +85,7 @@ leadingTerm pol var =  (snd &&& fst) $ fromJust $ MS.lookupLE chosenTerm (_terms
         where
                 chosenTerm = toMonomial (foldr1 foo polToList)
                 polToList = map (S.toList . getMonomial) (MS.keys $ _terms pol)
-                foo = \monomCoeffs acc -> if monomCoeffs!!var > acc!!var then monomCoeffs else acc
+                foo monomCoeffs acc = if monomCoeffs!!var > acc!!var then monomCoeffs else acc
 
 leadingMonomial :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n) => Polynomial' ord n -> Int -> OrderedMonomial ord n
 leadingMonomial pol var = snd $ leadingTerm pol var
@@ -106,7 +106,7 @@ mon var exp numVars = toMonomial exps
                 exps = insertAt var exp zeros
 
 insertAt :: Int -> Int-> [Int] -> [Int] 
-insertAt z y xs = as ++ (y:(tail bs))
+insertAt z y xs = as ++ (y : tail bs)
                         where (as,bs) = splitAt z xs
 -----
 
@@ -118,12 +118,12 @@ chooseTermsWithVar pol var
                 where
                         deg_pol = classVarDeg pol var
                         idxs = findIndices (\x -> x!!var == deg_pol) (map (S.toList . getMonomial) (MS.keys $ _terms pol))
-                        foo = \idx acc -> acc + toPolynomial (snd $ auxMonom pol idx , fst $ auxMonom pol idx)
-                        auxMonom = \poly idx -> MS.elemAt idx $ _terms poly
+                        foo idx acc = acc + toPolynomial (snd $ auxMonom pol idx , fst $ auxMonom pol idx)
+                        auxMonom poly idx = MS.elemAt idx $ _terms poly
 
 simplifyMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n)   =>  Polynomial' ord n -> Int -> Polynomial' ord n
 simplifyMonomial pol var 
-        | length (_terms pol) == 1 = Polynomial $ MS.fromList [(toMonomial $ (replaceZero listMon var), coeff)]
+        | length (_terms pol) == 1 = Polynomial $ MS.fromList [(toMonomial (replaceZero listMon var), coeff)]
         | otherwise = pol // (1, commonMonomial pol)
         where 
                 listMon = ( S.toList . getMonomial . fst ) uniqueTerm
@@ -135,13 +135,13 @@ simplifyMonomial pol var
 replaceZero :: (Num a) => [a] -> Int -> [a]
 replaceZero (x:xs) position
         | position == 0 = 0:xs
-        | otherwise = (x:(replaceZero xs (position-1)) )
+        | otherwise = x : replaceZero xs (position-1)
 
 
 -- Funcion que intentará dividir un polinomio por un monomio
 (//) :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n) 
             =>  Polynomial' ord n  -> (Rational, OrderedMonomial ord n) ->  Polynomial' ord n
-pol // (coeff, mon) = Algebra.Prelude.sum $ map toPolynomial $ map (`tryDiv'` (coeff, mon)) (map (snd &&& fst) terms)
+pol // (coeff, mon) = Algebra.Prelude.sum $ map (toPolynomial . (`tryDiv'` (coeff, mon)) . (snd &&& fst)) terms
             where
                     terms = MS.toList $ _terms pol
 
@@ -150,12 +150,12 @@ commonMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n)
         =>  Polynomial' ord n  -> OrderedMonomial ord n
 commonMonomial pol  = foldr' foo (last monomials) (init monomials)
                         where
-                                foo = \monomial acc -> gcdMonomial acc monomial
+                                foo monomial acc = gcdMonomial acc monomial
                                 monomials = MS.keys $ _terms pol
 
 
 tryDiv' :: (Rational, OrderedMonomial ord n) -> (Rational, OrderedMonomial ord n) -> (Rational, OrderedMonomial ord n)
 tryDiv' (a, f) (b, g)
-        | g `divs` f = ((a / b), OrderedMonomial $ zipWithSame (-) (getMonomial f) (getMonomial g))
+        | g `divs` f = (a/b, OrderedMonomial $ zipWithSame (-) (getMonomial f) (getMonomial g))
         | otherwise  = error "cannot divide."
 ---------------------------------------------------------------------------------------------------------------------------------------------

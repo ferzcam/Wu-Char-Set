@@ -2,8 +2,8 @@
 
 module Polynomial.Prelude where
 
-import Prelude (Rational)
-import Algebra.Prelude hiding (Rational, (++), map, findIndex, drop, leadingCoeff, leadingTerm, leadingMonomial)
+import Prelude (Rational, (/), gcd, lcm, fromRational, toRational) 
+import Algebra.Prelude hiding (Rational, (++), map, findIndex, drop, leadingCoeff, leadingTerm, leadingMonomial, (/), gcd, lcm, fromRational, toRational)
 import qualified Data.Map.Strict as MS
 import qualified Data.Sized.Builtin as S (toList)
 import Data.List hiding (drop)
@@ -54,15 +54,12 @@ pseudoRemainders polys poly var = map (\p -> snd $ pseudoRemainder p poly var) p
 
 pseudoRemainder :: (IsOrder n ord, KnownNat n, IsMonomialOrder n ord) 
         => Polynomial' ord n -> Polynomial' ord n -> Int -> (Polynomial' ord n, Polynomial' ord n)
-pseudoRemainder f g var = findQR 0 f g var m d
---trace ("EEEEE PSEUDO REM " ++ show f ++ "       " ++ show g) 
+pseudoRemainder f g var = (fst pseudo, simplifyPolinomial (snd pseudo))
         where 
                 m = classVarDeg g var
-                d = simplifyMonomial factors var
-                factors = chooseTermsWithVar g var        
-
-
-
+                d = getCoeff factors var
+                factors = chooseTermsWithVar g var
+                pseudo = findQR 0 f g var m d        
 
 findQR :: (IsMonomialOrder n ord, KnownNat n) 
         => Polynomial' ord n -> Polynomial' ord n -> Polynomial' ord n -> Int -> Int -> Polynomial' ord n -> (Polynomial' ord n, Polynomial' ord n)
@@ -73,10 +70,10 @@ findQR q r g var m d
                         newMonomial = mon var ((classVarDeg r var) - m) arity
                         x = Polynomial $ MS.fromList [(newMonomial ,1)]
                         factors = chooseTermsWithVar r var
-                        lc_r = simplifyMonomial factors var
+                        lc_r = getCoeff factors var
                         newR =  d*r - lc_r*g*x
                         newQ = d*q + lc_r*x
-                        in findQR newQ newR g var m d
+                        in trace ("\n new R:" ++ show newR ++ "\n Deg old r: " ++ show (classVarDeg r var) ++ "\t \t Deg new r: " ++ show (classVarDeg newR var)  ++  "\n lcr: "  ++ show lc_r ++ "\t d: " ++ show d) findQR newQ newR g var m d
 
 -- trace ("EEEEEEE LEADING TERM" ++ (show pol) ++ "     " ++ show polToList)
 -- Assumes that the polynomial containns variable. The ordering will be Lexicographical
@@ -121,16 +118,32 @@ chooseTermsWithVar pol var
                         foo idx acc = acc + toPolynomial (snd $ auxMonom pol idx , fst $ auxMonom pol idx)
                         auxMonom poly idx = MS.elemAt idx $ _terms poly
 
-simplifyMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n)   =>  Polynomial' ord n -> Int -> Polynomial' ord n
-simplifyMonomial pol var 
-        | length (_terms pol) == 1 = Polynomial $ MS.fromList [(toMonomial (replaceZero listMon var), coeff)]
-        | otherwise = pol // (1, commonMonomial pol)
+simplifyMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n)   =>  Polynomial' ord n -> Polynomial' ord n
+simplifyMonomial pol = pol // (1, commonMonomial pol)
+
+
+simplifyPolinomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n)   =>  Polynomial' ord n -> Polynomial' ord n
+simplifyPolinomial pol  = pol // commonTerm pol
+        
+getCoeff :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n)   =>  Polynomial' ord n -> Int -> Polynomial' ord n
+getCoeff pol var = pol // (1, classVariable)
+        where
+                deg = classVarDeg pol var
+                arity = (length . S.toList . getMonomial . fst . head . MS.toList . _terms) pol
+                classVariable = mon var deg arity
+                
+
+
+
+gcdRational :: Rational -> Rational -> Rational
+gcdRational num1 num2 = toRational (gcdNum / lcmDen)
         where 
-                listMon = ( S.toList . getMonomial . fst ) uniqueTerm
-                uniqueTerm = (head  . MS.toList . _terms) pol
-                coeff = snd uniqueTerm
-
-
+                gcdNum = fromInteger $ gcd a c 
+                lcmDen = fromInteger $ lcm b d
+                a = numerator $ fromRational num1
+                b = denominator $ fromRational num1
+                c = numerator $ fromRational num2
+                d = denominator $ fromRational num2
 
 replaceZero :: (Num a) => [a] -> Int -> [a]
 replaceZero (x:xs) position
@@ -146,13 +159,29 @@ pol // (coeff, mon) = Algebra.Prelude.sum $ map (toPolynomial . (`tryDiv'` (coef
                     terms = MS.toList $ _terms pol
 
 -- Funcion que obtiene el gcd de un polinomio, en este caso se refiere al termino en comun de todos los monomios que conforman el polinomio
+-- commonMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n) 
+--         =>  Polynomial' ord n  -> OrderedMonomial ord n
+-- commonMonomial pol  =   foldr' foo (last monomials) (init monomials)
+--                         where
+--                                 foo monomial acc = gcdMonomial acc monomial
+--                                 monomials = MS.keys $ _terms pol
+                                
+
 commonMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n) 
-        =>  Polynomial' ord n  -> OrderedMonomial ord n
-commonMonomial pol  = foldr' foo (last monomials) (init monomials)
+        =>  Polynomial' ord n  ->  OrderedMonomial ord n
+commonMonomial pol  =  foldr' foo (last monomials) (init monomials) 
                         where
                                 foo monomial acc = gcdMonomial acc monomial
                                 monomials = MS.keys $ _terms pol
+                       
 
+commonTerm ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n) 
+        =>  Polynomial' ord n  ->  (Rational, OrderedMonomial ord n)
+commonTerm pol  =  (coeff ,foldr' foo (last monomials) (init monomials) )
+                        where
+                                foo monomial acc = gcdMonomial acc monomial
+                                monomials = MS.keys $ _terms pol
+                                coeff = foldl1 (gcdRational) $ MS.elems $ _terms pol
 
 tryDiv' :: (Rational, OrderedMonomial ord n) -> (Rational, OrderedMonomial ord n) -> (Rational, OrderedMonomial ord n)
 tryDiv' (a, f) (b, g)

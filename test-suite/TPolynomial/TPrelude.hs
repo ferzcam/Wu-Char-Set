@@ -8,7 +8,6 @@ import Test.Tasty.HUnit as HU
 import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
     
-
 xl = var 0
 yl = var 1
 zl = var 2
@@ -40,6 +39,7 @@ p2Gr = xg^2*yg^3 - zg :: Polynomial' Grevlex 3
 p3Gr = xg*yg + xg*yg*zg^2 :: Polynomial' Grevlex 3
 
 
+
 -- testClassVarDeg :: TestTree
 -- testClassVarDeg = testCase "Test for getting class variables" $ do
 --     classVarDeg p1L @?= 1
@@ -66,6 +66,7 @@ testPseudoRemainder :: TestTree
 testPseudoRemainder = testCase "Test for pseudo remainder" $ do
     snd (pseudoRemainder (x^2 + y^2 - 1) (-x*y^2 + x + 1) 0) @?= y^6 - 3*y^4 + 3*y^2 
     snd (pseudoRemainder (x^2 + y^2 - 1) (-x*y^2 + x + 1) 1) @?= - x^3 - 1
+    
 
 
 testsPrelude :: TestTree

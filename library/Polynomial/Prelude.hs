@@ -73,7 +73,8 @@ findQR q r g var m d
                         lc_r = getCoeff factors var
                         newR =  d*r - lc_r*g*x
                         newQ = d*q + lc_r*x
-                        in trace ("\n new R:" ++ show newR ++ "\n Deg old r: " ++ show (classVarDeg r var) ++ "\t \t Deg new r: " ++ show (classVarDeg newR var)  ++  "\n lcr: "  ++ show lc_r ++ "\t d: " ++ show d) findQR newQ newR g var m d
+                        in  findQR newQ newR g var m d
+                        --trace ("\n new R:" ++ show newR ++ "\n Deg old r: " ++ show (classVarDeg r var) ++ "\t \t Deg new r: " ++ show (classVarDeg newR var)  ++  "\n lcr: "  ++ show lc_r ++ "\t d: " ++ show d)
 
 -- trace ("EEEEEEE LEADING TERM" ++ (show pol) ++ "     " ++ show polToList)
 -- Assumes that the polynomial containns variable. The ordering will be Lexicographical

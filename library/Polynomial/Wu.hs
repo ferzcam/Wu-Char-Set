@@ -30,17 +30,22 @@ charSet p a var
 -- Output: list of the pseudo remainders of g with respect to the ascending chain
 theoremProver :: (IsMonomialOrder n ord, KnownNat n) 
     => [Polynomial' ord n] -> Polynomial' ord n -> [Polynomial' ord n]
-theoremProver hip g = remWithChain wuChain g 0 numHip
+theoremProver hip g = remWithChain wuChain g 0
+-- remWithChain wuChain g 0 numHip
     where 
         wuChain =  charSet hip [] 0
-        numHip = length hip - 1
+        -- numHip = length hip - 1
 
+-- Function that get the pseudoremider of a polinomial with
+-- respect to a set of polynomials
 remWithChain :: (IsMonomialOrder n ord, KnownNat n) 
-    => [Polynomial' ord n] -> Polynomial' ord n -> Int -> Int -> [ Polynomial' ord n]
-remWithChain [e] pol _ hip = [snd $ pseudoRemainder pol e (hip-1)]
-remWithChain chain pol var hip = trace ("New Chain: "++ show newChain) [rem]++(remWithChain newChain rem (var + 1) hip )
+    => [Polynomial' ord n] -> Polynomial' ord n -> Int -> [ Polynomial' ord n]
+remWithChain [e] pol var = [snd $ pseudoRemainder pol e var]
+remWithChain chain pol var = [rem]++(remWithChain newChain rem (var + 1) )
+--  trace ("New Chain: "++ show newChain)
     where  
-        rem =trace ("\n Trace in RemWithChain--------------------------\n" ++ "\n Pol:" ++ show pol ++ "elemChain: " ++ show elemChain ++ "\n \n NewChain: " ++ show newChain) snd $ pseudoRemainder pol elemChain var -- remainder
+        rem =  snd $ pseudoRemainder pol elemChain var -- remainder
+        --trace ("\n Trace in RemWithChain--------------------------\n" ++ "\n Pol:" ++ show pol ++ "elemChain: " ++ show elemChain ++ "\n \n NewChain: " ++ show newChain)
         elemChain = head chain
         newChain = tail chain
         

@@ -5,8 +5,7 @@
 -- wrote in their libraries.
 import Example
 import Polynomial.Wu
---import Prelude hiding (gcd)
-import qualified Data.Map.Strict as MS
+import Prelude
 --import Algebra.Prelude hiding ((*),(-),(+),(^), (/), gcd, lcm, fromRational, map)
 import Polynomial.Prelude
 

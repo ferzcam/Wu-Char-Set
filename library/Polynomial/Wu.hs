@@ -44,7 +44,7 @@ remWithChain [e] pol var = [snd $ pseudoRemainder pol e var]
 remWithChain chain pol var = [rem]++(remWithChain newChain rem (var + 1) )
 --  trace ("New Chain: "++ show newChain)
     where  
-        rem = trace ("\n Trace in RemWithChain--------------------------\n" ++ "\n Pol:" ++ show pol ++ "elemChain: " ++ show elemChain ++ "\n \n NewChain: " ++ show newChain)  snd $ pseudoRemainder pol elemChain var -- remainder
+        rem = snd $ pseudoRemainder pol elemChain var -- remainder
         
         elemChain = head chain
         newChain = tail chain

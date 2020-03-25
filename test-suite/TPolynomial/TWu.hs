@@ -51,7 +51,7 @@ r1 = x1*x2^2 + 2*x2^2 - x1 - 1
 
 testTheorem :: TestTree
 testTheorem = testCase "Test for Theorem Prover" $ do
-    theoremProver [h1,h2,h3,h4,h5,h6,h7,h8] g @?= sort [r1]
+    last (theoremProver [h1,h2,h3,h4,h5,h6,h7,h8] g) @?=  0
 --testReplacePoly :: TestTree
 
 testsWu :: TestTree

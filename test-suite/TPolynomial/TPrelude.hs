@@ -64,7 +64,7 @@ testLeadingTerms = testCase "Test for leading term" $ do
 
 testPseudoRemainder :: TestTree
 testPseudoRemainder = testCase "Test for pseudo remainder" $ do
-    snd (pseudoRemainder (x^2 + y^2 - 1) (-x*y^2 + x + 1) 0) @?= y^6 - 3*y^4 + 3*y^2 
+    snd (pseudoRemainder (x^2 + y^2 - 1) (-x*y^2 + x + 1) 0) @?= y^4 - 3*y^2 + 3 
     snd (pseudoRemainder (x^2 + y^2 - 1) (-x*y^2 + x + 1) 1) @?= - x^3 - 1
     
 

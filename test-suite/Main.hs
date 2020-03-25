@@ -4,6 +4,7 @@
 import Test.Tasty
 import TPolynomial.TPrelude
 import TPolynomial.TWu
+import Examples.Pascal
 
 
 

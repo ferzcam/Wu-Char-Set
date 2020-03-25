@@ -54,7 +54,7 @@ executable Wu-Char-Set
   ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N -freverse-errors
   build-depends:
       Wu-Char-Set
-    , base
+    , base, containers
   default-language: Haskell2010
 
 test-suite Wu-Char-Set-test-suite

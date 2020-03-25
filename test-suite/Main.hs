@@ -4,6 +4,7 @@
 import Test.Tasty
 import TPolynomial.TPrelude
 import TPolynomial.TWu
+import Examples.Pascal
 
 
 
@@ -14,6 +15,6 @@ main = do
 allTests ::   TestTree
 allTests = testGroup "Tasty tests" [
 
-        testGroup "List of tests:" [testsPrelude,testsWu]
+        testGroup "List of tests:" [testsPascal]
     ]
 

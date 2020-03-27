@@ -26,6 +26,7 @@ library:
   - containers
   - algebra
   - sized
+  - matrix
   extra-deps:
   source-dirs: library
 

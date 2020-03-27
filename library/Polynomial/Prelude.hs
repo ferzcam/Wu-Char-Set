@@ -89,7 +89,7 @@ leadingMonomial :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n) => Polynom
 leadingMonomial pol var = snd $ leadingTerm pol var
 
 leadingCoeff :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n) => Polynomial' ord n -> Int -> Rational
-leadingCoeff pol var = trace "EEEEEEE leading Coeff" fst $ leadingTerm pol var
+leadingCoeff pol var = fst $ leadingTerm pol var
 
 
 toMonomial :: (KnownNat n) => [Int] -> OrderedMonomial ord n

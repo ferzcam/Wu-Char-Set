@@ -39,7 +39,7 @@ library
   ghc-options:  -Wall,
                 -freverse-errors
   build-depends:
-      base , containers, algebra, computational-algebra, sized, type-natural
+      base , containers, algebra, computational-algebra, sized, type-natural, matrix
   default-language: Haskell2010
 
 
@@ -63,9 +63,12 @@ test-suite Wu-Char-Set-test-suite
   other-modules:
       Paths_Wu_Char_Set
       TPolynomial.TPrelude
+      Examples.Apolonius
+      Examples.Morley
+      Examples.Pascal
   hs-source-dirs:
       test-suite
-  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N -freverse-errors  -Wname-shadowing
+  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N1 -freverse-errors  -Wname-shadowing
   build-depends:
       Wu-Char-Set
     , base
@@ -83,9 +86,10 @@ benchmark Wu-Char-Set-benchmarks
       Paths_Wu_Char_Set
   hs-source-dirs:
       benchmark
-  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N -freverse-errors
+  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N4 -freverse-errors
   build-depends:
       Wu-Char-Set
     , base
     , criterion
   default-language: Haskell2010
+

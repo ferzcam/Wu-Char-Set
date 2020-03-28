@@ -32,7 +32,7 @@ h1 = Parallel lab ldc
 h2 = Parallel lda lbc
 h3 = Colinear d o b
 h4 = Colinear a c o
-h5 = Acute angl_cbi angl_iba
+h5 = SameAcAngle angl_cbi angl_iba
 
 conc = SameLen lao ldo
 

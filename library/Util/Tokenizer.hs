@@ -27,7 +27,7 @@ data Hypothesis =   Colinear Point Point Point
                     | Perpendicular Line Line 
                     | InCircle Point Circle
                     | SameLen Line Line
-                    | Acute Angle Angle
+                    | SameAcAngle Angle Angle
 
 type Conclusion = Hypothesis
 
@@ -89,7 +89,7 @@ geomToAlg (InCircle (pt1) (Circle pt2 pt3)) var =
                                 let dist23 = distance pt2 pt3 var
                                     dist21 = distance pt2 pt1 var
                                 in dist23 - dist21
-geomToAlg (Acute (Angle pt1 pt2 pt3) (Angle pt4  pt5 pt6)) var =  
+geomToAlg (SameAcAngle (Angle pt1 pt2 pt3) (Angle pt4  pt5 pt6)) var =  
                                 let pts = map (\point -> fromJust $ lookup point var ) $ [pt1, pt2, pt3, pt4, pt5, pt6]
                                     p1 = trace("pts :" ++ show pts) pts!!0
                                     p2 = pts!!1

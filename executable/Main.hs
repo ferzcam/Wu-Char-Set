@@ -15,18 +15,28 @@ a = Point "A"
 b = Point "B"
 c = Point "C"
 d = Point "D"
+o = Point "O"
 
-l1 = Line a b
-l2 = Line b c
+lab = Line a b
+ldc = Line d c
+lac = Line a c 
+lbd = Line b d
+lda = Line d a 
+lbc = Line b c 
+lao = Line a o
+ldo = Line d o
 
-hyp = Colinear a b c
+h1 = Parallel lab ldc
+h2 = Parallel lda lbca
+h3 = Colinear d o b
+h4 = Colinear a c o
 
-conc = Intersect l1 l2
+conc = SameLen lao ldo
 
-structures = [P a, P b, P c, P d, L l1, L l2]
+structures = [P a, P b, P c, P d, P o, L lab, L ldc, L lac, L lbd, L lda, L lbc, L lao, L ldo]
 
-res :: [Polynomial' Grevlex 8]
-res = generatePolynomials structures [hyp] conc
+res :: [Polynomial' Grevlex 10]
+res = generatePolynomials structures [h1, h2, h3, h4] conc
 
 
 main :: IO ()

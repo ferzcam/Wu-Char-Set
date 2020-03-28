@@ -1,14 +1,15 @@
 {-# LANGUAGE DataKinds, TupleSections #-}
 
 module Util.Tokenizer where
-
-import Algebra.Prelude hiding (map, (*), (++), (\\))
+import Prelude hiding ((+), (-))
+import Algebra.Prelude hiding (map, (*), (^), (++), (\\))
 --hiding (Rational, findIndex, drop, leadingCoeff, leadingTerm, leadingMonomial, (/), gcd, lcm, fromRational, toRational)
 import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
 import Data.Matrix hiding (flatten, trace)
 import Data.List
 import Debug.Trace
+import Data.Maybe
 
 newtype Point = Point String deriving (Eq, Show)
 data Circle = Circle (Point, Point) Point deriving (Show) 
@@ -24,6 +25,7 @@ data Hypothesis =   Colinear Point Point Point
                     | Perpendicular Line Line 
                     | Intersect Line Line
                     | InCircle Point Circle
+                    | SameLen Line Line
 
 type Conclusion = Hypothesis
 
@@ -57,8 +59,26 @@ takePairs [a] = []
 takePairs (x:y:s) = [[x,y]] ++ takePairs s
 
 
-geomToAlg :: Hypothesis -> [(Point, [Polynomial' Grevlex n])] -> Polynomial' Grevlex n
-geomToAlg _ = head . snd . head
+geomToAlg :: (KnownNat n) => Hypothesis -> [(Point, [Polynomial' Grevlex n])] -> Polynomial' Grevlex n
+geomToAlg (Colinear a b c) var =  
+                                let pa = fromJust $ lookup a var
+                                    pb = fromJust $ lookup b var
+                                    pc = fromJust $ lookup c var
+                                in  (pb!!1 -  pa!!1)*(pc!!0 - pa!!0) - (pc!!1 - pa!!1)*(pb!!0 - pa!!0)  
+geomToAlg (Parallel l1 l2) var =  
+                                let pts = map (\point -> fromJust $ lookup point var ) $ flatten (Parallel l1 l2)
+                                    p1 = pts!!0
+                                    p2 = pts!!1
+                                    p3 = pts!!2
+                                    p4 = pts!!3
+                                in  (p2!!1 - p1!!1)*(p4!!0 - p3!!0) - (p4!!1 - p3!!1)*(p2!!0 - p1!!0) 
+geomToAlg (SameLen (Line pt1 pt2) (Line pt3 pt4)) var =  
+                                let pts = map (\point -> fromJust $ lookup point var ) $ [pt1, pt2, pt3, pt4]
+                                    p1 = trace ("pts:" ++ show pts) pts!!0
+                                    p2 = pts!!1
+                                    p3 = pts!!2
+                                    p4 = pts!!3
+                                in  (p2!!1 - p1!!1)^2 + (p2!!0 - p1!!0)^2 - (p4!!0 - p3!!0)^2 - (p4!!1 - p3!!1)^2  
 
 
 
@@ -77,6 +97,7 @@ instance Flattening Hypothesis where
     flatten (Perpendicular (Line p1 p2) (Line p3 p4)) = nub [p1, p2, p3, p4] 
     flatten (Intersect (Line p1 p2) (Line p3 p4)) = nub [p1, p2, p3, p4] 
     flatten (InCircle p (Circle (h,k) r)) = nub [p, h, k, r]
+    flatten (SameLen (Line p1 p2) (Line p3 p4)) = nub [p1, p2, p3, p4] 
 
 
 

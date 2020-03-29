@@ -1,4 +1,4 @@
- {-# LANGUAGE NoImplicitPrelude #-}
+ {-# LANGUAGE NoImplicitPrelude, FlexibleContexts #-}
 
 module Polynomial.Prelude where
 
@@ -10,25 +10,25 @@ import Data.List hiding (drop)
 import Data.Maybe
 import Debug.Trace
 
-type Polynomial' ord n = OrderedPolynomial Rational ord n
---type Polynomial' ord n = OrderedPolynomial k ord n
+type Polynomial' n = OrderedPolynomial Rational Grevlex n
+type OrderedMonomial' n = OrderedMonomial Grevlex n
 
 -- -- | Returns the position of the class variable. Monomial ordering must be defined correctly.
--- classVarDeg ::  Polynomial' ord n -> Int
+-- classVarDeg ::  Polynomial' n -> Int
 -- classVarDeg poly = let maybeDegree = (find (/=0)) . S.toList . getMonomial . fst . head . (MS.toDescList) . _terms
 --                     in case maybeDegree poly of
 --                         Just a -> a
 --                         Nothing -> 0
 
-classVarDeg :: (IsOrder n ord, KnownNat n, IsMonomialOrder n ord)
-        =>  Polynomial' ord n -> Int -> Int
+classVarDeg :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex)
+        =>  Polynomial' n -> Int -> Int
 classVarDeg pol var =  leadingMonomialDegs !! var
         where
                 leadingMonomialDegs = S.toList $ getMonomial $ leadingMonomial pol var
 
 -- (IsOrder n order, KnownNat n,  IsMonomialOrder n order)
-varInPoly :: (IsOrder n ord, KnownNat n,  IsMonomialOrder n ord)
-        =>  Polynomial' ord n -> Int -> Bool
+varInPoly :: (IsOrder n Grevlex, KnownNat n,  IsMonomialOrder n Grevlex)
+        =>  Polynomial' n -> Int -> Bool
 varInPoly pol var
     | classVarDeg pol var == 0 = False
     | otherwise = True
@@ -42,18 +42,18 @@ replacePoly :: Eq poly => [poly] -> poly -> poly -> [poly]
 replacePoly polys p q = q : dropPolys polys [p]
 
 
-existOneDegPoly :: [Polynomial' ord n] -> Int -> Maybe (Polynomial' ord n)
+existOneDegPoly :: [Polynomial' n] -> Int -> Maybe (Polynomial' n)
 existOneDegPoly polys var = find isOneDeg polys
         where
             isOneDeg poly = elem 1 (((map ((!! var) . S.toList . getMonomial . fst)) . MS.toList . _terms) poly) 
 
-pseudoRemainders :: (IsMonomialOrder n ord, KnownNat n) => 
-        [Polynomial' ord n] -> Polynomial' ord n -> Int -> [Polynomial' ord n]
+pseudoRemainders :: (IsMonomialOrder n Grevlex, KnownNat n) => 
+        [Polynomial' n] -> Polynomial' n -> Int -> [Polynomial' n]
 pseudoRemainders polys poly var = map (\p -> snd $ pseudoRemainder p poly var) polys
             
 
-pseudoRemainder :: (IsOrder n ord, KnownNat n, IsMonomialOrder n ord) 
-        => Polynomial' ord n -> Polynomial' ord n -> Int -> (Polynomial' ord n, Polynomial' ord n)
+pseudoRemainder :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex) 
+        => Polynomial' n -> Polynomial' n -> Int -> (Polynomial' n, Polynomial' n)
 pseudoRemainder f g var = (fst pseudo, simplifyPolinomial (snd pseudo))
         where 
                 m = classVarDeg g var
@@ -61,8 +61,8 @@ pseudoRemainder f g var = (fst pseudo, simplifyPolinomial (snd pseudo))
                 factors = chooseTermsWithVar g var
                 pseudo = findQR 0 f g var m d        
 
-findQR :: (IsMonomialOrder n ord, KnownNat n) 
-        => Polynomial' ord n -> Polynomial' ord n -> Polynomial' ord n -> Int -> Int -> Polynomial' ord n -> (Polynomial' ord n, Polynomial' ord n)
+findQR :: (IsMonomialOrder n Grevlex, KnownNat n) 
+        => Polynomial' n -> Polynomial' n -> Polynomial' n -> Int -> Int -> Polynomial' n -> (Polynomial' n, Polynomial' n)
 findQR q r g var m d
         | r == 0 || classVarDeg r var < m = (q,r)
         | otherwise = let
@@ -78,26 +78,26 @@ findQR q r g var m d
 
 -- trace ("EEEEEEE LEADING TERM" ++ (show pol) ++ "     " ++ show polToList)
 -- Assumes that the polynomial containns variable. The ordering will be Lexicographical
-leadingTerm :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n) => Polynomial' ord n -> Int -> (Rational, OrderedMonomial ord n)
+leadingTerm :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) => Polynomial' n -> Int -> (Rational, OrderedMonomial' n)
 leadingTerm pol var =  (snd &&& fst) $ fromJust $ MS.lookupLE chosenTerm (_terms pol)
         where
                 chosenTerm = toMonomial (foldr1 foo polToList)
                 polToList = map (S.toList . getMonomial) (MS.keys $ _terms pol)
                 foo monomCoeffs acc = if monomCoeffs!!var > acc!!var then monomCoeffs else acc
 
-leadingMonomial :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n) => Polynomial' ord n -> Int -> OrderedMonomial ord n
+leadingMonomial :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) => Polynomial' n -> Int -> OrderedMonomial Grevlex n
 leadingMonomial pol var = snd $ leadingTerm pol var
 
-leadingCoeff :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n) => Polynomial' ord n -> Int -> Rational
+leadingCoeff :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) => Polynomial' n -> Int -> Rational
 leadingCoeff pol var = fst $ leadingTerm pol var
 
 
-toMonomial :: (KnownNat n) => [Int] -> OrderedMonomial ord n
+toMonomial :: (KnownNat n) => [Int] -> OrderedMonomial Grevlex n
 toMonomial a = orderMonomial Proxy (fromList sing a)
 
 --Genera un polinomio del tipo p(x1,x2,...xn) = xi^k
-mon :: (IsOrder n order, KnownNat n, IsMonomialOrder n order)
-        => Int -> Int -> Int -> OrderedMonomial order n
+mon :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex)
+        => Int -> Int -> Int -> OrderedMonomial' n
 mon var exp numVars = toMonomial exps
         where 
                 zeros = replicate numVars 0
@@ -109,7 +109,7 @@ insertAt z y xs = as ++ (y : tail bs)
 -----
 
 ----------------------------------------FUNCIONES EXTRAS PARA OBTENER DE MANERA ADECUADA EL LC-------------------------
-chooseTermsWithVar :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n) => Polynomial' ord n -> Int -> Polynomial' ord n
+chooseTermsWithVar :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) => Polynomial' n -> Int -> Polynomial' n
 chooseTermsWithVar pol var
                 | not $ varInPoly pol var = chooseTermsWithVar pol (var + 1)
                 | otherwise = foldr' foo 0 idxs
@@ -119,14 +119,14 @@ chooseTermsWithVar pol var
                         foo idx acc = acc + toPolynomial (snd $ auxMonom pol idx , fst $ auxMonom pol idx)
                         auxMonom poly idx = MS.elemAt idx $ _terms poly
 
-simplifyMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n)   =>  Polynomial' ord n -> Polynomial' ord n
+simplifyMonomial ::(IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n)   =>  Polynomial' n -> Polynomial' n
 simplifyMonomial pol = pol // (1, commonMonomial pol)
 
 
-simplifyPolinomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n)   =>  Polynomial' ord n -> Polynomial' ord n
+simplifyPolinomial ::(IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n)   =>  Polynomial' n -> Polynomial' n
 simplifyPolinomial pol  = pol // commonTerm pol
         
-getCoeff :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n)   =>  Polynomial' ord n -> Int -> Polynomial' ord n
+getCoeff :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n)   =>  Polynomial' n -> Int -> Polynomial' n
 getCoeff pol var = pol // (1, classVariable)
         where
                 deg = classVarDeg pol var
@@ -153,38 +153,38 @@ replaceZero (x:xs) position
 
 
 -- Funcion que intentará dividir un polinomio por un monomio
-(//) :: (IsMonomialOrder n ord, IsOrder n ord, KnownNat n) 
-            =>  Polynomial' ord n  -> (Rational, OrderedMonomial ord n) ->  Polynomial' ord n
+(//) :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) 
+            =>  Polynomial' n  -> (Rational, OrderedMonomial' n) ->  Polynomial' n
 pol // (coeff, mon) = Algebra.Prelude.sum $ map (toPolynomial . (`tryDiv'` (coeff, mon)) . (snd &&& fst)) terms
             where
                     terms = MS.toList $ _terms pol
 
 -- Funcion que obtiene el gcd de un polinomio, en este caso se refiere al termino en comun de todos los monomios que conforman el polinomio
 -- commonMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n) 
---         =>  Polynomial' ord n  -> OrderedMonomial ord n
+--         =>  Polynomial' n  -> OrderedMonomial' n
 -- commonMonomial pol  =   foldr' foo (last monomials) (init monomials)
 --                         where
 --                                 foo monomial acc = gcdMonomial acc monomial
 --                                 monomials = MS.keys $ _terms pol
                                 
 
-commonMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n) 
-        =>  Polynomial' ord n  ->  OrderedMonomial ord n
+commonMonomial ::(IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) 
+        =>  Polynomial' n  ->  OrderedMonomial' n
 commonMonomial pol  =  foldr' foo (last monomials) (init monomials) 
                         where
                                 foo monomial acc = gcdMonomial acc monomial
                                 monomials = MS.keys $ _terms pol
                        
 
-commonTerm ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n) 
-        =>  Polynomial' ord n  ->  (Rational, OrderedMonomial ord n)
+commonTerm ::(IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) 
+        =>  Polynomial' n  ->  (Rational, OrderedMonomial' n)
 commonTerm pol  =  (coeff ,foldr' foo (last monomials) (init monomials) )
                         where
                                 foo monomial acc = gcdMonomial acc monomial
                                 monomials = MS.keys $ _terms pol
                                 coeff = foldl1 (gcdRational) $ MS.elems $ _terms pol
 
-tryDiv' :: (Rational, OrderedMonomial ord n) -> (Rational, OrderedMonomial ord n) -> (Rational, OrderedMonomial ord n)
+tryDiv' :: (Rational, OrderedMonomial' n) -> (Rational, OrderedMonomial' n) -> (Rational, OrderedMonomial' n)
 tryDiv' (a, f) (b, g)
         | g `divs` f = (a/b, OrderedMonomial $ zipWithSame (-) (getMonomial f) (getMonomial g))
         | otherwise  = error "cannot divide."

@@ -1,3 +1,5 @@
+{-#LANGUAGE FlexibleContexts#-}
+
 module Polynomial.Wu where
 
 
@@ -8,8 +10,8 @@ import Debug.Trace
 -- | This algorithm was taken from the book "Ideals, Varieties and Algorithms" 4th ed.
 
 -- | Algorithm to get characteristic set from a set of polynomials.
-charSet :: (IsMonomialOrder n ord, KnownNat n) 
-    => [Polynomial' ord n] -> [ Polynomial' ord n] -> Int -> [ Polynomial' ord n]
+charSet :: (IsMonomialOrder n Grevlex, KnownNat n) 
+    => [Polynomial' n] -> [ Polynomial' n] -> Int -> [ Polynomial' n]
 charSet [] a _ = map (simplifyPolinomial) a
 charSet p a var
     | lenS == 0 = charSet p a (var+1)
@@ -28,8 +30,8 @@ charSet p a var
 -- Function that test a geometric theorem. 
 -- Inputs: hip, Hipotheses; g, theorem. 
 -- Output: list of the pseudo remainders of g with respect to the ascending chain
-theoremProver :: (IsMonomialOrder n ord, KnownNat n) 
-    => [Polynomial' ord n] -> Polynomial' ord n -> [Polynomial' ord n]
+theoremProver :: (IsMonomialOrder n Grevlex, KnownNat n) 
+    => [Polynomial' n] -> Polynomial' n -> [Polynomial' n]
 theoremProver hip g = remWithChain wuChain g 0
 -- remWithChain wuChain g 0 numHip
     where 
@@ -38,8 +40,8 @@ theoremProver hip g = remWithChain wuChain g 0
 
 -- Function that get the pseudoremider of a polinomial with
 -- respect to a set of polynomials
-remWithChain :: (IsMonomialOrder n ord, KnownNat n) 
-    => [Polynomial' ord n] -> Polynomial' ord n -> Int -> [ Polynomial' ord n]
+remWithChain :: (IsMonomialOrder n Grevlex, KnownNat n) 
+    => [Polynomial' n] -> Polynomial' n -> Int -> [ Polynomial' n]
 remWithChain [e] pol var = [snd $ pseudoRemainder pol e var]
 remWithChain chain pol var = [rem]++(remWithChain newChain rem (var + 1) )
 --  trace ("New Chain: "++ show newChain)
@@ -50,7 +52,7 @@ remWithChain chain pol var = [rem]++(remWithChain newChain rem (var + 1) )
         newChain = tail chain
         
 
-analizeS :: (IsMonomialOrder n ord, KnownNat n) => [Polynomial' ord n] -> Int -> ([Polynomial' ord n], [Polynomial' ord n])
+analizeS :: (IsMonomialOrder n Grevlex, KnownNat n) => [Polynomial' n] -> Int -> ([Polynomial' n], [Polynomial' n])
 analizeS ls@(x:y:z) var
         | classVarDeg r var > 1 =   analizeS newls var
         | classVarDeg r var == 1 =  (newls, [])
@@ -60,7 +62,7 @@ analizeS ls@(x:y:z) var
             newls = replacePoly ls max r 
         
 
-maxNpseudo :: (IsMonomialOrder n ord, KnownNat n) => Polynomial' ord n -> Polynomial' ord n -> Int -> (Polynomial' ord n, Polynomial' ord n)
+maxNpseudo :: (IsMonomialOrder n Grevlex, KnownNat n) => Polynomial' n -> Polynomial' n -> Int -> (Polynomial' n, Polynomial' n)
 maxNpseudo f g var
     | classVarDeg f var >= classVarDeg g var = (r, f)
     | otherwise = (r, g)

@@ -3,7 +3,6 @@
 module Util.Tokenizer where
 import Prelude hiding ((+), (-))
 import Algebra.Prelude hiding (map, (*), (^), (++), (\\))
---hiding (Rational, findIndex, drop, leadingCoeff, leadingTerm, leadingMonomial, (/), gcd, lcm, fromRational, toRational)
 import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
 import Data.Matrix hiding (flatten, trace)
@@ -11,7 +10,7 @@ import Data.List
 import Debug.Trace
 import Data.Maybe
 
-newtype Point = Point String deriving (Eq, Show)
+data Point = Point String  deriving (Eq, Show)
 data Circle = Circle Point Point deriving (Show) 
 data Line = Line Point Point deriving (Show)
 data Angle = Angle Point Point Point deriving (Show)
@@ -31,24 +30,25 @@ data Hypothesis =   Colinear Point Point Point
 
 type Conclusion = Hypothesis
 
-generatePolynomials :: (KnownNat n) => [Struct] -> [Hypothesis] -> Conclusion -> [Polynomial' Grevlex n] 
+generatePolynomials :: (KnownNat n) => [Struct] -> [Hypothesis] -> Conclusion -> [Polynomial' n] 
 generatePolynomials structs hypotheses conclusion = map (flip geomToAlg variables) statements
 
     where 
         points = map getPoint (filter (isPoint) structs)
         arity = 2 * length points
         variables = generateVariables arity points conclusion
-        statements = hypotheses ++ [conclusion]
+        statements = conclusion:hypotheses
 
 
-generateVariables :: (KnownNat n) => Int -> [Point] -> Conclusion -> [(Point, [Polynomial' Grevlex n])]
+generateVariables :: (KnownNat n) => Int -> [Point] -> Conclusion -> [(Point, [Polynomial' n])]
 generateVariables arity points conclusion = zip orderedPoints (takePairs variables)
     where
         pointsConclusion = flatten conclusion
         orderedPoints = pointsConclusion ++ (points\\pointsConclusion)
-        initialArrays = identity arity
-        monomials = map toMonomial (toLists initialArrays)
-            
+        initialArrays = identity (arity-3)
+        nonZero = toLists initialArrays -- ^Remove the three last variables to make them zero
+        ready = nonZero ++ (replicate 3 (replicate (arity-3) 0)) -- ^The three last variables are fixed to zero to make that (w.l.o.g) the first two points are (0,0) and (x_1,0) 
+        monomials = map toMonomial ready
         variables = map (toPolynomial . (1,)) monomials
 
 isPoint :: Struct -> Bool
@@ -61,7 +61,7 @@ takePairs [a] = []
 takePairs (x:y:s) = [[x,y]] ++ takePairs s
 
 
-geomToAlg :: (KnownNat n) => Hypothesis -> [(Point, [Polynomial' Grevlex n])] -> Polynomial' Grevlex n
+geomToAlg :: (KnownNat n) => Hypothesis -> [(Point, [Polynomial' n])] -> Polynomial' n
 geomToAlg (Colinear a b c) var =  
                                 let pa = fromJust $ lookup a var
                                     pb = fromJust $ lookup b var
@@ -100,7 +100,7 @@ geomToAlg (SameAcAngle (Angle pt1 pt2 pt3) (Angle pt4  pt5 pt6)) var =
                                 in  ((p3!!1 - p2!!1)*(p1!!0 - p2!!0) - (p1!!1 - p2!!1)*(p3!!0 - p2!!0)  )*((p4!!0 - p5!!0)*(p6!!0 - p5!!0)  + (p4!!1 - p5!!1)*(p6!!1 - p5!!1)  )  -  ((p6!!1 - p5!!1)*(p4!!0 - p5!!0) - (p4!!1 - p5!!1)*(p6!!0 - p5!!0))* ((p1!!0 - p2!!0)*(p3!!0 - p2!!0)  + (p1!!1 - p2!!1)*(p3!!1 - p2!!1)  ) 
  
 
-distance :: (KnownNat n) => Point -> Point -> [(Point, [Polynomial' Grevlex n])] -> Polynomial' Grevlex n
+distance :: (KnownNat n) => Point -> Point -> [(Point, [Polynomial' n])] -> Polynomial' n
 distance pt1 pt2 var = (p2!!1 - p1!!1)^2 + (p2!!0 - p1!!0)^2
                 where 
                     pts = map (\point -> fromJust $ lookup point var ) $ [pt1, pt2]

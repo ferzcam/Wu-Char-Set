@@ -4,42 +4,48 @@
 -- and only use it in the executable. Doing so allows others to use what you
 -- wrote in their libraries.
 import Example
-import Polynomial.Wu
-import Prelude
-import Algebra.Prelude hiding ((*),(-),(+),(^), (/), gcd, lcm, fromRational, map)
-import Polynomial.Prelude
-import Util.Tokenizer
+--import Algebra.Prelude hiding ((*),(-),(+),(^), (/), gcd, lcm, fromRational, map)
+import Core
+
 
 
 a = Point "A"
 b = Point "B"
 c = Point "C"
 d = Point "D"
+e = Point "E"
+f = Point "F"
 o = Point "O"
+p = Point "P"
+q = Point "Q"
+s = Point "S"
 
-lab = Line a b
-ldc = Line d c
-lac = Line a c 
-lbd = Line b d
-lda = Line d a 
-lbc = Line b c 
-lao = Line a o
-ldo = Line d o
-angl_cbi = Angle c b o
-angl_iba = Angle o b a
+loa = Line o a
+loc = Line o c
+lob = Line o b
+lod = Line o d
+lof = Line o f
+loe = Line o e
 
-h1 = Parallel lab ldc
-h2 = Parallel lda lbc
-h3 = Colinear d o b
-h4 = Colinear a c o
-h5 = SameAcAngle angl_cbi angl_iba
 
-conc = SameLen lao ldo
+h1 = SameLen loa loc
+h2 = SameLen loa lob
+h3 = SameLen loa lod
+h4 = SameLen loa lof
+h5 = SameLen loa loe
+h6 = Colinear p d f
+h7 = Colinear q f e
+h8 = Colinear q b c
+h9 = Colinear s e a
+h10 = Colinear s c d
 
-structures = [P a, P b, P c, P d, P o, L lab, L ldc, L lac, L lbd, L lda, L lbc, L lao, L ldo, A angl_cbi, A angl_iba]
+g = Colinear s q p
 
-res :: [Polynomial' Grevlex 10]
-res = generatePolynomials structures [h1, h2, h3, h4, h5] conc
+structres = [P a, P b, P c, P d, P e, P f, P o, P p, P q, P s, L loa, L loc, L lob, L lod, L lof, L loe]
+hypsGeom = [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10]
+
+polys :: [Polynomial' 20]
+polys@(conclusion:hypotheses) = generatePolynomials structres hypsGeom g
 
 
 main :: IO ()

@@ -7,37 +7,16 @@ import Test.Tasty
 import Test.Tasty.HUnit as HU
 import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
-    
-xl = var 0
-yl = var 1
-zl = var 2
-
-xg = var 0
-yg = var 1
-zg = var 2
-
 
 x = var 0
-y = var 1 
+y = var 1
 
-s1,s2,r1,r2:: Polynomial'  Lex 2
+s1,s2,r1,r2 :: Polynomial' 2
 s1 = y^2 -  x^2 -  x^3
 s2 = y^2 +  x^2 - 1
 
 r1 = x*y^2 + 2*y^2 - x - 1
 r2 = y^4 + y^2 - 1
-
-
-
-p1L = xl + yl^4 + zl^3 :: Polynomial' Lex 3
-p2L = xl^2*yl - zl :: Polynomial' Lex 3
-p3L = xl*yl + xl*yl*zl :: Polynomial' Lex 3
-p4L = xl*yl*zl
-
-p1Gr = xg + yg^4 + zg^3 :: Polynomial' Grevlex 3
-p2Gr = xg^2*yg^3 - zg :: Polynomial' Grevlex 3
-p3Gr = xg*yg + xg*yg*zg^2 :: Polynomial' Grevlex 3
-
 
 
 -- testClassVarDeg :: TestTree
@@ -49,11 +28,6 @@ p3Gr = xg*yg + xg*yg*zg^2 :: Polynomial' Grevlex 3
 --     classVarDeg p2Gr @?= 1
 --     classVarDeg p3Gr @?= 2
 
-testDropPolys :: TestTree
-testDropPolys = testCase "Test for dropping polys" $ do
-    dropPolys [p1L,p2L,p3L] [p4L,p3L] @?= [p1L, p2L]
-
---testReplacePoly :: TestTree
 
 testLeadingTerms :: TestTree
 testLeadingTerms = testCase "Test for leading term" $ do
@@ -70,4 +44,4 @@ testPseudoRemainder = testCase "Test for pseudo remainder" $ do
 
 
 testsPrelude :: TestTree
-testsPrelude = testGroup "Test for Prelude of Polynomials" [testDropPolys,testPseudoRemainder]
+testsPrelude = testGroup "Test for Prelude of Polynomials" [testPseudoRemainder]

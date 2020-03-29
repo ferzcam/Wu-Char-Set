@@ -31,6 +31,7 @@ library
       Example
       Polynomial.Prelude
       Polynomial.Wu
+      Util.Tokenizer
       Core
   other-modules:
       Paths_Wu_Char_Set
@@ -66,6 +67,9 @@ test-suite Wu-Char-Set-test-suite
       Examples.Apolonius
       Examples.Morley
       Examples.Pascal
+      Examples.Parallelogram
+      Core
+      
   hs-source-dirs:
       test-suite
   ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N1 -freverse-errors  -Wname-shadowing

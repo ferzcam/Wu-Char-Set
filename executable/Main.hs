@@ -9,16 +9,16 @@ import Core
 
 
 
-a = Point "A"
-b = Point "B"
-c = Point "C"
-d = Point "D"
-e = Point "E"
-f = Point "F"
-o = Point "O"
-p = Point "P"
-q = Point "Q"
-s = Point "S"
+a = IndepPoint "A"
+b = IndepPoint "B"
+c = IndepPoint "C"
+d = DepPoint "D"
+e = DepPoint "E"
+f = DepPoint "F"
+o = DepPoint "O"
+p = DepPoint "P"
+q = DepPoint "Q"
+s = DepPoint "S"
 
 loa = Line o a
 loc = Line o c
@@ -39,14 +39,14 @@ h8 = Colinear q b c
 h9 = Colinear s e a
 h10 = Colinear s c d
 
-g = Colinear s q p
+g = Colinear q s p
 
 structres = [P a, P b, P c, P d, P e, P f, P o, P p, P q, P s, L loa, L loc, L lob, L lod, L lof, L loe]
 hypsGeom = [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10]
 
-polys :: [Polynomial' 20]
+polys :: [Polynomial' 14]
 polys@(conclusion:hypotheses) = generatePolynomials structres hypsGeom g
 
 
 main :: IO ()
-main = putStrLn "Hello World!"
+main = print (theoremProver hypotheses conclusion)

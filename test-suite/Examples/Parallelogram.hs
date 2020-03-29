@@ -1,8 +1,9 @@
-{-#LANGUAGE DataKinds, NoImplicitPrelude #-}
+{-#LANGUAGE DataKinds#-}
 
 module Examples.Parallelogram (testParallelogram) where 
 
-import Algebra.Prelude hiding (leadingTerm)
+
+import Algebra.Ring.Polynomial
 import Test.Tasty
 import Test.Tasty.HUnit as HU
 import qualified Data.Map.Strict as MS
@@ -11,11 +12,11 @@ import Polynomial.Wu
 import Util.Tokenizer    
 
 
-a = Point "A"
-b = Point "B"
-c = Point "C"
-d = Point "D"
-o = Point "O"
+a = IndepPoint "A"
+b = IndepPoint "B"
+c = IndepPoint "C"
+d = DepPoint "D"
+o = DepPoint "O"
 
 
 lab = Line a b
@@ -34,7 +35,7 @@ conc = SameLen lao lco
 
 structures = [P a, P b, P c, P d, P o, L lab, L ldc, L lda, L lbc, L lao, L lco]
 
-polys :: [Polynomial' 7]
+polys :: [Polynomial' 4]
 polys@(conclusion:hypotheses) = generatePolynomials structures [h1, h2, h3, h4] conc
 
 

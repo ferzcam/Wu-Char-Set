@@ -1,8 +1,8 @@
-{-#LANGUAGE DataKinds, NoImplicitPrelude #-}
+{-#LANGUAGE DataKinds#-}
 
 module Examples.Apolonius (testApolonius) where 
 
-import Algebra.Prelude hiding (leadingTerm)
+import Algebra.Ring.Polynomial
 import Test.Tasty
 import Test.Tasty.HUnit as HU
 import qualified Data.Map.Strict as MS

@@ -1,15 +1,20 @@
- {-# LANGUAGE NoImplicitPrelude, FlexibleContexts #-}
+ {-# LANGUAGE FlexibleContexts #-}
 
 module Polynomial.Prelude where
 
-import Prelude (Rational, (/), gcd, lcm, fromRational, toRational) 
-import Algebra.Prelude hiding (Rational, (++), map, findIndex, drop, leadingCoeff, leadingTerm, leadingMonomial, (/), gcd, lcm, fromRational, toRational)
-import qualified Data.Map.Strict as MS
+import Algebra.Ring.Polynomial hiding (leadingMonomial, leadingTerm)
+import qualified Data.Map.Strict as MS 
 import qualified Data.Sized.Builtin as S (toList)
 import Data.List hiding (drop)
+import Data.Foldable
 import Data.Maybe
 import Debug.Trace
-
+import Data.Ratio
+import GHC.TypeLits
+import qualified Data.Sized as DS
+import Control.Arrow
+import Data.Proxy
+import Data.Singletons
 type Polynomial' n = OrderedPolynomial Rational Grevlex n
 type OrderedMonomial' n = OrderedMonomial Grevlex n
 
@@ -22,7 +27,7 @@ type OrderedMonomial' n = OrderedMonomial Grevlex n
 
 classVarDeg :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex)
         =>  Polynomial' n -> Int -> Int
-classVarDeg pol var =  leadingMonomialDegs !! var
+classVarDeg pol var = trace ("VAR " ++  show var) leadingMonomialDegs !! var
         where
                 leadingMonomialDegs = S.toList $ getMonomial $ leadingMonomial pol var
 
@@ -79,7 +84,7 @@ findQR q r g var m d
 -- trace ("EEEEEEE LEADING TERM" ++ (show pol) ++ "     " ++ show polToList)
 -- Assumes that the polynomial containns variable. The ordering will be Lexicographical
 leadingTerm :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) => Polynomial' n -> Int -> (Rational, OrderedMonomial' n)
-leadingTerm pol var =  (snd &&& fst) $ fromJust $ MS.lookupLE chosenTerm (_terms pol)
+leadingTerm pol var = (snd &&& fst) $ fromJust $ MS.lookupLE chosenTerm (_terms pol)
         where
                 chosenTerm = toMonomial (foldr1 foo polToList)
                 polToList = map (S.toList . getMonomial) (MS.keys $ _terms pol)
@@ -155,7 +160,7 @@ replaceZero (x:xs) position
 -- Funcion que intentará dividir un polinomio por un monomio
 (//) :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) 
             =>  Polynomial' n  -> (Rational, OrderedMonomial' n) ->  Polynomial' n
-pol // (coeff, mon) = Algebra.Prelude.sum $ map (toPolynomial . (`tryDiv'` (coeff, mon)) . (snd &&& fst)) terms
+pol // (coeff, mon) = sum $ map (toPolynomial . (`tryDiv'` (coeff, mon)) . (snd &&& fst)) terms
             where
                     terms = MS.toList $ _terms pol
 
@@ -184,8 +189,8 @@ commonTerm pol  =  (coeff ,foldr' foo (last monomials) (init monomials) )
                                 monomials = MS.keys $ _terms pol
                                 coeff = foldl1 (gcdRational) $ MS.elems $ _terms pol
 
-tryDiv' :: (Rational, OrderedMonomial' n) -> (Rational, OrderedMonomial' n) -> (Rational, OrderedMonomial' n)
+tryDiv' :: (KnownNat n) => (Rational, OrderedMonomial' n) -> (Rational, OrderedMonomial' n) -> (Rational, OrderedMonomial' n)
 tryDiv' (a, f) (b, g)
-        | g `divs` f = (a/b, OrderedMonomial $ zipWithSame (-) (getMonomial f) (getMonomial g))
+        | g `divs` f = (a/b, OrderedMonomial $ DS.zipWithSame (-) (getMonomial f) (getMonomial g))
         | otherwise  = error "cannot divide."
 ---------------------------------------------------------------------------------------------------------------------------------------------

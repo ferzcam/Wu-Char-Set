@@ -1,8 +1,9 @@
-{-#LANGUAGE DataKinds, NoImplicitPrelude #-}
+{-#LANGUAGE DataKinds #-}
 
 module Examples.Morley (testMorley) where 
 
-import Algebra.Prelude hiding (leadingTerm)
+
+import Algebra.Ring.Polynomial
 import Test.Tasty
 import Test.Tasty.HUnit as HU
 import qualified Data.Map.Strict as MS

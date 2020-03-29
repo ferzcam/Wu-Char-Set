@@ -1,12 +1,14 @@
-{-#LANGUAGE DataKinds, NoImplicitPrelude #-}
+{-#LANGUAGE DataKinds#-}
 
 module TPolynomial.TPrelude (testsPrelude) where 
 
-import Algebra.Prelude hiding (leadingTerm)
+
+import Algebra.Ring.Polynomial hiding (leadingTerm)
 import Test.Tasty
 import Test.Tasty.HUnit as HU
 import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
+import Control.Arrow
 
 x = var 0
 y = var 1
@@ -32,9 +34,9 @@ r2 = y^4 + y^2 - 1
 testLeadingTerms :: TestTree
 testLeadingTerms = testCase "Test for leading term" $ do
     leadingTerm s1 0 @?= ((snd &&& fst) $ (head . MS.toList._terms) (-x^3))
-    leadingTerm s1 1 @?= ((snd &&& fst) $ (head . MS.toList._terms) y^2)
-    leadingTerm s2 0 @?= ((snd &&& fst) $ (head . MS.toList._terms) x^2)
-    leadingTerm s2 1 @?= ((snd &&& fst) $ (head . MS.toList._terms) y^2)
+    leadingTerm s1 1 @?= ((snd &&& fst) $ (head . MS.toList._terms) (y^2))
+    leadingTerm s2 0 @?= ((snd &&& fst) $ (head . MS.toList._terms) (x^2))
+    leadingTerm s2 1 @?= ((snd &&& fst) $ (head . MS.toList._terms) (y^2))
 
 testPseudoRemainder :: TestTree
 testPseudoRemainder = testCase "Test for pseudo remainder" $ do

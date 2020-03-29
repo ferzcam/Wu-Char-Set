@@ -2,11 +2,11 @@
 
 module Polynomial.Wu where
 
-
+import Algebra.Ring.Polynomial
 import Data.Type.Ordinal
 import Polynomial.Prelude
-import Algebra.Prelude hiding ((+), (++), map, (-), gcd, lcm, fromRational)
 import Debug.Trace
+import GHC.TypeLits
 -- | This algorithm was taken from the book "Ideals, Varieties and Algorithms" 4th ed.
 
 -- | Algorithm to get characteristic set from a set of polynomials.

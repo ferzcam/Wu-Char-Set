@@ -12,11 +12,11 @@ import Polynomial.Wu
 import Util.Tokenizer    
 
 
-a = IndepPoint "A"
-b = IndepPoint "B"
-c = IndepPoint "C"
-d = DepPoint "D"
-o = DepPoint "O"
+a = Point (U "u1") (U "u2")
+b = Point (U "u3") (U "u4")
+c = Point (U "u3") (U "u6")
+d = Point (X "x1") (X "x2")
+o = Point (X "x3") (X "x4")
 
 
 lab = Line a b
@@ -35,7 +35,7 @@ conc = SameLen lao lco
 
 structures = [P a, P b, P c, P d, P o, L lab, L ldc, L lda, L lbc, L lao, L lco]
 
-polys :: [Polynomial' 4]
+polys :: [Polynomial' 10]
 polys@(conclusion:hypotheses) = generatePolynomials structures [h1, h2, h3, h4] conc
 
 

@@ -15,6 +15,7 @@ import qualified Data.Sized as DS
 import Control.Arrow
 import Data.Proxy
 import Data.Singletons
+
 type Polynomial' n = OrderedPolynomial Rational Grevlex n
 type OrderedMonomial' n = OrderedMonomial Grevlex n
 
@@ -27,7 +28,7 @@ type OrderedMonomial' n = OrderedMonomial Grevlex n
 
 classVarDeg :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex)
         =>  Polynomial' n -> Int -> Int
-classVarDeg pol var = trace ("VAR " ++  show var) leadingMonomialDegs !! var
+classVarDeg pol var = leadingMonomialDegs !! var
         where
                 leadingMonomialDegs = S.toList $ getMonomial $ leadingMonomial pol var
 
@@ -57,6 +58,7 @@ pseudoRemainders :: (IsMonomialOrder n Grevlex, KnownNat n) =>
 pseudoRemainders polys poly var = map (\p -> snd $ pseudoRemainder p poly var) polys
             
 
+--trace ("Var: " ++ show var ++ "\nF: " ++ show f ++ "\nG: " ++ show g ++ "\nDEGEREE G: " ++ show (classVarDeg g var))
 pseudoRemainder :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex) 
         => Polynomial' n -> Polynomial' n -> Int -> (Polynomial' n, Polynomial' n)
 pseudoRemainder f g var = (fst pseudo, simplifyPolinomial (snd pseudo))
@@ -69,7 +71,7 @@ pseudoRemainder f g var = (fst pseudo, simplifyPolinomial (snd pseudo))
 findQR :: (IsMonomialOrder n Grevlex, KnownNat n) 
         => Polynomial' n -> Polynomial' n -> Polynomial' n -> Int -> Int -> Polynomial' n -> (Polynomial' n, Polynomial' n)
 findQR q r g var m d
-        | r == 0 || classVarDeg r var < m = (q,r)
+        | r == 0 || m == 0 || classVarDeg r var < m = (q,r)
         | otherwise = let
                         arity = (length . S.toList . getMonomial . fst . head . MS.toList . _terms) r
                         newMonomial = mon var ((classVarDeg r var) - m) arity
@@ -79,6 +81,7 @@ findQR q r g var m d
                         newR =  d*r - lc_r*g*x
                         newQ = d*q + lc_r*x
                         in  findQR newQ newR g var m d
+                        -- trace ("\nNEWQ: " ++ show newQ ++ "\n NEWR: " ++ show newR ++ "\n G: " ++ show g)
                         --trace ("\n new R:" ++ show newR ++ "\n Deg old r: " ++ show (classVarDeg r var) ++ "\t \t Deg new r: " ++ show (classVarDeg newR var)  ++  "\n lcr: "  ++ show lc_r ++ "\t d: " ++ show d)
 
 -- trace ("EEEEEEE LEADING TERM" ++ (show pol) ++ "     " ++ show polToList)

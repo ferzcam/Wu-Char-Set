@@ -10,16 +10,16 @@ import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
 import Polynomial.Wu
 import Util.Tokenizer    
+import Data.List
 
-
-d = IndepPoint "D"
-e = IndepPoint "E"
-f = IndepPoint "F"
-a = DepPoint "A"
-b = DepPoint "B"
-c = DepPoint "C"
-m = DepPoint "M"
-n = DepPoint "N"
+a = Point (U "u1") (U "u2")
+b = Point (X "x1") (U "u3")
+c = Point (X "x2") (X "x3")
+d = Point (X "x4") (X "x5")
+e = Point (X "x6") (X "x7")
+f = Point (U "x8") (U "u4")
+m = Point (U "x9") (U "u5")
+n = Point (U "x10") (U "x11")
 
 
 
@@ -44,7 +44,7 @@ g = SameLen lnf lnm
 
 structures = [P a, P b, P c, P d, P e, P f, P m, P n, L lad, L lcb, L leb, L lca, L lnf, L lne, L lnd, L lnm]
 
-polys :: [Polynomial' 10]
+polys :: [Polynomial' 16]
 polys@(conclusion:hypotheses) = generatePolynomials structures [h1, h2, h3, h4, h5, h6, h7] g
 
 

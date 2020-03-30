@@ -5,6 +5,7 @@ module Polynomial.Wu where
 import Algebra.Ring.Polynomial
 import Data.Type.Ordinal
 import Polynomial.Prelude
+import Data.List
 import Debug.Trace
 import GHC.TypeLits
 -- | This algorithm was taken from the book "Ideals, Varieties and Algorithms" 4th ed.
@@ -32,7 +33,7 @@ charSet p a var
 -- Output: list of the pseudo remainders of g with respect to the ascending chain
 theoremProver :: (IsMonomialOrder n Grevlex, KnownNat n) 
     => [Polynomial' n] -> Polynomial' n -> [Polynomial' n]
-theoremProver hip g = remWithChain wuChain g 0
+theoremProver hip g =  trace ((show wuChain) ++ "\n\n\n\n\n\n") remWithChain wuChain g 0
 -- remWithChain wuChain g 0 numHip
     where 
         wuChain =  charSet hip [] 0

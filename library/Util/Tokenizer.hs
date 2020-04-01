@@ -38,8 +38,9 @@ data Hypothesis =   Colinear Point Point Point
 type Conclusion = Hypothesis
 
 generatePolynomials :: (KnownNat n) => [Struct] -> [Hypothesis] -> Conclusion -> [Polynomial' n] 
-generatePolynomials structs hypotheses conclusion = trace ("VARIABLES: " ++ show variables ++ "\n\n") map (flip geomToAlg variables) statements
+generatePolynomials structs hypotheses conclusion = map (flip geomToAlg variables) statements
 
+    --trace ("VARIABLES: " ++ show variables ++ "\n\n") 
     where 
         points = nub $ map getPoint (filter (isPoint) structs)
         arity = 2 * length points
@@ -48,21 +49,64 @@ generatePolynomials structs hypotheses conclusion = trace ("VARIABLES: " ++ show
 
 
 generateVariables :: (KnownNat n) => Int -> [Point] -> Conclusion -> [(Coord, Polynomial' n)]
-generateVariables arity points conclusion = trace ("VARIABLES: " ++ show variablesFinal) zip variablesFinal monicPolys
+generateVariables arity points conclusion = trace ("VARIABLES: " ++ show (zip variablesFinal monicPolys)) zip variablesFinal monicPolys
+    --trace ("VARIABLES: " ++ show variablesFinal) 
     where
-        pointsConclusion = flatten conclusion
-        pointsHypotheses = points \\ pointsConclusion
+        pointsConclusion = nub $ (concatMap (\(Point c1 c2) -> [c1, c2])) (flatten conclusion)
+        variablesConclusion = filter (flip elem variablesX) pointsConclusion
+        variablesNotConclusion = variablesX \\ variablesConclusion
+      ---  pointsHypotheses = points \\ pointsConclusion
         -- variablesConclusion = filter (isX) $ concatMap (\(Point c1 c2) -> [c1, c2]) pointsConclusion
         -- variablesUinConclusion = filter (not.isX) $ concatMap (\(Point c1 c2) -> [c1, c2]) pointsConclusion
         -- variablesHyp = filter (isX) $ (concatMap (\(Point c1 c2) -> [c1, c2]) pointsHypotheses)
         -- variablesFinal = sort $ variablesConclusion ++ variablesHyp
-        variablesX = filter isX variablesFinal
-        variablesZ = filter isZ variablesFinal
-        variablesFinal = sort $ (concatMap (\(Point c1 c2) -> [c1, c2]) points)
+        variablesX = filter isX variablesFinal0
+        variablesZ = filter isZ variablesFinal0
+        variablesU = filter isU variablesFinal0
+        variablesFinal0 =sort $ (concatMap (\(Point c1 c2) -> [c1, c2]) points)
+        variablesFinal = (variablesConclusion ++ variablesNotConclusion) ++ (variablesU)
+            --sort $ (concatMap (\(Point c1 c2) -> [c1, c2]) points)
        -- initialArrays = (toLists.identity) arity
-        initialArrays = (toLists.identity) (length variablesFinal)
+        initialArrays = (toLists.identity) (length (variablesX  ))
         monomials = map toMonomial initialArrays
-        monicPolys = (map (toPolynomial . (1,)) monomials) ++ (replicate (length variablesZ) 0) ++[1,1,2,4,3,9,4,16,5,25,6,36,7,49]
+        -- ++ (replicate (length variablesZ) 0)
+        monicPolys = (map (toPolynomial . (1,)) monomials)  ++[1,1,2,4,3,9,4,16,5,25,6,36,7,49]
+
+
+
+
+
+
+
+-- generateVariables :: (KnownNat n) => Int -> [Point] -> Conclusion -> [(Coord, Polynomial' n)]
+-- generateVariables arity points conclusion = trace ("VARIABLES: " ++ show variablesFinal) zip variablesFinal monicPolys
+--     where
+--         pointsConclusion = flatten conclusion
+--         pointsHypotheses = points \\ pointsConclusion
+--         -- variablesConclusion = filter (isX) $ concatMap (\(Point c1 c2) -> [c1, c2]) pointsConclusion
+--         -- variablesUinConclusion = filter (not.isX) $ concatMap (\(Point c1 c2) -> [c1, c2]) pointsConclusion
+--         -- variablesHyp = filter (isX) $ (concatMap (\(Point c1 c2) -> [c1, c2]) pointsHypotheses)
+--         -- variablesFinal = sort $ variablesConclusion ++ variablesHyp
+--         variablesX = filter isX variablesFinal
+--         variablesZ = filter isZ variablesFinal
+--         variablesU = filter isU variablesFinal
+--         variablesFinal = variablesX ++ variablesU ++ variablesZ
+--             --sort $ (concatMap (\(Point c1 c2) -> [c1, c2]) points)
+--        -- initialArrays = (toLists.identity) arity
+--         initialArrays = (toLists.identity) (length (variablesX ++ variablesU))
+--         monomials = map toMonomial initialArrays
+--         -- ++ (replicate (length variablesZ) 0)
+--         monicPolys = (map (toPolynomial . (1,)) monomials) ++ (replicate (length variablesZ) 0)  
+--         -- ++[1,1,2,4,3,9,4,16,5,25,6,36,7,49]
+
+
+
+
+
+
+
+
+
 
 isPoint :: Struct -> Bool
 isPoint (P p) = True
@@ -109,7 +153,7 @@ geomToAlg (SameLen (Line pt1 pt2) (Line pt3 pt4)) dict =
                                     (x2,y2) = getCoords pt2 dict
                                     (x3,y3) = getCoords pt3 dict
                                     (x4,y4) = getCoords pt4 dict
-                                in  (y2 - y1)^2 + (x2 - x1)^2 - (y4 - y3)^2 + (x4 - x3)^2
+                                in  (y2 - y1)^2 + (x2 - x1)^2 - (y4 - y3)^2 - (x4 - x3)^2
 geomToAlg (Perpendicular (Line pt1 pt2) (Line pt3 pt4)) dict =  
                                 let (x1,y1) = getCoords pt1 dict
                                     (x2,y2) = getCoords pt2 dict

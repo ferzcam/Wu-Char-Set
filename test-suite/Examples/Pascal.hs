@@ -46,11 +46,11 @@ import Util.Tokenizer
 -- g = x7*x10 - (x8-x6)*x9 - x6*x7
 
 a = Point (U "u1") (U "u2")
-b = Point (X "u3") (X "u4")
-c = Point (X "u5") (X "u6")
-d = Point (X "x1") (X "u7")
-e = Point (X "x2") (X "u8")
-f = Point (X "x3") (X "u9")
+b = Point (U "u3") (U "u4")
+c = Point (U "u5") (U "u6")
+d = Point (X "x1") (U "u7")
+e = Point (X "x2") (U "u8")
+f = Point (X "x3") (U "u9")
 o = Point (X "x4") (X "x5")
 p = Point (X "x6") (X "u10")
 q = Point (X "x7") (X "x8")
@@ -78,9 +78,9 @@ h11 = Colinear p a b
 g = Colinear s q p
 
 structres = [P a, P b, P c, P d, P e, P f, P o, P p, P q, P s, L loa, L loc, L lob, L lod, L lof, L loe]
-hypsGeom = [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11]
+hypsGeom = [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10]
 
-polys :: [Polynomial' 20]
+polys :: [Polynomial' 11]
 polys@(conclusion:hypotheses) = generatePolynomials structres hypsGeom g
 
 testTheorem :: TestTree

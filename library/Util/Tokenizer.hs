@@ -13,7 +13,7 @@ import Data.Maybe
 import GHC.TypeLits
 import Algebra.Ring.Polynomial
 
-data Coord = X String | U String deriving (Eq, Show)
+data Coord = X String | U String | Z  deriving (Eq, Show)
 
 data Point = Point Coord Coord deriving (Eq, Show)
 data Circle = Circle Point Point deriving (Show) 
@@ -41,7 +41,7 @@ generatePolynomials :: (KnownNat n) => [Struct] -> [Hypothesis] -> Conclusion ->
 generatePolynomials structs hypotheses conclusion = trace ("VARIABLES: " ++ show variables ++ "\n\n") map (flip geomToAlg variables) statements
 
     where 
-        points = map getPoint (filter (isPoint) structs)
+        points = nub $ map getPoint (filter (isPoint) structs)
         arity = 2 * length points
         variables = generateVariables arity points conclusion
         statements = conclusion:hypotheses
@@ -52,15 +52,17 @@ generateVariables arity points conclusion = trace ("VARIABLES: " ++ show variabl
     where
         pointsConclusion = flatten conclusion
         pointsHypotheses = points \\ pointsConclusion
-        variablesConclusion = concatMap (\(Point c1 c2) -> [c1, c2]) pointsConclusion
-        variablesHyp = sort $ (concatMap (\(Point c1 c2) -> [c1, c2]) pointsHypotheses)
-        variablesFinal = variablesConclusion ++ variablesHyp 
-        initialArrays = identity (arity)
-        nonZero = toLists initialArrays -- ^Remove the three last variables to make them zero
-        --ready = nonZero ++ (replicate 3 (replicate (arity-3) 0)) -- ^The three last variables are fixed to zero to make that (w.l.o.g) the first two points are (0,0) and (x_1,0) 
-        monomials = map toMonomial nonZero
---        variables = (map (Polynomial . MS.fromList . return . (,1) ) monomials) ++ [zero, zero, zero]
-        monicPolys = (map (toPolynomial . (1,)) monomials)
+        -- variablesConclusion = filter (isX) $ concatMap (\(Point c1 c2) -> [c1, c2]) pointsConclusion
+        -- variablesUinConclusion = filter (not.isX) $ concatMap (\(Point c1 c2) -> [c1, c2]) pointsConclusion
+        -- variablesHyp = filter (isX) $ (concatMap (\(Point c1 c2) -> [c1, c2]) pointsHypotheses)
+        -- variablesFinal = sort $ variablesConclusion ++ variablesHyp
+        variablesX = filter isX variablesFinal
+        variablesZ = filter isZ variablesFinal
+        variablesFinal = sort $ (concatMap (\(Point c1 c2) -> [c1, c2]) points)
+       -- initialArrays = (toLists.identity) arity
+        initialArrays = (toLists.identity) (length variablesX)
+        monomials = map toMonomial initialArrays
+        monicPolys = (map (toPolynomial . (1,)) monomials) ++ (replicate (length variablesZ) 0) ++[1,1,2,4,3,9,4,16,5,25,6,36,7,49]
 
 isPoint :: Struct -> Bool
 isPoint (P p) = True
@@ -69,6 +71,15 @@ isPoint _ = False
 isX :: Coord -> Bool
 isX (X _) = True
 isX _ = False
+
+isU :: Coord -> Bool
+isU (U _) = True
+isU _ = False
+
+isZ :: Coord -> Bool
+isZ (Z) = True
+isZ _ = False
+
 
 takePairs :: [a] -> [[a]]
 takePairs [] = []
@@ -152,8 +163,13 @@ instance Flattening Hypothesis where
 instance Ord Coord where
     compare (X _) (U _) = LT
     compare (U _) (X _) = GT
+    compare (X _) (Z) = LT
+    compare (Z) (X _) = GT
+    compare (U _) (Z) = GT
+    compare (Z) (U _) = LT
     compare (X x1) (X x2) = compare x1 x2
     compare (U u1) (U u2) = compare u1 u2
+    compare Z Z = EQ
 
 class Flattening a where
     flatten :: a -> [Point]

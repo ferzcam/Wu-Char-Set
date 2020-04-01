@@ -33,7 +33,7 @@ charSet p a var
 -- Output: list of the pseudo remainders of g with respect to the ascending chain
 theoremProver :: (IsMonomialOrder n Grevlex, KnownNat n) 
     => [Polynomial' n] -> Polynomial' n -> [Polynomial' n]
-theoremProver hip g =  trace ((show wuChain) ++ "\n\n\n\n\n\n") remWithChain wuChain g 0
+theoremProver hip g =  trace ("\nWUCHAIN: " ++ (show wuChain) ++ "\n\n\n" ++ "G: "++ show g ++ "\n\n\n" ++ "ARITY: " ++ show ((getArity $ head hip)-1) ++ "\n") remWithChain wuChain g 0
 -- remWithChain wuChain g 0 numHip
     where 
         wuChain =  charSet hip [] 0
@@ -43,8 +43,10 @@ theoremProver hip g =  trace ((show wuChain) ++ "\n\n\n\n\n\n") remWithChain wuC
 -- respect to a set of polynomials
 remWithChain :: (IsMonomialOrder n Grevlex, KnownNat n) 
     => [Polynomial' n] -> Polynomial' n -> Int -> [ Polynomial' n]
-remWithChain [e] pol var = [snd $ pseudoRemainder pol e var]
-remWithChain chain pol var = [rem]++(remWithChain newChain rem (var + 1) )
+-- remWithChain [e] pol var = let result = snd $ pseudoRemainder pol e var  
+--                             in trace ("\nVAR: " ++ show var ++"\n" ++ "POL: " ++ show pol ++ "\nLASTELEMCHAIN: " ++ show e ++ "\nREMFINAL: " ++ show (result) ++ "\n") [result]
+remWithChain [] _ _ = []
+remWithChain chain pol var = trace ("\nVAR: " ++ show var ++"\n" ++ "POL: " ++ show pol ++ "\n" ++ "ELEMCHAIN: " ++ show elemChain ++"\nREM: " ++ show rem ++ "\n") [rem]++(remWithChain newChain rem (var + 1) )
 --  trace ("New Chain: "++ show newChain)
     where  
         rem = snd $ pseudoRemainder pol elemChain var -- remainder

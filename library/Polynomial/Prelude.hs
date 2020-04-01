@@ -71,16 +71,16 @@ pseudoRemainder f g var = (fst pseudo, simplifyPolinomial (snd pseudo))
 findQR :: (IsMonomialOrder n Grevlex, KnownNat n) 
         => Polynomial' n -> Polynomial' n -> Polynomial' n -> Int -> Int -> Polynomial' n -> (Polynomial' n, Polynomial' n)
 findQR q r g var m d
-        | r == 0 || m == 0 || classVarDeg r var < m = (q,r)
+        | r == 0 || m == 0 || classVarDeg r var < m = trace ("\nVAR: " ++ show var ++ "\nNEWQ: " ++ show q ++ "\nR: " ++ show r) (q,r)
         | otherwise = let
-                        arity = (length . S.toList . getMonomial . fst . head . MS.toList . _terms) r
+                        arity = getArity r
                         newMonomial = mon var ((classVarDeg r var) - m) arity
                         x = Polynomial $ MS.fromList [(newMonomial ,1)]
                         factors = chooseTermsWithVar r var
                         lc_r = getCoeff factors var
                         newR =  d*r - lc_r*g*x
                         newQ = d*q + lc_r*x
-                        in  findQR newQ newR g var m d
+                        in trace ("\nVAR: " ++ show var ++ "\nNEWQ: " ++ show newQ ++ "\nNEWR: " ++ show newR ++ "\nG: " ++ show g) findQR newQ newR g var m d
                         -- trace ("\nNEWQ: " ++ show newQ ++ "\n NEWR: " ++ show newR ++ "\n G: " ++ show g)
                         --trace ("\n new R:" ++ show newR ++ "\n Deg old r: " ++ show (classVarDeg r var) ++ "\t \t Deg new r: " ++ show (classVarDeg newR var)  ++  "\n lcr: "  ++ show lc_r ++ "\t d: " ++ show d)
 
@@ -197,3 +197,8 @@ tryDiv' (a, f) (b, g)
         | g `divs` f = (a/b, OrderedMonomial $ DS.zipWithSame (-) (getMonomial f) (getMonomial g))
         | otherwise  = error "cannot divide."
 ---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+getArity :: Polynomial' n -> Int
+getArity = (length.DS.toList.getMonomial.fst.head.MS.toList._terms)

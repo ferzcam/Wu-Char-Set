@@ -18,7 +18,7 @@ charSet p a var
     | lenS == 0 = charSet p a (var+1)
     | lenS == 1 = charSet c (a++s) (var+1)
     | otherwise = case existOneDegPoly s var of
-                    Just poly -> charSet (c ++ rem poly) (a++[poly]) (var+1)
+                    Just poly -> trace ("\nVAR: " ++ show var ++ "\nPOLYONEDEG: " ++ show poly) charSet (c ++ rem poly) (a++[poly]) (var+1)
                     Nothing -> charSet (c++r++newS) a var
 
     where
@@ -57,9 +57,9 @@ remWithChain chain pol var = trace ("\nVAR: " ++ show var ++"\n" ++ "POL: " ++ s
 
 analizeS :: (IsMonomialOrder n Grevlex, KnownNat n) => [Polynomial' n] -> Int -> ([Polynomial' n], [Polynomial' n])
 analizeS ls@(x:y:z) var
-        | classVarDeg r var > 1 =   analizeS newls var
-        | classVarDeg r var == 1 =  (newls, [])
-        | classVarDeg r var == 0 =  (dropPolys newls [max], [r])
+        | classVarDeg r var > 1 =  trace ("\nVAR: " ++ show var ++ "\nX: " ++ show x ++ "\nY: " ++ show y) analizeS newls var
+        | classVarDeg r var == 1 = trace ("\nVAR: " ++ show var ++ "\nX: " ++ show x ++ "\nY: " ++ show y) (newls, [])
+        | classVarDeg r var == 0 = trace ("\nVAR: " ++ show var ++ "\nX: " ++ show x ++ "\nY: " ++ show y) (dropPolys newls [max], [r])
         where
             (r, max) = maxNpseudo x y var
             newls = replacePoly ls max r 
@@ -70,4 +70,5 @@ maxNpseudo f g var
     | classVarDeg f var >= classVarDeg g var = (r, f)
     | otherwise = (r, g)
     where
-        r = snd $ pseudoRemainder f g var
+        [newF, newG] = if (classVarDeg f var) > (classVarDeg g var) then [f,g] else [g,f] 
+        r = snd $ pseudoRemainder newF newG var

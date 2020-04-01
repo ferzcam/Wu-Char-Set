@@ -37,8 +37,8 @@ ldo = Line d o
 
 h1 = Parallel lab lcd
 h2 = Parallel lad lbc
-h3 = Colinear d o b
-h4 = Colinear a c o
+h3 = Colinear b o d
+h4 = Colinear a o c
 h5 = SameLen lab lcd
 h6 = SameLen lbc lad
 
@@ -46,7 +46,7 @@ h6 = SameLen lbc lad
 conc = SameLen lbo ldo
 points = [P a, P b, P c, P d, P o]
 
-polys :: [Polynomial' 4]
+polys :: [Polynomial' 10]
 polys@(conclusion:hypotheses) = generatePolynomials points [h1, h2, h3, h4] conc
 
 

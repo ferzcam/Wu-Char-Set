@@ -51,7 +51,7 @@ replacePoly polys p q = q : dropPolys polys [p]
 existOneDegPoly :: [Polynomial' n] -> Int -> Maybe (Polynomial' n)
 existOneDegPoly polys var = find isOneDeg polys
         where
-            isOneDeg poly = elem 1 (((map ((!! var) . S.toList . getMonomial . fst)) . MS.toList . _terms) poly) 
+            isOneDeg poly = (((\x -> x==1).last.sort)) (((map ((!! var) . S.toList . getMonomial . fst)) . MS.toList . _terms) poly) 
 
 pseudoRemainders :: (IsMonomialOrder n Grevlex, KnownNat n) => 
         [Polynomial' n] -> Polynomial' n -> Int -> [Polynomial' n]
@@ -61,17 +61,19 @@ pseudoRemainders polys poly var = map (\p -> snd $ pseudoRemainder p poly var) p
 --trace ("Var: " ++ show var ++ "\nF: " ++ show f ++ "\nG: " ++ show g ++ "\nDEGEREE G: " ++ show (classVarDeg g var))
 pseudoRemainder :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex) 
         => Polynomial' n -> Polynomial' n -> Int -> (Polynomial' n, Polynomial' n)
-pseudoRemainder f g var = (fst pseudo, simplifyPolinomial (snd pseudo))
+pseudoRemainder f g var = trace ("\nVAR: " ++ show var ++ "\nF: " ++ show f ++ "\nG: " ++ show g ++ "\nREM: " ++ show (simplifyPolinomial (snd pseudo))) (fst pseudo, simplifyPolinomial (snd pseudo))
         where 
                 m = classVarDeg g var
                 d = getCoeff factors var
                 factors = chooseTermsWithVar g var
                 pseudo = findQR 0 f g var m d        
 
+
+--trace ("\nVAR: " ++ show var ++ "\nNEWQ: " ++ show q ++ "\nR: " ++ show r)
 findQR :: (IsMonomialOrder n Grevlex, KnownNat n) 
         => Polynomial' n -> Polynomial' n -> Polynomial' n -> Int -> Int -> Polynomial' n -> (Polynomial' n, Polynomial' n)
 findQR q r g var m d
-        | r == 0 || m == 0 || classVarDeg r var < m = trace ("\nVAR: " ++ show var ++ "\nNEWQ: " ++ show q ++ "\nR: " ++ show r) (q,r)
+        | r == 0 || m == 0 || classVarDeg r var < m = (q,r)
         | otherwise = let
                         arity = getArity r
                         newMonomial = mon var ((classVarDeg r var) - m) arity
@@ -80,7 +82,8 @@ findQR q r g var m d
                         lc_r = getCoeff factors var
                         newR =  d*r - lc_r*g*x
                         newQ = d*q + lc_r*x
-                        in trace ("\nVAR: " ++ show var ++ "\nNEWQ: " ++ show newQ ++ "\nNEWR: " ++ show newR ++ "\nG: " ++ show g) findQR newQ newR g var m d
+                        in  findQR newQ newR g var m d
+                        --trace ("\nVAR: " ++ show var ++ "\nNEWQ: " ++ show newQ ++ "\nNEWR: " ++ show newR ++ "\nG: " ++ show g)
                         -- trace ("\nNEWQ: " ++ show newQ ++ "\n NEWR: " ++ show newR ++ "\n G: " ++ show g)
                         --trace ("\n new R:" ++ show newR ++ "\n Deg old r: " ++ show (classVarDeg r var) ++ "\t \t Deg new r: " ++ show (classVarDeg newR var)  ++  "\n lcr: "  ++ show lc_r ++ "\t d: " ++ show d)
 

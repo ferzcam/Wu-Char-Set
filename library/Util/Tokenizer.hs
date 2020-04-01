@@ -60,7 +60,7 @@ generateVariables arity points conclusion = trace ("VARIABLES: " ++ show variabl
         variablesZ = filter isZ variablesFinal
         variablesFinal = sort $ (concatMap (\(Point c1 c2) -> [c1, c2]) points)
        -- initialArrays = (toLists.identity) arity
-        initialArrays = (toLists.identity) (length variablesX)
+        initialArrays = (toLists.identity) (length variablesFinal)
         monomials = map toMonomial initialArrays
         monicPolys = (map (toPolynomial . (1,)) monomials) ++ (replicate (length variablesZ) 0) ++[1,1,2,4,3,9,4,16,5,25,6,36,7,49]
 

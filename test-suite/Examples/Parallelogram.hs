@@ -18,13 +18,6 @@ c = Point (U "u5") (U "u6")
 d = Point (X "x1") (X "x2")
 o = Point (X "x3") (X "x4")
 
--- a = Point (Z) (Z)
--- b = Point (U "u1") (Z)
--- c = Point (U "u2") (U "u3")
--- d = Point (X "x1") (X "x2")
--- o = Point (X "x3") (X "x4")
-
-
 lac = Line a c
 lbd = Line b d
 lab = Line a b 
@@ -39,15 +32,12 @@ h1 = Parallel lac lbd
 h2 = Parallel lab lcd
 h3 = Colinear b o c
 h4 = Colinear a o d
--- h5 = SameLen lab lcd
--- h6 = SameLen lbc lad
 
 conc = SameLen lao ldo
 --conc = SameLen lco lbo
-points = [P a, P b, P c, P d, P o]
 
 polys :: [Polynomial' 4]
-polys@(conclusion:hypotheses) = generatePolynomials points [h1, h2, h3, h4] conc
+polys@(conclusion:hypotheses) = generatePolynomials [h1, h2, h3, h4] conc
 
 testTheorem :: TestTree
 testTheorem = testCase "Test for Parallelogram Theorem" $ do

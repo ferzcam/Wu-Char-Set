@@ -4,47 +4,40 @@
 -- and only use it in the executable. Doing so allows others to use what you
 -- wrote in their libraries.
 import Example
---import Algebra.Prelude hiding ((*),(-),(+),(^), (/), gcd, lcm, fromRational, map)
 import Core
 
 
 a = Point (U "u1") (U "u1")
-b = Point (U "u3") (U "u1")
-c = Point (U "u5") (U "u6")
-d = Point (X "x1") (U "u7")
-e = Point (X "x2") (U "u8")
-f = Point (X "x3") (U "u9")
-o = Point (X "x4") (X "x5")
-p = Point (X "x6") (U "u1")
-q = Point (X "x7") (X "x8")
-s = Point (X "x9") (X "xx10")
+b = Point (X "x1") (U "u1")
+c = Point (X "x2") (X "x3")
+d = Point (X "x4") (X "x5")
+e = Point (X "x6") (X "x7")
+f = Point (X "x2") (U "u1")
+m = Point (X "x8") (U "u1")
+n = Point (X "x9") (X "xx10")
 
-loa = Line o a
-loc = Line o c
-lob = Line o b
-lod = Line o d
-lof = Line o f
-loe = Line o e
+lad = Line a d
+lcb = Line c b
+leb = Line e b
+lca = Line c a
+lnf = Line n f
+lne = Line n e
+lnd = Line n d
+lnm = Line n m
 
+h1 = Colinear d b c 
+h2 = Perpendicular lad lcb
+h3 = Colinear e a c
+h4 = Perpendicular leb lca
+h5 = MidPoint a m b
+h6 = SameLen lnf lne
+h7 = SameLen lnf lnd
 
-h1 = SameLen loa loc
-h2 = SameLen loa lob
-h3 = SameLen loa lod
-h4 = SameLen loa lof
-h5 = SameLen loa loe
-h6 = Colinear p d f
-h7 = Colinear q f e
-h8 = Colinear q b c
-h9 = Colinear s e a
-h10 = Colinear s c d
-h11 = Colinear p a b
-g = Colinear s q p
-
-structres = [P a, P b, P c, P d, P e, P f, P o, P p, P q, P s, L loa, L loc, L lob, L lod, L lof, L loe]
-hypsGeom = [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10]
+g = SameLen lnf lnm
 
 polys :: [Polynomial' 10]
-polys@(conclusion:hypotheses) = generatePolynomials structres hypsGeom g
+polys@(conclusion:hypotheses) = generatePolynomials [h1, h2, h3, h4, h5, h6, h7] g
+
 
 
 main :: IO ()

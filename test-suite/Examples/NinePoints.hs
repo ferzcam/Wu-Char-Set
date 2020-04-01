@@ -12,15 +12,14 @@ import Polynomial.Wu
 import Util.Tokenizer    
 import Data.List
 
-a = Point (U "u1") (U "u2")
-b = Point (U "x1") (U "u3")
-c = Point (U "x2") (U "x3")
+a = Point (U "u1") (U "u1")
+b = Point (X "x1") (U "u1")
+c = Point (X "x2") (X "x3")
 d = Point (X "x4") (X "x5")
 e = Point (X "x6") (X "x7")
-f = Point (X "ax8") (X "au4")
-m = Point (X "ax9") (X "au5")
-n = Point (X "ax10") (X "ax11")
-
+f = Point (X "x2") (U "u1")
+m = Point (X "x8") (U "u1")
+n = Point (X "x9") (X "xx10")
 
 
 lad = Line a d
@@ -42,10 +41,9 @@ h7 = SameLen lnf lnd
 
 g = SameLen lnf lnm
 
-structures = [P a, P b, P c, P d, P e, P f, P m, P n, L lad, L lcb, L leb, L lca, L lnf, L lne, L lnd, L lnm]
 
 polys :: [Polynomial' 10]
-polys@(conclusion:hypotheses) = generatePolynomials structures [h1, h2, h3, h4, h5, h6, h7] g
+polys@(conclusion:hypotheses) = generatePolynomials [h1, h2, h3, h4, h5, h6, h7] g
 
 
 testTheorem :: TestTree

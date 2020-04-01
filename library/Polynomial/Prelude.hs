@@ -58,10 +58,10 @@ pseudoRemainders :: (IsMonomialOrder n Grevlex, KnownNat n) =>
 pseudoRemainders polys poly var = map (\p -> snd $ pseudoRemainder p poly var) polys
             
 
---trace ("Var: " ++ show var ++ "\nF: " ++ show f ++ "\nG: " ++ show g ++ "\nDEGEREE G: " ++ show (classVarDeg g var))
 pseudoRemainder :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex) 
         => Polynomial' n -> Polynomial' n -> Int -> (Polynomial' n, Polynomial' n)
-pseudoRemainder f g var = trace ("\nVAR: " ++ show var ++ "\nF: " ++ show f ++ "\nG: " ++ show g ++ "\nREM: " ++ show (simplifyPolinomial (snd pseudo))) (fst pseudo, simplifyPolinomial (snd pseudo))
+pseudoRemainder f g var =  (fst pseudo, simplifyPolinomial (snd pseudo))
+        -- trace ("\nVAR: " ++ show var ++ "\nF: " ++ show f ++ "\nG: " ++ show g ++ "\nREM: " ++ show (simplifyPolinomial (snd pseudo)))
         where 
                 m = classVarDeg g var
                 d = getCoeff factors var
@@ -69,7 +69,6 @@ pseudoRemainder f g var = trace ("\nVAR: " ++ show var ++ "\nF: " ++ show f ++ "
                 pseudo = findQR 0 f g var m d        
 
 
---trace ("\nVAR: " ++ show var ++ "\nNEWQ: " ++ show q ++ "\nR: " ++ show r)
 findQR :: (IsMonomialOrder n Grevlex, KnownNat n) 
         => Polynomial' n -> Polynomial' n -> Polynomial' n -> Int -> Int -> Polynomial' n -> (Polynomial' n, Polynomial' n)
 findQR q r g var m d
@@ -84,10 +83,7 @@ findQR q r g var m d
                         newQ = d*q + lc_r*x
                         in  findQR newQ newR g var m d
                         --trace ("\nVAR: " ++ show var ++ "\nNEWQ: " ++ show newQ ++ "\nNEWR: " ++ show newR ++ "\nG: " ++ show g)
-                        -- trace ("\nNEWQ: " ++ show newQ ++ "\n NEWR: " ++ show newR ++ "\n G: " ++ show g)
-                        --trace ("\n new R:" ++ show newR ++ "\n Deg old r: " ++ show (classVarDeg r var) ++ "\t \t Deg new r: " ++ show (classVarDeg newR var)  ++  "\n lcr: "  ++ show lc_r ++ "\t d: " ++ show d)
-
--- trace ("EEEEEEE LEADING TERM" ++ (show pol) ++ "     " ++ show polToList)
+                       
 -- Assumes that the polynomial containns variable. The ordering will be Lexicographical
 leadingTerm :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) => Polynomial' n -> Int -> (Rational, OrderedMonomial' n)
 leadingTerm pol var = (snd &&& fst) $ fromJust $ MS.lookupLE chosenTerm (_terms pol)

@@ -13,18 +13,12 @@ import Data.Maybe
 import GHC.TypeLits
 import Algebra.Ring.Polynomial
 
-data Coord = X String | U String | Z  deriving (Eq, Show)
+data Coord = X String | U String deriving (Eq, Show)
 
 data Point = Point Coord Coord deriving (Eq, Show)
 data Circle = Circle Point Point deriving (Show) 
 data Line = Line Point Point deriving (Show)
 data Angle = Angle Point Point Point deriving (Show)
-
-data Struct =   P {getPoint :: Point}
-                | C Circle 
-                | L Line
-                | A Angle
-            deriving (Show)
 
 data Hypothesis =   Colinear Point Point Point 
                     | Parallel Line Line 
@@ -37,80 +31,31 @@ data Hypothesis =   Colinear Point Point Point
 
 type Conclusion = Hypothesis
 
-generatePolynomials :: (KnownNat n) => [Struct] -> [Hypothesis] -> Conclusion -> [Polynomial' n] 
-generatePolynomials structs hypotheses conclusion = map (flip geomToAlg variables) statements
-
+generatePolynomials :: (KnownNat n) => [Hypothesis] -> Conclusion -> [Polynomial' n] 
+generatePolynomials hypotheses conclusion = map (flip geomToAlg variables) statements
     --trace ("VARIABLES: " ++ show variables ++ "\n\n") 
     where 
-        points = nub $ map getPoint (filter (isPoint) structs)
-        arity = 2 * length points
-        variables = generateVariables arity points conclusion
+        points = nub $ concatMap flatten hypotheses
+        variables = generateVariables points conclusion
         statements = conclusion:hypotheses
 
 
-generateVariables :: (KnownNat n) => Int -> [Point] -> Conclusion -> [(Coord, Polynomial' n)]
-generateVariables arity points conclusion = trace ("VARIABLES: " ++ show (zip variablesFinal monicPolys)) zip variablesFinal monicPolys
-    --trace ("VARIABLES: " ++ show variablesFinal) 
+generateVariables :: (KnownNat n) => [Point] -> Conclusion -> [(Coord, Polynomial' n)]
+generateVariables points conclusion = trace ("VARIABLES: " ++ show (zip finalVariables monicPolys)) zip finalVariables monicPolys
+    --trace ("VARIABLES: " ++ show (zip finalVariables monicPolys))
     where
         pointsConclusion = nub $ (concatMap (\(Point c1 c2) -> [c1, c2])) (flatten conclusion)
         variablesConclusion = filter (flip elem variablesX) pointsConclusion
         variablesNotConclusion = variablesX \\ variablesConclusion
-      ---  pointsHypotheses = points \\ pointsConclusion
-        -- variablesConclusion = filter (isX) $ concatMap (\(Point c1 c2) -> [c1, c2]) pointsConclusion
-        -- variablesUinConclusion = filter (not.isX) $ concatMap (\(Point c1 c2) -> [c1, c2]) pointsConclusion
-        -- variablesHyp = filter (isX) $ (concatMap (\(Point c1 c2) -> [c1, c2]) pointsHypotheses)
-        -- variablesFinal = sort $ variablesConclusion ++ variablesHyp
-        variablesX = filter isX variablesFinal0
-        variablesZ = filter isZ variablesFinal0
-        variablesU = filter isU variablesFinal0
-        variablesFinal0 =sort $ (concatMap (\(Point c1 c2) -> [c1, c2]) points)
-        variablesFinal = (variablesConclusion ++ variablesNotConclusion) ++ (variablesU)
-            --sort $ (concatMap (\(Point c1 c2) -> [c1, c2]) points)
-       -- initialArrays = (toLists.identity) arity
-        initialArrays = (toLists.identity) (length (variablesX  ))
+        variablesX = nub $ filter isX allVariables
+        variablesU = nub $ filter isU allVariables
+        allVariables =sort $ (concatMap (\(Point c1 c2) -> [c1, c2]) points)
+        finalVariables = variablesConclusion ++ variablesNotConclusion ++ (variablesU)
+        initialArrays = (toLists.identity) (length (variablesX))
         monomials = map toMonomial initialArrays
-        -- ++ (replicate (length variablesZ) 0)
-        monicPolys = (map (toPolynomial . (1,)) monomials)  ++[1,1,2,4,3,9,4,16,5,25,6,36,7,49]
+        monicPolys = (map (toPolynomial . (1,)) monomials) ++ ((map ((^2).fromInteger) [0..]))
 
 
-
-
-
-
-
--- generateVariables :: (KnownNat n) => Int -> [Point] -> Conclusion -> [(Coord, Polynomial' n)]
--- generateVariables arity points conclusion = trace ("VARIABLES: " ++ show variablesFinal) zip variablesFinal monicPolys
---     where
---         pointsConclusion = flatten conclusion
---         pointsHypotheses = points \\ pointsConclusion
---         -- variablesConclusion = filter (isX) $ concatMap (\(Point c1 c2) -> [c1, c2]) pointsConclusion
---         -- variablesUinConclusion = filter (not.isX) $ concatMap (\(Point c1 c2) -> [c1, c2]) pointsConclusion
---         -- variablesHyp = filter (isX) $ (concatMap (\(Point c1 c2) -> [c1, c2]) pointsHypotheses)
---         -- variablesFinal = sort $ variablesConclusion ++ variablesHyp
---         variablesX = filter isX variablesFinal
---         variablesZ = filter isZ variablesFinal
---         variablesU = filter isU variablesFinal
---         variablesFinal = variablesX ++ variablesU ++ variablesZ
---             --sort $ (concatMap (\(Point c1 c2) -> [c1, c2]) points)
---        -- initialArrays = (toLists.identity) arity
---         initialArrays = (toLists.identity) (length (variablesX ++ variablesU))
---         monomials = map toMonomial initialArrays
---         -- ++ (replicate (length variablesZ) 0)
---         monicPolys = (map (toPolynomial . (1,)) monomials) ++ (replicate (length variablesZ) 0)  
---         -- ++[1,1,2,4,3,9,4,16,5,25,6,36,7,49]
-
-
-
-
-
-
-
-
-
-
-isPoint :: Struct -> Bool
-isPoint (P p) = True
-isPoint _ = False
 
 isX :: Coord -> Bool
 isX (X _) = True
@@ -119,10 +64,6 @@ isX _ = False
 isU :: Coord -> Bool
 isU (U _) = True
 isU _ = False
-
-isZ :: Coord -> Bool
-isZ (Z) = True
-isZ _ = False
 
 
 takePairs :: [a] -> [[a]]
@@ -179,41 +120,28 @@ geomToAlg (MidPoint first middle last) dict =
                                     (x2,y2) = getCoords last dict
                                 in  x1+x2-2*xm + y1+y2 - 2*ym
 
-distance :: (KnownNat n) => Point -> Point -> [(Point, [Polynomial' n])] -> Polynomial' n
-distance pt1 pt2 var = (p2!!1 - p1!!1)^2 + (p2!!0 - p1!!0)^2
-                where 
-                    pts = map (\point -> fromJust $ lookup point var ) $ [pt1, pt2]
-                    p1 = pts!!0
-                    p2 = pts!!1
-
 
 uncurry3 :: (a -> b -> c -> d) -> (a,b,c) -> d
 uncurry3 f (a,b,c) = f a b c
 
-instance Flattening Struct where
-    flatten (P point) = [point] 
-    flatten (C (Circle c r)) = [c,r]
-    flatten (L (Line p1 p2)) = [p1,p2]
+
 
 instance Flattening Hypothesis where
     flatten (Colinear p1 p2 p3) = nub [p1, p2, p3] 
     flatten (Parallel (Line p1 p2) (Line p3 p4)) = nub [p1, p2, p3, p4] 
     flatten (Perpendicular (Line p1 p2) (Line p3 p4)) = nub [p1, p2, p3, p4] 
     flatten (InCircle p (Circle c r)) = nub [p, c, r]
-    flatten (SameLen (Line p1 p2) (Line p3 p4)) = nub [p1, p2, p3, p4] 
+    flatten (SameLen (Line p1 p2) (Line p3 p4)) = nub [p1, p2, p3, p4]
+    flatten (MidPoint first middle last) = nub [first, middle, last]
 
 
 
 instance Ord Coord where
     compare (X _) (U _) = LT
     compare (U _) (X _) = GT
-    compare (X _) (Z) = LT
-    compare (Z) (X _) = GT
-    compare (U _) (Z) = GT
-    compare (Z) (U _) = LT
     compare (X x1) (X x2) = compare x1 x2
     compare (U u1) (U u2) = compare u1 u2
-    compare Z Z = EQ
+  
 
 class Flattening a where
     flatten :: a -> [Point]

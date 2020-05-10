@@ -39,8 +39,8 @@ packages:
 # using the same syntax as the packages field.
 # (e.g., acme-missiles-0.3)
 extra-deps:
-- /home/fz/Projects/Haskell/computational-algebra/halg-polynomials
-- /home/fz/Projects/Haskell/computational-algebra/halg-core
+- /home/anthony/Proyectos/Haskell/Projects/Packages/computational-algebra-master/halg-polynomials
+- /home/anthony/Proyectos/Haskell/Projects/Packages/computational-algebra-master/halg-core
 - algebra-4.3.1
 - algebraic-prelude-0.1.1.0
 - equational-reasoning-0.6.0.1

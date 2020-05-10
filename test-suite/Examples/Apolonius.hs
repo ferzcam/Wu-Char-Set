@@ -23,7 +23,7 @@ u1 = var 8
 u2 = var 9
 
 h1,h2,h3,h4,h5,h6,h7,h8,g :: Polynomial' 10
-h1 = 2*x1 - u1
+h1 = 2*x1- u1
 h2 = 2*x2 - u2
 h3 = 2*x3 - u1 
 h4 = 2*x4 - u2

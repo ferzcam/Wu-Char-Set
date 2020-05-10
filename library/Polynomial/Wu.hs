@@ -43,11 +43,10 @@ theoremProver hip g = remWithChain wuChain g 0
 remWithChain :: (IsMonomialOrder n Grevlex, KnownNat n) 
     => [Polynomial' n] -> Polynomial' n -> Int -> [ Polynomial' n]
 remWithChain [e] pol var = [snd $ pseudoRemainder pol e var]
-remWithChain chain pol var = [rem]++(remWithChain newChain rem (var + 1) )
+remWithChain chain pol var = trace ("\n\nVar:" ++ show var ++ "\n\nElemChain:" ++ show elemChain ++ "\n\nPol :" ++ show pol) [rem]++(remWithChain newChain rem (var + 1) )
 --  trace ("New Chain: "++ show newChain)
     where  
         rem = snd $ pseudoRemainder pol elemChain var -- remainder
-        
         elemChain = head chain
         newChain = tail chain
         

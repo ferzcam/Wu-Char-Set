@@ -11,6 +11,7 @@ import Polynomial.Prelude
 import Polynomial.Wu
 import Util.Tokenizer      
 
+<<<<<<< HEAD
 
 
 a = IndepPoint "A"
@@ -23,6 +24,18 @@ o = DepPoint "O"
 p = DepPoint "P"
 q = DepPoint "Q"
 s = DepPoint "S"
+=======
+a = Point (U "u1") (U "u1")
+b = Point (U "u3") (U "u1")
+c = Point (U "u5") (U "u6")
+d = Point (X "x1") (U "u7")
+e = Point (X "x2") (U "u8")
+f = Point (X "x3") (U "u9")
+o = Point (X "x4") (X "x5")
+p = Point (X "x6") (U "u1")
+q = Point (X "x7") (X "x8")
+s = Point (X "x9") (X "x10")
+>>>>>>> 007921bd7cb5639da4bc6327b225f73c643fb17a
 
 loa = Line o a
 loc = Line o c
@@ -42,14 +55,12 @@ h7 = Colinear q f e
 h8 = Colinear q b c
 h9 = Colinear s e a
 h10 = Colinear s c d
-
 g = Colinear s q p
 
-structres = [P a, P b, P c, P d, P e, P f, P o, P p, P q, P s, L loa, L loc, L lob, L lod, L lof, L loe]
 hypsGeom = [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10]
 
-polys :: [Polynomial' 14]
-polys@(conclusion:hypotheses) = generatePolynomials structres hypsGeom g
+polys :: [Polynomial' 10]
+polys@(conclusion:hypotheses) = generatePolynomials hypsGeom g
 
 testTheorem :: TestTree
 testTheorem = testCase "Test for Pascal Theorem" $ do
@@ -58,6 +69,7 @@ testTheorem = testCase "Test for Pascal Theorem" $ do
 testPascal :: TestTree
 testPascal = testGroup "Test for Pascal Theorem" [testTheorem]
 
+<<<<<<< HEAD
 
 
 
@@ -139,3 +151,5 @@ testPascal = testGroup "Test for Pascal Theorem" [testTheorem]
 
 -- testPascal :: TestTree
 -- testPascal = testGroup "Test for Pascal Theorem" [testTheorem]
+=======
+>>>>>>> 007921bd7cb5639da4bc6327b225f73c643fb17a

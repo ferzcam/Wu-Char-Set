@@ -15,6 +15,7 @@ import qualified Data.Sized as DS
 import Control.Arrow
 import Data.Proxy
 import Data.Singletons
+
 type Polynomial' n = OrderedPolynomial Rational Grevlex n
 type OrderedMonomial' n = OrderedMonomial Grevlex n
 
@@ -28,7 +29,10 @@ type OrderedMonomial' n = OrderedMonomial Grevlex n
 classVarDeg :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex)
         =>  Polynomial' n -> Int -> Int
 classVarDeg pol var = leadingMonomialDegs !! var
+<<<<<<< HEAD
 -- trace ("VAR " ++  show var) 
+=======
+>>>>>>> 007921bd7cb5639da4bc6327b225f73c643fb17a
         where
                 leadingMonomialDegs = S.toList $ getMonomial $ leadingMonomial pol var
 
@@ -51,7 +55,7 @@ replacePoly polys p q = q : dropPolys polys [p]
 existOneDegPoly :: [Polynomial' n] -> Int -> Maybe (Polynomial' n)
 existOneDegPoly polys var = find isOneDeg polys
         where
-            isOneDeg poly = elem 1 (((map ((!! var) . S.toList . getMonomial . fst)) . MS.toList . _terms) poly) 
+            isOneDeg poly = (((\x -> x==1).last.sort)) (((map ((!! var) . S.toList . getMonomial . fst)) . MS.toList . _terms) poly) 
 
 pseudoRemainders :: (IsMonomialOrder n Grevlex, KnownNat n) => 
         [Polynomial' n] -> Polynomial' n -> Int -> [Polynomial' n]
@@ -60,29 +64,41 @@ pseudoRemainders polys poly var = map (\p -> snd $ pseudoRemainder p poly var) p
 
 pseudoRemainder :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex) 
         => Polynomial' n -> Polynomial' n -> Int -> (Polynomial' n, Polynomial' n)
-pseudoRemainder f g var = (fst pseudo, simplifyPolinomial (snd pseudo))
+pseudoRemainder f g var =  (fst pseudo, simplifyPolinomial (snd pseudo))
+        -- trace ("\nVAR: " ++ show var ++ "\nF: " ++ show f ++ "\nG: " ++ show g ++ "\nREM: " ++ show (simplifyPolinomial (snd pseudo)))
         where 
                 m = classVarDeg g var
                 d = getCoeff factors var
                 factors = chooseTermsWithVar g var
                 pseudo = findQR 0 f g var m d        
 
+
 findQR :: (IsMonomialOrder n Grevlex, KnownNat n) 
         => Polynomial' n -> Polynomial' n -> Polynomial' n -> Int -> Int -> Polynomial' n -> (Polynomial' n, Polynomial' n)
 findQR q r g var m d
+<<<<<<< HEAD
         | r == 0 || m==0 || classVarDeg r var < m = (q,r)
+=======
+        | r == 0 || m == 0 || classVarDeg r var < m = (q,r)
+>>>>>>> 007921bd7cb5639da4bc6327b225f73c643fb17a
         | otherwise = let
-                        arity = (length . S.toList . getMonomial . fst . head . MS.toList . _terms) r
+                        arity = getArity r
                         newMonomial = mon var ((classVarDeg r var) - m) arity
                         x = Polynomial $ MS.fromList [(newMonomial ,1)]
                         factors = chooseTermsWithVar r var
                         lc_r = getCoeff factors var
                         newR =  d*r - lc_r*g*x
                         newQ = d*q + lc_r*x
+<<<<<<< HEAD
                         in findQR newQ newR g var m d
                         
 
 -- trace ("EEEEEEE LEADING TERM" ++ (show pol) ++ "     " ++ show polToList)
+=======
+                        in  findQR newQ newR g var m d
+                        --trace ("\nVAR: " ++ show var ++ "\nNEWQ: " ++ show newQ ++ "\nNEWR: " ++ show newR ++ "\nG: " ++ show g)
+                       
+>>>>>>> 007921bd7cb5639da4bc6327b225f73c643fb17a
 -- Assumes that the polynomial containns variable. The ordering will be Lexicographical
 leadingTerm :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) => Polynomial' n -> Int -> (Rational, OrderedMonomial' n)
 leadingTerm pol var = (snd &&& fst) $ fromJust $ MS.lookupLE chosenTerm (_terms pol)
@@ -195,3 +211,8 @@ tryDiv' (a, f) (b, g)
         | g `divs` f = (a/b, OrderedMonomial $ DS.zipWithSame (-) (getMonomial f) (getMonomial g))
         | otherwise  = error "cannot divide."
 ---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+getArity :: Polynomial' n -> Int
+getArity = (length.DS.toList.getMonomial.fst.head.MS.toList._terms)

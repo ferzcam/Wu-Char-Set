@@ -12,32 +12,32 @@ import Polynomial.Wu
 import Util.Tokenizer    
 
 
-a = IndepPoint "A"
-b = IndepPoint "B"
-c = IndepPoint "C"
-d = DepPoint "D"
-o = DepPoint "O"
+a = Point (U "u1") (U "u2")
+b = Point (U "u3") (U "u4")
+c = Point (U "u5") (U "u6")
+d = Point (X "x1") (X "x2")
+o = Point (X "x3") (X "x4")
 
-
-lab = Line a b
-ldc = Line d c
-lda = Line d a 
-lbc = Line b c 
+lac = Line a c
+lbd = Line b d
+lab = Line a b 
+lcd = Line c d 
 lao = Line a o
 lco = Line c o
 
-h1 = Parallel lab ldc
-h2 = Parallel lda lbc
-h3 = Colinear d o b
-h4 = Colinear a c o
+lbo = Line b o
+ldo = Line d o
 
-conc = SameLen lao lco
+h1 = Parallel lac lbd
+h2 = Parallel lab lcd
+h3 = Colinear b o c
+h4 = Colinear a o d
 
-structures = [P a, P b, P c, P d, P o, L lab, L ldc, L lda, L lbc, L lao, L lco]
+conc = SameLen lao ldo
+--conc = SameLen lco lbo
 
 polys :: [Polynomial' 4]
-polys@(conclusion:hypotheses) = generatePolynomials structures [h1, h2, h3, h4] conc
-
+polys@(conclusion:hypotheses) = generatePolynomials [h1, h2, h3, h4] conc
 
 testTheorem :: TestTree
 testTheorem = testCase "Test for Parallelogram Theorem" $ do

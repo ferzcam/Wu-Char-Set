@@ -9,6 +9,7 @@ import Test.Tasty.HUnit as HU
 import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
 import Polynomial.Wu
+import Polynomial.TheoremProver
 import Util.Tokenizer    
 import Data.List
 
@@ -31,9 +32,9 @@ lne = Line n e
 lnd = Line n d
 lnm = Line n m
 
-h1 = Colinear d b c 
+h1 = Collinear d b c 
 h2 = Perpendicular lad lcb
-h3 = Colinear e a c
+h3 = Collinear e a c
 h4 = Perpendicular leb lca
 h5 = MidPoint a m b
 h6 = SameLen lnf lne

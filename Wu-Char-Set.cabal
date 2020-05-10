@@ -31,6 +31,7 @@ library
       Example
       Polynomial.Prelude
       Polynomial.Wu
+      Polynomial.TheoremProver
       Util.Tokenizer
       Core
   other-modules:
@@ -72,7 +73,7 @@ test-suite Wu-Char-Set-test-suite
       Paths_Wu_Char_Set
       TPolynomial.TPrelude
       Examples.Apolonius
-      Examples.Morley
+      Examples.EquilateralTri
       Examples.Pascal
       Examples.Parallelogram
       Core

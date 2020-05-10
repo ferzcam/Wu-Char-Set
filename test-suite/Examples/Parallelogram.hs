@@ -9,6 +9,7 @@ import Test.Tasty.HUnit as HU
 import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
 import Polynomial.Wu
+import Polynomial.TheoremProver
 import Util.Tokenizer    
 
 
@@ -30,8 +31,8 @@ ldo = Line d o
 
 h1 = Parallel lac lbd
 h2 = Parallel lab lcd
-h3 = Colinear b o c
-h4 = Colinear a o d
+h3 = Collinear b o c
+h4 = Collinear a o d
 
 conc = SameLen lao ldo
 --conc = SameLen lco lbo

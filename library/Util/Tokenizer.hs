@@ -20,7 +20,7 @@ data Circle = Circle Point Point deriving (Show)
 data Line = Line Point Point deriving (Show)
 data Angle = Angle Point Point Point deriving (Show)
 
-data Hypothesis =   Colinear Point Point Point 
+data Hypothesis =   Collinear Point Point Point 
                     | Parallel Line Line 
                     | Perpendicular Line Line 
                     | InCircle Point Circle
@@ -33,7 +33,6 @@ type Conclusion = Hypothesis
 
 generatePolynomials :: (KnownNat n) => [Hypothesis] -> Conclusion -> [Polynomial' n] 
 generatePolynomials hypotheses conclusion = map (flip geomToAlg variables) statements
-    --trace ("VARIABLES: " ++ show variables ++ "\n\n") 
     where 
         points = nub $ concatMap flatten hypotheses
         variables = generateVariables points conclusion
@@ -41,7 +40,7 @@ generatePolynomials hypotheses conclusion = map (flip geomToAlg variables) state
 
 
 generateVariables :: (KnownNat n) => [Point] -> Conclusion -> [(Coord, Polynomial' n)]
-generateVariables points conclusion = trace ("VARIABLES: " ++ show (zip finalVariables monicPolys)) zip finalVariables monicPolys
+generateVariables points conclusion =  zip finalVariables monicPolys
     --trace ("VARIABLES: " ++ show (zip finalVariables monicPolys))
     where
         pointsConclusion = nub $ (concatMap (\(Point c1 c2) -> [c1, c2])) (flatten conclusion)
@@ -55,7 +54,7 @@ generateVariables points conclusion = trace ("VARIABLES: " ++ show (zip finalVar
         monomials = map toMonomial initialArrays
         monicPolys = (map (toPolynomial . (1,)) monomials) ++ ((map ((^2).fromInteger) [0..]))
 
-
+-- trace ("VARIABLES: " ++ show (zip finalVariables monicPolys)) zip finalVariables 
 
 isX :: Coord -> Bool
 isX (X _) = True
@@ -76,7 +75,7 @@ getCoords :: Point -> [(Coord, Polynomial' n)] -> (Polynomial' n, Polynomial' n)
 getCoords (Point x y) dict = (fromJust $ lookup x dict, fromJust $ lookup y dict)
 
 geomToAlg :: (KnownNat n) => Hypothesis -> [(Coord, Polynomial' n)] -> Polynomial' n
-geomToAlg (Colinear a b c) dict =  
+geomToAlg (Collinear a b c) dict =  
                                 let (x1,y1) = getCoords a dict
                                     (x2,y2) = getCoords b dict
                                     (x3,y3) = getCoords c dict
@@ -113,7 +112,7 @@ geomToAlg (SameAcAngle (Angle pt1 pt2 pt3) (Angle pt4  pt5 pt6)) dict =
                                     (x4,y4) = getCoords pt4 dict
                                     (x5,y5) = getCoords pt5 dict
                                     (x6,y6) = getCoords pt6 dict
-                                in  ((y3 - y2)*(x1 - x2) - (y1 - y2)*(x3 - x2))*((x4 - x5)*(x6 - x5) + (y4 - y5)*(y6 - y5)) - ((y6 - y5)*(x4 - x5) - (y4 - y5)*(x6 - x5))*((x1 - x2)*(x3 - x2) + (y1 - y2)*(y3 - y2)) 
+                                in  ((y1 - y2)*(x3 - x2) - (y3 - y2)*(x1 - x2))*((x4 - x5)*(x6 - x5) + (y4 - y5)*(y6 - y5)) - ((y4 - y5)*(x6 - x5) - (y6 - y5)*(x4 - x5))*((x1 - x2)*(x3 - x2) + (y1 - y2)*(y3 - y2)) 
 geomToAlg (MidPoint first middle last) dict =
                                 let (x1,y1) = getCoords first dict
                                     (xm,ym) = getCoords middle dict
@@ -127,12 +126,13 @@ uncurry3 f (a,b,c) = f a b c
 
 
 instance Flattening Hypothesis where
-    flatten (Colinear p1 p2 p3) = nub [p1, p2, p3] 
+    flatten (Collinear p1 p2 p3) = nub [p1, p2, p3] 
     flatten (Parallel (Line p1 p2) (Line p3 p4)) = nub [p1, p2, p3, p4] 
     flatten (Perpendicular (Line p1 p2) (Line p3 p4)) = nub [p1, p2, p3, p4] 
     flatten (InCircle p (Circle c r)) = nub [p, c, r]
     flatten (SameLen (Line p1 p2) (Line p3 p4)) = nub [p1, p2, p3, p4]
     flatten (MidPoint first middle last) = nub [first, middle, last]
+    flatten (SameAcAngle (Angle p1 p2 p3) (Angle p4 p5 p6)) = nub [p1, p2, p3, p4, p5, p6]
 
 
 

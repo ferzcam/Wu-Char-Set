@@ -1,13 +1,17 @@
 {-#LANGUAGE DataKinds#-}
 
--- It is generally a good idea to keep all your business logic in your library
--- and only use it in the executable. Doing so allows others to use what you
--- wrote in their libraries.
-import Example
-import Core
---import Algebra.Ring.Polynomial
+module Examples.EquilateralTri (testEquilateralTri) where 
 
 
+import Algebra.Ring.Polynomial
+import Test.Tasty
+import Test.Tasty.HUnit as HU
+import qualified Data.Map.Strict as MS
+import Polynomial.Prelude
+import Polynomial.Wu
+import Polynomial.TheoremProver
+import Util.Tokenizer    
+import Data.List
 
 a = Point (U "u1") (U "u1")
 b = Point (X "x1") (U "u1")
@@ -44,8 +48,8 @@ h4 = SameAcAngle ang1 ang2
 h5 = SameAcAngle ang1 ang3
 h6 = SameLen la1b la1c
 h7 = Collinear o a1 a 
-h8 = Collinear o b1 b 
-
+h8 = Collinear o b b1
+ 
 
 g = Collinear c1 c o
 
@@ -54,6 +58,9 @@ polys :: [Polynomial' 11]
 polys@(conclusion:hypotheses) = generatePolynomials [h1, h2, h3, h4, h5, h6, h7, h8] g
 
 
+testTheorem :: TestTree
+testTheorem = testCase "Test for Equilateral Triangles" $ do
+    last (theoremProver hypotheses conclusion) @?= 0
 
-main :: IO ()
-main = putStrLn "Main Excutable"
+testEquilateralTri :: TestTree
+testEquilateralTri = testGroup "Test for Equilateral Triangles" [testTheorem]

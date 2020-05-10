@@ -8,6 +8,7 @@ import Test.Tasty.HUnit as HU
 import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
 import Polynomial.Wu
+import Polynomial.TheoremProver
     
 
 

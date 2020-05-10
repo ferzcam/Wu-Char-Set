@@ -29,10 +29,6 @@ type OrderedMonomial' n = OrderedMonomial Grevlex n
 classVarDeg :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex)
         =>  Polynomial' n -> Int -> Int
 classVarDeg pol var = leadingMonomialDegs !! var
-<<<<<<< HEAD
--- trace ("VAR " ++  show var) 
-=======
->>>>>>> 007921bd7cb5639da4bc6327b225f73c643fb17a
         where
                 leadingMonomialDegs = S.toList $ getMonomial $ leadingMonomial pol var
 
@@ -65,22 +61,17 @@ pseudoRemainders polys poly var = map (\p -> snd $ pseudoRemainder p poly var) p
 pseudoRemainder :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex) 
         => Polynomial' n -> Polynomial' n -> Int -> (Polynomial' n, Polynomial' n)
 pseudoRemainder f g var =  (fst pseudo, simplifyPolinomial (snd pseudo))
-        -- trace ("\nVAR: " ++ show var ++ "\nF: " ++ show f ++ "\nG: " ++ show g ++ "\nREM: " ++ show (simplifyPolinomial (snd pseudo)))
         where 
                 m = classVarDeg g var
                 d = getCoeff factors var
                 factors = chooseTermsWithVar g var
                 pseudo = findQR 0 f g var m d        
-
+-- trace ("\nVAR: " ++ show var ++ "\nF: " ++ show f ++ "\nG: " ++ show g ++ "\nREM: " ++ show (simplifyPolinomial (snd pseudo)))
 
 findQR :: (IsMonomialOrder n Grevlex, KnownNat n) 
         => Polynomial' n -> Polynomial' n -> Polynomial' n -> Int -> Int -> Polynomial' n -> (Polynomial' n, Polynomial' n)
 findQR q r g var m d
-<<<<<<< HEAD
-        | r == 0 || m==0 || classVarDeg r var < m = (q,r)
-=======
         | r == 0 || m == 0 || classVarDeg r var < m = (q,r)
->>>>>>> 007921bd7cb5639da4bc6327b225f73c643fb17a
         | otherwise = let
                         arity = getArity r
                         newMonomial = mon var ((classVarDeg r var) - m) arity
@@ -89,16 +80,9 @@ findQR q r g var m d
                         lc_r = getCoeff factors var
                         newR =  d*r - lc_r*g*x
                         newQ = d*q + lc_r*x
-<<<<<<< HEAD
-                        in findQR newQ newR g var m d
-                        
+                        in  trace ("\nVAR: " ++ show var ++ "\nNEWQ: " ++ show newQ ++ "\nNEWR: " ++ show newR ++ "\nG: " ++ show g) findQR newQ newR g var m d
 
--- trace ("EEEEEEE LEADING TERM" ++ (show pol) ++ "     " ++ show polToList)
-=======
-                        in  findQR newQ newR g var m d
-                        --trace ("\nVAR: " ++ show var ++ "\nNEWQ: " ++ show newQ ++ "\nNEWR: " ++ show newR ++ "\nG: " ++ show g)
                        
->>>>>>> 007921bd7cb5639da4bc6327b225f73c643fb17a
 -- Assumes that the polynomial containns variable. The ordering will be Lexicographical
 leadingTerm :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) => Polynomial' n -> Int -> (Rational, OrderedMonomial' n)
 leadingTerm pol var = (snd &&& fst) $ fromJust $ MS.lookupLE chosenTerm (_terms pol)

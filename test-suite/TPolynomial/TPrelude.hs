@@ -21,6 +21,7 @@ r1 = x*y^2 + 2*y^2 - x - 1
 r2 = y^4 + y^2 - 1
 
 
+
 -- testClassVarDeg :: TestTree
 -- testClassVarDeg = testCase "Test for getting class variables" $ do
 --     classVarDeg p1L @?= 1

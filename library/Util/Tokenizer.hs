@@ -40,7 +40,7 @@ generatePolynomials hypotheses conclusion = map (flip geomToAlg variables) state
 
 
 generateVariables :: (KnownNat n) => [Point] -> Conclusion -> [(Coord, Polynomial' n)]
-generateVariables points conclusion = trace ("VARIABLES: " ++ show (zip finalVariables monicPolys)) zip finalVariables monicPolys
+generateVariables points conclusion =  zip finalVariables monicPolys
     --trace ("VARIABLES: " ++ show (zip finalVariables monicPolys))
     where
         pointsConclusion = nub $ (concatMap (\(Point c1 c2) -> [c1, c2])) (flatten conclusion)

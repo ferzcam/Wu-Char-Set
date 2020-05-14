@@ -60,13 +60,14 @@ pseudoRemainders polys poly var = map (\p -> snd $ pseudoRemainder p poly var) p
 
 pseudoRemainder :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex) 
         => Polynomial' n -> Polynomial' n -> Int -> (Polynomial' n, Polynomial' n)
-pseudoRemainder f g var =  trace ("\nVAR: " ++ show var ++ "\nREM Class Var : " ++ show (classVarDeg (simplifyPolinomial (snd pseudo)) var )) (fst pseudo, simplifyPolinomial (snd pseudo))
+pseudoRemainder f g var = (fst pseudo, simplifyPolinomial (snd pseudo))
         where 
                 m = classVarDeg g var
                 d = getCoeff factors var
                 factors = chooseTermsWithVar g var
                 pseudo = findQR 0 f g var m d        
 -- trace ("\nVAR: " ++ show var ++ "\nF: " ++ show f ++ "\nG: " ++ show g ++ "\nREM: " ++ show (simplifyPolinomial (snd pseudo)))
+-- trace ("\nVAR: " ++ show var ++ "\nREM Class Var : " ++ show (classVarDeg (simplifyPolinomial (snd pseudo)) var ))
 
 findQR :: (IsMonomialOrder n Grevlex, KnownNat n) 
         => Polynomial' n -> Polynomial' n -> Polynomial' n -> Int -> Int -> Polynomial' n -> (Polynomial' n, Polynomial' n)

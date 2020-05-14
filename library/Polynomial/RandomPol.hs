@@ -15,7 +15,12 @@ import Algebra.Ring.Polynomial
 import System.Random 
 import System.Random.Shuffle 
 
-
+setRandPol :: (KnownNat n) => Int -> Int -> Int -> Int -> Int -> [Polynomial' n]
+setRandPol arity sizePol deg g0 setSize = rand_polys
+    where
+        g = mkStdGen g0
+        rand_gen =  take setSize (randomRs (0:: Int, 500) g)
+        rand_polys = map (\gen -> randPol arity sizePol deg gen) rand_gen 
 
 randPol :: (KnownNat n) => Int -> Int -> Int -> Int -> Polynomial' n
 randPol arity sizePol deg intGen =  poly

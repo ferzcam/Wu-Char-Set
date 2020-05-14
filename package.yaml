@@ -27,6 +27,7 @@ library:
   - algebra
   - sized
   - matrix
+  - random
   - random-shuffle
   extra-deps:
   source-dirs: library
@@ -68,6 +69,8 @@ tests:
     - tasty-hspec
     - sized
     - tasty-hunit
+    - random
+    - random-shuffle
     ghc-options:
     - -rtsopts
     - -threaded

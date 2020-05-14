@@ -32,6 +32,8 @@ library
       Polynomial.Prelude
       Polynomial.Wu
       Polynomial.TheoremProver
+      Polynomial.RandomPol
+      Polynomial.Spoly
       Util.Tokenizer
       Core
   other-modules:
@@ -91,6 +93,8 @@ test-suite Wu-Char-Set-test-suite
     , tasty-hunit
     , containers
     , halg-polynomials
+    , random
+    , random-shuffle
   default-language: Haskell2010
 
 benchmark Wu-Char-Set-benchmarks

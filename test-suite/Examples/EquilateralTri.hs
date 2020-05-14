@@ -1,14 +1,17 @@
 {-#LANGUAGE DataKinds#-}
 
--- It is generally a good idea to keep all your business logic in your library
--- and only use it in the executable. Doing so allows others to use what you
--- wrote in their libraries.
-import Example
-import System.Random
-import Core
-import System.Random.Shuffle
+module Examples.EquilateralTri (testEquilateralTri) where 
 
 
+import Algebra.Ring.Polynomial
+import Test.Tasty
+import Test.Tasty.HUnit as HU
+import qualified Data.Map.Strict as MS
+import Polynomial.Prelude
+import Polynomial.Wu
+import Polynomial.TheoremProver
+import Util.Tokenizer    
+import Data.List
 
 a = Point (U "u1") (U "u1")
 b = Point (X "x1") (U "u1")
@@ -40,24 +43,24 @@ ang3 = Angle a1 b c
 
 h1 = SameLen lac1 lc1b 
 h2 = SameLen lac1 lab
-h3 = SameLen lb1c lb1a
-h4 = SameAcAngle ang1 ang2 
+h3 = SameAcAngle ang1 ang2 
+h4 = SameLen lb1c lb1a
 h5 = SameAcAngle ang1 ang3
 h6 = SameLen la1b la1c
 h7 = Collinear o a1 a 
-h8 = Collinear o b1 b 
+h8 = Collinear o b b1
+ 
 
-
-g = Collinear c1 c o
+g = Collinear o c1 c
 
 
 polys :: [Polynomial' 11]
 polys@(conclusion:hypotheses) = generatePolynomials [h1, h2, h3, h4, h5, h6, h7, h8] g
 
--- genMonomials arity size deg seed 
-p1, p2 :: Polynomial' 8
-p1 = randPol 8 2 8 13 
-p2 = randPol 8 3 4 25
 
-main :: IO ()
-main = putStrLn "Main Excutable"
+testTheorem :: TestTree
+testTheorem = testCase "Test for Equilateral Triangles" $ do
+    last (theoremProver hypotheses conclusion) @?= 0
+
+testEquilateralTri :: TestTree
+testEquilateralTri = testGroup "Test for Equilateral Triangles" [testTheorem]

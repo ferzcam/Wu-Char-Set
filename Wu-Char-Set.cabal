@@ -31,6 +31,8 @@ library
       Example
       Polynomial.Prelude
       Polynomial.Wu
+      Polynomial.TheoremProver
+      Util.Tokenizer
       Core
   other-modules:
       Paths_Wu_Char_Set
@@ -39,7 +41,16 @@ library
   ghc-options:  -Wall,
                 -freverse-errors
   build-depends:
-      base , containers, algebra, computational-algebra, sized
+      base, 
+      containers, 
+      algebra, 
+      halg-polynomials, 
+      sized, 
+      type-natural, 
+      matrix,
+      singletons,
+      random,
+      random-shuffle
   default-language: Haskell2010
 
 
@@ -54,7 +65,7 @@ executable Wu-Char-Set
   ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N -freverse-errors
   build-depends:
       Wu-Char-Set
-    , base
+    , base, containers
   default-language: Haskell2010
 
 test-suite Wu-Char-Set-test-suite
@@ -63,9 +74,15 @@ test-suite Wu-Char-Set-test-suite
   other-modules:
       Paths_Wu_Char_Set
       TPolynomial.TPrelude
+      Examples.Apolonius
+      Examples.EquilateralTri
+      Examples.Pascal
+      Examples.Parallelogram
+      Core
+      
   hs-source-dirs:
       test-suite
-  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N -freverse-errors  -Wname-shadowing
+  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N1 -freverse-errors  -Wname-shadowing
   build-depends:
       Wu-Char-Set
     , base
@@ -73,8 +90,7 @@ test-suite Wu-Char-Set-test-suite
     , tasty-hspec
     , tasty-hunit
     , containers
-    , sized
-    , computational-algebra  
+    , halg-polynomials
   default-language: Haskell2010
 
 benchmark Wu-Char-Set-benchmarks
@@ -84,9 +100,10 @@ benchmark Wu-Char-Set-benchmarks
       Paths_Wu_Char_Set
   hs-source-dirs:
       benchmark
-  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N -freverse-errors
+  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N4 -freverse-errors
   build-depends:
       Wu-Char-Set
     , base
     , criterion
   default-language: Haskell2010
+

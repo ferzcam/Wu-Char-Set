@@ -48,7 +48,9 @@ library
       sized, 
       type-natural, 
       matrix,
-      singletons
+      singletons,
+      random,
+      random-shuffle
   default-language: Haskell2010
 
 

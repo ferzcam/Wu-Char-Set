@@ -4,8 +4,9 @@
 -- and only use it in the executable. Doing so allows others to use what you
 -- wrote in their libraries.
 import Example
+import System.Random
 import Core
---import Algebra.Ring.Polynomial
+import System.Random.Shuffle
 
 
 
@@ -53,7 +54,10 @@ g = Collinear c1 c o
 polys :: [Polynomial' 11]
 polys@(conclusion:hypotheses) = generatePolynomials [h1, h2, h3, h4, h5, h6, h7, h8] g
 
-
+-- genMonomials arity size deg seed 
+p1, p2 :: Polynomial' 8
+p1 = randPol 8 2 8 13 
+p2 = randPol 8 3 4 25
 
 main :: IO ()
 main = putStrLn "Main Excutable"

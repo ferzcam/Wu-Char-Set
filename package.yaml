@@ -27,6 +27,7 @@ library:
   - algebra
   - sized
   - matrix
+  - random-shuffle
   extra-deps:
   source-dirs: library
 

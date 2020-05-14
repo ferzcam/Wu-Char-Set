@@ -60,7 +60,7 @@ pseudoRemainders polys poly var = map (\p -> snd $ pseudoRemainder p poly var) p
 
 pseudoRemainder :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex) 
         => Polynomial' n -> Polynomial' n -> Int -> (Polynomial' n, Polynomial' n)
-pseudoRemainder f g var =  (fst pseudo, simplifyPolinomial (snd pseudo))
+pseudoRemainder f g var =  trace ("\nVAR: " ++ show var ++ "\nREM Class Var : " ++ show (classVarDeg (simplifyPolinomial (snd pseudo)) var )) (fst pseudo, simplifyPolinomial (snd pseudo))
         where 
                 m = classVarDeg g var
                 d = getCoeff factors var
@@ -80,8 +80,8 @@ findQR q r g var m d
                         lc_r = getCoeff factors var
                         newR =  d*r - lc_r*g*x
                         newQ = d*q + lc_r*x
-                        in  trace ("\nVAR: " ++ show var ++ "\nNEWQ: " ++ show newQ ++ "\nNEWR: " ++ show newR ++ "\nG: " ++ show g) findQR newQ newR g var m d
-
+                        in findQR newQ newR g var m d
+-- trace ("\nVAR: " ++ show var ++ "\nNEWQ: " ++ show newQ ++ "\nNEWR: " ++ show newR ++ "\nG: " ++ show g) 
                        
 -- Assumes that the polynomial containns variable. The ordering will be Lexicographical
 leadingTerm :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) => Polynomial' n -> Int -> (Rational, OrderedMonomial' n)

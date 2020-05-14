@@ -43,15 +43,15 @@ ang3 = Angle a1 b c
 
 h1 = SameLen lac1 lc1b 
 h2 = SameLen lac1 lab
-h3 = SameLen lb1c lb1a
-h4 = SameAcAngle ang1 ang2 
+h3 = SameAcAngle ang1 ang2 
+h4 = SameLen lb1c lb1a
 h5 = SameAcAngle ang1 ang3
 h6 = SameLen la1b la1c
 h7 = Collinear o a1 a 
 h8 = Collinear o b b1
  
 
-g = Collinear c1 c o
+g = Collinear o c1 c
 
 
 polys :: [Polynomial' 11]

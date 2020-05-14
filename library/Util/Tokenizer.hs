@@ -40,15 +40,15 @@ generatePolynomials hypotheses conclusion = map (flip geomToAlg variables) state
 
 
 generateVariables :: (KnownNat n) => [Point] -> Conclusion -> [(Coord, Polynomial' n)]
-generateVariables points conclusion =  zip finalVariables monicPolys
+generateVariables points conclusion = trace ("VARIABLES: " ++ show (zip finalVariables monicPolys)) zip finalVariables monicPolys
     --trace ("VARIABLES: " ++ show (zip finalVariables monicPolys))
     where
         pointsConclusion = nub $ (concatMap (\(Point c1 c2) -> [c1, c2])) (flatten conclusion)
-        variablesConclusion = filter (flip elem variablesX) pointsConclusion
+        variablesConclusion =  filter (flip elem variablesX) pointsConclusion
         variablesNotConclusion = variablesX \\ variablesConclusion
         variablesX = nub $ filter isX allVariables
         variablesU = nub $ filter isU allVariables
-        allVariables =sort $ (concatMap (\(Point c1 c2) -> [c1, c2]) points)
+        allVariables = sort $ (concatMap (\(Point c1 c2) -> [c1, c2]) points)
         finalVariables = variablesConclusion ++ variablesNotConclusion ++ (variablesU)
         initialArrays = (toLists.identity) (length (variablesX))
         monomials = map toMonomial initialArrays

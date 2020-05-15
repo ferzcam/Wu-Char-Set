@@ -3,14 +3,16 @@
 module Examples.Pascal (testPascal) where 
 
 
-import Algebra.Ring.Polynomial
+-- import Algebra.Ring.Polynomial
 import Test.Tasty
 import Test.Tasty.HUnit as HU
-import qualified Data.Map.Strict as MS
+-- import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
-import Polynomial.Wu
+-- import Polynomial.Wu
 import Polynomial.TheoremProver
-import Util.Tokenizer      
+import Polynomial.Spolynomial.WuSP
+import Polynomial.Spolynomial.TheoProverSP
+import Util.Traslator      
 
 a = Point (U "u1") (U "u1")
 b = Point (U "u3") (U "u1")
@@ -52,6 +54,10 @@ testTheorem :: TestTree
 testTheorem = testCase "Test for Pascal Theorem" $ do
     last (theoremProver hypotheses conclusion) @?= 0
 
+testTheoremSP:: TestTree
+testTheoremSP = testCase "Test for Pascal Theorem Spoly" $ do
+    last (theoremProverSP hypotheses conclusion) @?= 0
+
 testPascal :: TestTree
-testPascal = testGroup "Test for Pascal Theorem" [testTheorem]
+testPascal = testGroup "Test for Pascal Theorem" [testTheorem, testTheoremSP]
 

@@ -10,7 +10,10 @@ import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
 import Polynomial.Wu
 import Polynomial.TheoremProver
-import Util.Tokenizer    
+import Polynomial.TheoremProver
+import Polynomial.Spolynomial.WuSP
+import Polynomial.Spolynomial.TheoProverSP
+import Util.Traslator    
 import Data.List
 
 a = Point (U "u1") (U "u1")
@@ -51,5 +54,9 @@ testTheorem :: TestTree
 testTheorem = testCase "Test for NinePoints Theorem" $ do
     last (theoremProver hypotheses conclusion) @?= 0
 
+testTheoremSP:: TestTree
+testTheoremSP = testCase "Test for NinePoints Theorem Spoly" $ do
+    last (theoremProverSP hypotheses conclusion) @?= 0
+
 testNinePoints :: TestTree
-testNinePoints = testGroup "Test for NinePoints Theorem" [testTheorem]
+testNinePoints = testGroup "Test for NinePoints Theorem" [testTheorem, testTheoremSP]

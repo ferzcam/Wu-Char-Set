@@ -9,7 +9,7 @@ import Test.Tasty.HUnit as HU
 import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
 import Polynomial.RandomPol
-import Polynomial.Spoly
+import Polynomial.Spolynomial.Remainder
 import Control.Arrow
 
 

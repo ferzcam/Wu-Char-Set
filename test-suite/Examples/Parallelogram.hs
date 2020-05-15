@@ -10,7 +10,10 @@ import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
 import Polynomial.Wu
 import Polynomial.TheoremProver
-import Util.Tokenizer    
+import Polynomial.TheoremProver
+import Polynomial.Spolynomial.WuSP
+import Polynomial.Spolynomial.TheoProverSP
+import Util.Traslator    
 
 
 a = Point (U "u1") (U "u2")
@@ -44,5 +47,10 @@ testTheorem :: TestTree
 testTheorem = testCase "Test for Parallelogram Theorem" $ do
     last (theoremProver hypotheses conclusion) @?= 0
 
+testTheoremSP:: TestTree
+testTheoremSP = testCase "Test for Parallelogram Theorem Spoly" $ do
+    last (theoremProverSP hypotheses conclusion) @?= 0
+
+
 testParallelogram :: TestTree
-testParallelogram = testGroup "Test for Parallelogram Theorem" [testTheorem]
+testParallelogram = testGroup "Test for Parallelogram Theorem" [testTheorem, testTheoremSP]

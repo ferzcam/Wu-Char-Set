@@ -33,8 +33,10 @@ library
       Polynomial.Wu
       Polynomial.TheoremProver
       Polynomial.RandomPol
-      Polynomial.Spoly
-      Util.Tokenizer
+      Polynomial.Spolynomial.WuSP
+      Polynomial.Spolynomial.Remainder
+      Polynomial.Spolynomial.TheoProverSP
+      Util.Traslator
       Core
   other-modules:
       Paths_Wu_Char_Set
@@ -78,6 +80,7 @@ test-suite Wu-Char-Set-test-suite
       TPolynomial.TPrelude
       Examples.Apolonius
       Examples.EquilateralTri
+      Examples.EquiPol
       Examples.Pascal
       Examples.Parallelogram
       Core

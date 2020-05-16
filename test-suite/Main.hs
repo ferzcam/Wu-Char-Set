@@ -11,7 +11,8 @@ main = do
 allTests ::   TestTree
 allTests = testGroup "Tasty tests" [
 
-        testGroup "List of tests:" [testParallelogram, testPascal, testNinePoints, testEquipol, testEquilateralTri]
+        testGroup "List of tests:" [testPascal]
+        -- testParallelogram, testPascal, testNinePoints, testEquipol, testEquilateralTri
         --testsPrelude
         --testParallelogram, testPascal, testNinePoints, testSpoly, 
     ]

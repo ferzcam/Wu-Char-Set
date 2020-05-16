@@ -36,6 +36,10 @@ library
       Polynomial.Spolynomial.WuSP
       Polynomial.Spolynomial.Remainder
       Polynomial.Spolynomial.TheoProverSP
+      Symbolic.Prelude
+      Symbolic.Expr
+      Symbolic.SymRem
+      Symbolic.SymWu
       Util.Traslator
       Core
   other-modules:
@@ -48,10 +52,13 @@ library
       base, 
       containers, 
       algebra, 
-      halg-polynomials, 
+      halg-polynomials,
+      halg-core,
+      algebraic-prelude, 
       sized, 
       type-natural, 
       matrix,
+      directory,
       singletons,
       random,
       random-shuffle
@@ -70,6 +77,10 @@ executable Wu-Char-Set
   build-depends:
       Wu-Char-Set
     , base, containers
+    , algebra
+    , halg-polynomials
+    , halg-core
+    , algebraic-prelude
   default-language: Haskell2010
 
 test-suite Wu-Char-Set-test-suite
@@ -96,8 +107,10 @@ test-suite Wu-Char-Set-test-suite
     , tasty-hunit
     , containers
     , halg-polynomials
+    , halg-core
     , random
     , random-shuffle
+    , algebraic-prelude
   default-language: Haskell2010
 
 benchmark Wu-Char-Set-benchmarks

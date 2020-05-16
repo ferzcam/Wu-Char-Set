@@ -20,7 +20,6 @@ charSetSP p a var
     | otherwise = case existOneDegPoly s var of
                     Just poly ->  charSetSP (c ++ rem poly) (a++[poly]) (var+1)
                     Nothing -> charSetSP (c++r++newS) a var
-
     where
         c = dropPolys p s -- p/s
         s =  filter (`varInPoly` var) p 

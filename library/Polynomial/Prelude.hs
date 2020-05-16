@@ -165,15 +165,7 @@ replaceZero (x:xs) position
 pol // (coeff, mon) = sum $ map (toPolynomial . (`tryDiv'` (coeff, mon)) . (snd &&& fst)) terms
             where
                     terms = MS.toList $ _terms pol
-
--- Funcion que obtiene el gcd de un polinomio, en este caso se refiere al termino en comun de todos los monomios que conforman el polinomio
--- commonMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n) 
---         =>  Polynomial' n  -> OrderedMonomial' n
--- commonMonomial pol  =   foldr' foo (last monomials) (init monomials)
---                         where
---                                 foo monomial acc = gcdMonomial acc monomial
---                                 monomials = MS.keys $ _terms pol
-                                
+                               
 
 commonMonomial ::(IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n) 
         =>  Polynomial' n  ->  OrderedMonomial' n
@@ -195,9 +187,18 @@ tryDiv' :: (KnownNat n) => (Rational, OrderedMonomial' n) -> (Rational, OrderedM
 tryDiv' (a, f) (b, g)
         | g `divs` f = (a/b, OrderedMonomial $ DS.zipWithSame (-) (getMonomial f) (getMonomial g))
         | otherwise  = error "cannot divide."
----------------------------------------------------------------------------------------------------------------------------------------------
-
 
 
 getArity :: Polynomial' n -> Int
 getArity = (length.DS.toList.getMonomial.fst.head.MS.toList._terms)
+
+
+-----------------------------------------------------------
+
+-- Funcion que obtiene el gcd de un polinomio, en este caso se refiere al termino en comun de todos los monomios que conforman el polinomio
+-- commonMonomial ::(IsMonomialOrder n ord, IsOrder n ord, KnownNat n) 
+--         =>  Polynomial' n  -> OrderedMonomial' n
+-- commonMonomial pol  =   foldr' foo (last monomials) (init monomials)
+--                         where
+--                                 foo monomial acc = gcdMonomial acc monomial
+--                                 monomials = MS.keys $ _terms pol

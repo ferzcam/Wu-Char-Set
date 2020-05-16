@@ -1,7 +1,9 @@
 
 -- | An example module.
-module Example  where
+module Example (
+    module Examples.WuExample
+)  where
 
-import Core
+import Examples.WuExample
 -- | An example function.
 

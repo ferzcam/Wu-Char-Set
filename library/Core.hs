@@ -5,6 +5,10 @@ module Core (
     module Polynomial.Spolynomial.WuSP,
     module Polynomial.Spolynomial.Remainder,
     module Polynomial.Spolynomial.TheoProverSP,
+    module Symbolic.Expr,
+    module Symbolic.SymRem,
+    module Symbolic.SymWu,
+    PolynomialSym,
     module Polynomial.TheoremProver,
     module Util.Traslator
     )
@@ -18,4 +22,7 @@ where
     import Polynomial.RandomPol
     import Polynomial.TheoremProver
     import Util.Traslator
-    
+    import Symbolic.Expr
+    import Symbolic.Prelude (PolynomialSym)
+    import Symbolic.SymRem
+    import Symbolic.SymWu

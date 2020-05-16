@@ -6,7 +6,9 @@ module Core (
     module Examples.Pascal,
     module Examples.NinePoints,
     module TPolynomial.TSpoly,
+    module TSymbolic.TSymbolic,
     module TSpolyCox.TSpoly_Cox,
+    module TSymbolic.TWuExample,
     module TPolynomial.TPrelude
 )
 where
@@ -20,3 +22,5 @@ import Examples.NinePoints
 import TPolynomial.TPrelude
 import TPolynomial.TSpoly
 import TSpolyCox.TSpoly_Cox
+import TSymbolic.TSymbolic 
+import TSymbolic.TWuExample

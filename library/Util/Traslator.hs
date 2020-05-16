@@ -4,14 +4,13 @@
 
 
 module Util.Traslator where
-import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
 import Data.Matrix hiding (flatten, trace, zero)
 import Data.List
 import Debug.Trace
 import Data.Maybe
 import GHC.TypeLits
-import Algebra.Ring.Polynomial
+import Algebra.Ring.Polynomial hiding (monomials)
 
 data Coord = X String | U String deriving (Eq, Show)
 

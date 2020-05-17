@@ -36,6 +36,7 @@ instance Enum Coeff where
 
 succ' :: String -> String
 succ' [a]
+    | a == 'w' = "y"
     | a == 'z' = 'a':"a"
     | a == 'Z' = 'A':"A"
     | otherwise = [succ a]

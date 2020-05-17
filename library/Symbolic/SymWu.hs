@@ -108,7 +108,7 @@ printPolys :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n)
         => [PolynomialSym n] -> FilePath -> IO ()
 printPolys [] _ = return ()
 printPolys (x:xs) path = do
-                        a <- appendFile path $  show x ++ "\n"
+                        a <- appendFile path $  printPolynomial x ++ "\n"
                         printPolys xs path
 
 -- | Let a and b be two lists, the function print the terms in the following way
@@ -122,7 +122,7 @@ printList [] _ _ = return ()
 printList (x:xs) (y:ys) path = if show x == "1" || show x == "(-1)"
                                         then do printList xs ys path
                                         else do 
-                                                a <- appendFile path $ show x ++ " = " ++ show y ++ "\n"
+                                                a <- appendFile path $ show x ++ "=" ++ show y ++ "\n"
                                                 printList xs ys path
 
 
@@ -137,24 +137,87 @@ printCoeffs new@(n:ns) old@(o:os) path = do
                                         printTail <- printCoeffs ns os path
                                         return ()
 
+printInitCoeffs :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n)
+        => [PolynomialSym n] -> FilePath -> IO ()
+printInitCoeffs pols path = do
+                            let coeffs = sort $ foldl1 (++) $ map (\x -> nub $ foldl1 (++ ) $ foldl1 (++) $ foldl1  (++) $ map ( map (nub . fst) . M.toList. fromExpr)  $ map (snd) $ M.toList $ _terms x) pols
+                            printHead <- printLine coeffs path
+                            return ()
+
+printLine :: (Show k) => [k] -> FilePath -> IO ()
+printLine x path = do 
+                    a <- appendFile path $ show x
+                    return () 
+
+printPolynomial :: (KnownNat n) => PolynomialSym n -> String 
+printPolynomial pol = dropPlusSign $  showTerms $ reverse $ M.toList $ _terms pol
+
+
+dropPlusSign :: String -> String
+dropPlusSign [] = error "String too short in dropPlusSign function"
+dropPlusSign [_] = error "String too short in dropPlusSign function"
+dropPlusSign [_,_] = error "String too short in dropPlusSign function"
+dropPlusSign s@(x:y:z:a)
+    | (x:y:[z]) == " + " = a
+    | otherwise = s
+
+showTerms :: (Unital k, Eq k, Show k, KnownNat n) =>  [(OrderedMonomial Grevlex n, k)] -> String
+showTerms [] = ""
+showTerms (t:ts)
+    | coeff == one = " + " ++ showMon monList ++ showTerms ts
+    | mon == one =  " + " ++ show coeff ++ showTerms ts
+    | otherwise = " + " ++ show coeff ++ "*" ++ showMon monList ++ showTerms ts
+    where 
+        coeff = snd t
+        mon = fst t
+        monList = S.toList $ getMonomial mon 
+
+showMon :: [Int] -> String
+showMon mon = idexToStr idxMon
+    where 
+        idxMon = getIndeces mon 0
+
+idexToStr :: [(Int,Int)] -> String
+idexToStr [] = ""
+idexToStr [x]
+    | snd x == 1 = "x" ++ show (fst x)
+    | otherwise = "x" ++ show (fst x) ++ "^" ++ show (snd x)
+idexToStr (x:xs)
+    | sup == 1  =  "x"++ show var ++ "*" ++ idexToStr xs
+    | otherwise  =  "x"++ show var ++ "^" ++ show sup ++ "*" ++ idexToStr xs 
+    where 
+        var = fst x
+        sup = snd x 
+
+getIndeces :: [Int] -> Int -> [(Int, Int)]
+getIndeces [] _ = []
+getIndeces (x:xs) pos  
+    | x /= 0 = [(pos, x)] ++ getIndeces xs (pos+1)
+    | otherwise = getIndeces xs (pos + 1)
+    
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 -- | Given a list of polynomials and an integer run the Wu's characteristic set and print each step
-printWuSet :: (KnownNat n1) => [PolynomialSym n1]  -> Int -> IO ()
-printWuSet [] _ = return ()
-printWuSet  pols var = do
-                placeToSaveAscChain <- fmap (++ ("/Output/AscChainStep_"++ (show var)++".txt")) getCurrentDirectory
+printWuSet :: (KnownNat n1) => [PolynomialSym n1]  -> Int -> Int -> IO ()
+printWuSet [] var cont =  return ()
+printWuSet  pols var cont = do
+                placeToSaveAscChain <- fmap (++ ("/Output/AscChain.txt")) getCurrentDirectory
                 placeToSaveNewSet <- fmap (++ ("/Output/NewSetStep_"++ (show var)++".txt")) getCurrentDirectory
                 placeToSaveCoeffs <- fmap (++ ("/Output/CoeffsStep_"++ (show var)++".txt")) getCurrentDirectory
+                placeToSaveInitCo <- fmap (++ ("/Output/SymVars.txt")) getCurrentDirectory
+                when (cont == 0) (printInitCoeffs pols placeToSaveInitCo)
                 let (chain, newPols, newVar) = ( \(a, b, c) -> (simplifyNumSym a, map simplifyNumSym b, c) ) $ stepCharSetSym pols var
                 if (newVar == var) 
-                        then do (printWuSet newPols newVar)
+                        then do (printWuSet newPols newVar 1)
                         else do let newSet = changeVariablesList newPols var (Coeff "a")               
                                 writeCoeffs <- printCoeffs newSet newPols placeToSaveCoeffs
                                 writeAscChain <- printPolys [chain] placeToSaveAscChain
                                 if length newSet == 1
-                                        then do printWuSet newSet newVar
+                                        then do printWuSet newSet newVar 1
                                         else do writeNewSet <- printPolys newSet placeToSaveNewSet
-                                                printWuSet newSet newVar
+                                                printWuSet newSet newVar 1
+
+
                                 

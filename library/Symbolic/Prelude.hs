@@ -20,6 +20,7 @@ type PolynomialSym n = OrderedPolynomial (Expr Integer) Grevlex n
 type OrderedMonomial' n = OrderedMonomial Grevlex n
 
 
+
 -- | Function that get the common term of a symbolic polynomial
 simplifyNumSym :: (KnownNat n )
             => PolynomialSym n -> PolynomialSym n

@@ -5,6 +5,9 @@
 -- wrote in their libraries.
 import Example
 import Core
+import AlgebraicPrelude
+import Algebra.Ring.Polynomial hiding (leadingTerm)
+import qualified Data.Map.Strict as M
 
 
 main :: IO ()

@@ -11,7 +11,7 @@ module Symbolic.Expr
     evaluate,
     varSym,
     fromExpr,
-    toExpr,
+    toExpr
 
 ) where
 
@@ -88,12 +88,14 @@ printExp (x:xs)
         symb = fst x
         exp = snd x 
 
-
 symbExpr :: [String] -> [(String, Integer)]
 symbExpr str = transf
     where 
         types = nub str 
         transf = map (\x -> (x, sum [1| e<-str, e==x])) types
+
+
+
 
 instance (Ord a) => Ord (Expr a) where
     Expr a `compare` Expr b
@@ -271,6 +273,8 @@ varSym str = Expr $ M.fromList [([str],1)]
 
 fromInteger :: Integer -> Expr Integer
 fromInteger int = Expr $ M.fromList [([""],int)]
+
+
 
 
 evaluate :: Expr Integer -> String -> Integer -> Expr Integer

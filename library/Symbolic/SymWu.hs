@@ -1,6 +1,6 @@
 {-# LANGUAGE MultiParamTypeClasses, NoImplicitPrelude, FlexibleContexts #-}
 
-module Symbolic.SymWu (charSetSym, stepCharSetSym, printWuSet) where
+module Symbolic.SymWu (charSetSym, stepCharSetSym, printWuSet, runMathematica) where
 
 import AlgebraicPrelude hiding (appendFile, fromString , (\\))
 import Algebra.Ring.Polynomial hiding (leadingMonomial, leadingTerm)
@@ -17,6 +17,7 @@ import Data.Maybe
 import Data.Singletons
 import Data.List ((\\))
 import System.Directory
+import System.Process
 
 
 -- | Given a two list of Symbolic Polynomials ([PolynomialSym n]) and an Integer return the Ascending Chain 
@@ -137,6 +138,8 @@ printCoeffs new@(n:ns) old@(o:os) path = do
                                         printTail <- printCoeffs ns os path
                                         return ()
 
+
+-- | Given a set of Polinomials print only the string part that apear on all the polinomials
 printInitCoeffs :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n)
         => [PolynomialSym n] -> FilePath -> IO ()
 printInitCoeffs pols path = do
@@ -144,15 +147,17 @@ printInitCoeffs pols path = do
                             printHead <- printLine coeffs path
                             return ()
 
+-- | Given a list print a line in a file 
 printLine :: (Show k) => [k] -> FilePath -> IO ()
 printLine x path = do 
                     a <- appendFile path $ show x
                     return () 
 
+-- | Given a Polynomials generate a string to print it
 printPolynomial :: (KnownNat n) => PolynomialSym n -> String 
 printPolynomial pol = dropPlusSign $  showTerms $ reverse $ M.toList $ _terms pol
 
-
+-- | Given A String add Strings between the chars
 dropPlusSign :: String -> String
 dropPlusSign [] = error "String too short in dropPlusSign function"
 dropPlusSign [_] = error "String too short in dropPlusSign function"
@@ -161,6 +166,7 @@ dropPlusSign s@(x:y:z:a)
     | (x:y:[z]) == " + " = a
     | otherwise = s
 
+-- | Given a Monomial, the function transform it to a string
 showTerms :: (Unital k, Eq k, Show k, KnownNat n) =>  [(OrderedMonomial Grevlex n, k)] -> String
 showTerms [] = ""
 showTerms (t:ts)
@@ -172,11 +178,13 @@ showTerms (t:ts)
         mon = fst t
         monList = S.toList $ getMonomial mon 
 
+-- | Given a List of integers print it as a monomial
 showMon :: [Int] -> String
 showMon mon = idexToStr idxMon
     where 
         idxMon = getIndeces mon 0
 
+-- | Auxiliar function to  print the monomials
 idexToStr :: [(Int,Int)] -> String
 idexToStr [] = ""
 idexToStr [x]
@@ -189,6 +197,7 @@ idexToStr (x:xs)
         var = fst x
         sup = snd x 
 
+-- | Auxiliar function to get the indices and positon of the indices
 getIndeces :: [Int] -> Int -> [(Int, Int)]
 getIndeces [] _ = []
 getIndeces (x:xs) pos  
@@ -201,13 +210,16 @@ getIndeces (x:xs) pos
 
 -- | Given a list of polynomials and an integer run the Wu's characteristic set and print each step
 printWuSet :: (KnownNat n1) => [PolynomialSym n1]  -> Int -> Int -> IO ()
-printWuSet [] var cont =  return ()
+printWuSet [] var cont = return ()
 printWuSet  pols var cont = do
+                placeToSaveInitPols <- fmap (++ ("/Output/InitPols.txt")) getCurrentDirectory
                 placeToSaveAscChain <- fmap (++ ("/Output/AscChain.txt")) getCurrentDirectory
                 placeToSaveNewSet <- fmap (++ ("/Output/NewSetStep_"++ (show var)++".txt")) getCurrentDirectory
                 placeToSaveCoeffs <- fmap (++ ("/Output/CoeffsStep_"++ (show var)++".txt")) getCurrentDirectory
                 placeToSaveInitCo <- fmap (++ ("/Output/SymVars.txt")) getCurrentDirectory
+              --  when (cont == 0) (callCommand "rm ~/Proyectos/Haskell/Projects/Wu-Char-Set/Output/*.txt")
                 when (cont == 0) (printInitCoeffs pols placeToSaveInitCo)
+                when (cont == 0) (printPolys pols placeToSaveInitPols)
                 let (chain, newPols, newVar) = ( \(a, b, c) -> (simplifyNumSym a, map simplifyNumSym b, c) ) $ stepCharSetSym pols var
                 if (newVar == var) 
                         then do (printWuSet newPols newVar 1)
@@ -219,5 +231,6 @@ printWuSet  pols var cont = do
                                         else do writeNewSet <- printPolys newSet placeToSaveNewSet
                                                 printWuSet newSet newVar 1
 
-
+runMathematica :: IO ()
+runMathematica = callCommand "mathematica ~/Proyectos/Haskell/Projects/Wu-Char-Set/MathematicaNoteBooks/wu_graphics.nb &"
                                 

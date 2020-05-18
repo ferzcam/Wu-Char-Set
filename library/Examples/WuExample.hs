@@ -1,7 +1,7 @@
 {-# LANGUAGE MultiParamTypeClasses, NoImplicitPrelude              #-}
 {-# LANGUAGE ConstraintKinds, DataKinds, GADTs, KindSignatures     #-}
 
-module Examples.WuExample (testPrintWu1, d1, d2) where 
+module Examples.WuExample (testPrintWu1, testPrintWu2, d1, d2) where 
 
 import AlgebraicPrelude
 import Algebra.Ring.Polynomial hiding (leadingTerm)
@@ -44,3 +44,6 @@ d3 = (x - g!*1)^2 + (y - h!*1)^2  - (t - i!*1)^2 - u!*1
 
 testPrintWu1 :: IO()
 testPrintWu1 = printWuSet [d1,d2] 0 0
+
+testPrintWu2 :: IO()
+testPrintWu2 = printWuSet [d1,d2,d3] 0 0

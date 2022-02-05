@@ -23,6 +23,6 @@ where
     import Polynomial.TheoremProver
     import Util.Traslator
     import Symbolic.Expr
-    import Symbolic.Prelude (PolynomialSym)
+    import Symbolic.Prelude (PolynomialSym, simplifyNumSym)
     import Symbolic.SymRem
     import Symbolic.SymWu

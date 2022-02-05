@@ -38,20 +38,27 @@ packages:
 # Dependency packages to be pulled from upstream that are not in the resolver
 # using the same syntax as the packages field.
 # (e.g., acme-missiles-0.3)
+
 extra-deps:
-- /home/anthony/Proyectos/Haskell/Projects/Packages/computational-algebra-master/halg-polynomials
-- /home/anthony/Proyectos/Haskell/Projects/Packages/computational-algebra-master/halg-core
+- /home/anthony/Projects/Haskell/Libraries/computational-algebra/halg-polynomials
+- /home/anthony/Projects/Haskell/Libraries/computational-algebra/halg-core
 - algebra-4.3.1
 - algebraic-prelude-0.1.1.0
 - equational-reasoning-0.6.0.1
-- ghc-typelits-presburger-0.3.0.0
-- sized-0.4.0.0
-- type-natural-0.8.3.1
+- ghc-typelits-presburger-0.4.0.0
+- singletons-presburger-0.4.0.0
+- sized-0.9.0.0
+- type-natural-0.9.0.0@rev:1
 - unamb-0.2.7
 - basic-prelude-0.6.1.1
 - ReadArgs-1.2.3
 - singletons-2.5.1
 - random-shuffle-0.0.4
+- subcategories-0.1.0.0
+- control-monad-loop-0.1
+- repa-3.4.1.4
+- mono-traversable-1.0.15.0
+- semialign-1.1.0.1
 # Override default flag values for local packages and extra-deps
 # flags: {}
 

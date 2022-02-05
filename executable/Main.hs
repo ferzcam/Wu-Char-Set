@@ -11,6 +11,6 @@ import qualified Data.Map.Strict as M
 
 
 main :: IO ()
-main = putStrLn "Main Excutable"
+main = putStrLn "Main"
 
 

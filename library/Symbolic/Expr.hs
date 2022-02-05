@@ -48,16 +48,24 @@ instance Show (Expr Integer) where
                         then "1" 
                         else if ( (length $ showSym (M.toList a) ) == 1 || (length $ showSym (M.toList a) ) == 2 ) 
                             then showSym (M.toList a) 
-                            else  "("++ showSym (M.toList a) ++")"
+                            else  "("++ (postFilter $ showSym (M.toList a)) ++")"
     show (Expr a :/: Expr b) = showSym (M.toList a) ++ "/" ++ showSym (M.toList b)
+
+
+postFilter :: String -> String 
+postFilter str  
+    | last str == '*' = init str
+    | otherwise = str
 
 
 showSym :: [([String],Integer)] -> String
 showSym [] = ""
 showSym [(x,c)]
     | c == 1 =  showTermSym x
-    | c == -1 = show c ++ showTermSym x
-    | otherwise = show c ++ "*" ++ showTermSym x
+--    | c == -1 = show c ++ showTermSym x
+--    | c < 0 =   show c ++  showTermSym x
+--    | otherwise = show c ++ "*" ++ showTermSym x
+    | otherwise = show c  ++ showTermSym x
 showSym (x:xs)
     | c == -1 = showSym xs ++ "-" ++ showTermSym s 
     | c == 1 = showSym xs ++ "+" ++ showTermSym s 

@@ -29,7 +29,6 @@ library:
   - matrix
   - random
   - random-shuffle
-  extra-deps:
   source-dirs: library
 
 

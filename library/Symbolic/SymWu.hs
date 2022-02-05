@@ -1,6 +1,6 @@
 {-# LANGUAGE MultiParamTypeClasses, NoImplicitPrelude, FlexibleContexts #-}
 
-module Symbolic.SymWu (charSetSym, stepCharSetSym, printWuSet, runMathematica) where
+module Symbolic.SymWu (charSetSym, stepCharSetSym, printWuSet, runMathematica, changeVariablesList, changeVariables) where
 
 import AlgebraicPrelude hiding (appendFile, fromString , (\\))
 import Algebra.Ring.Polynomial hiding (leadingMonomial, leadingTerm)
@@ -100,7 +100,7 @@ changeVariablesList [] _ _ = []
 changeVariablesList (x:xs) step coeff = (newPolX : changeVariablesList xs step (succ lastCoeff))
         where
                 newPolX = changeVariables x step coeff
-                lastCoeff = (toCoeff . snd . head . M.toList . terms) newPolX
+                lastCoeff = (toCoeff .  head . filter (\a -> toCoeff a /= Coeff "") . map snd  . M.toList . terms) newPolX
 
              
 
@@ -143,7 +143,7 @@ printCoeffs new@(n:ns) old@(o:os) path = do
 printInitCoeffs :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n)
         => [PolynomialSym n] -> FilePath -> IO ()
 printInitCoeffs pols path = do
-                            let coeffs = sort $ foldl1 (++) $ map (\x -> nub $ foldl1 (++ ) $ foldl1 (++) $ foldl1  (++) $ map ( map (nub . fst) . M.toList. fromExpr)  $ map (snd) $ M.toList $ _terms x) pols
+                            let coeffs = sort $ nub $ foldl1 (++) $ map (\x -> nub $ foldl1 (++ ) $ foldl1 (++) $ foldl1  (++) $ map ( map (nub . fst) . M.toList. fromExpr)  $ map (snd) $ M.toList $ _terms x) pols
                             printHead <- printLine coeffs path
                             return ()
 

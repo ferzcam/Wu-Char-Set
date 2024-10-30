@@ -2,6 +2,7 @@
 
 module Polynomial.Prelude where
 
+-- import Algebra.Ring.Polynomial.Class hiding (leadingMonomial, leadingTerm)
 import Algebra.Ring.Polynomial hiding (leadingMonomial, leadingTerm)
 import qualified Data.Map.Strict as MS 
 import qualified Data.Sized.Builtin as S (toList)
@@ -14,7 +15,8 @@ import GHC.TypeLits
 import qualified Data.Sized as DS
 import Control.Arrow
 import Data.Proxy
-import Data.Singletons
+-- import Data.Singletons
+import Data.Type.Natural
 
 type Polynomial' n = OrderedPolynomial Rational Grevlex n
 type OrderedMonomial' n = OrderedMonomial Grevlex n
@@ -99,7 +101,7 @@ leadingCoeff pol var = fst $ leadingTerm pol var
 
 
 toMonomial :: (KnownNat n) => [Int] -> OrderedMonomial Grevlex n
-toMonomial a = orderMonomial Proxy (fromList sing a)
+toMonomial a = orderMonomial Proxy (fromList sNat a)
 
 --Genera un polinomio del tipo p(x1,x2,...xn) = xi^k
 mon :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex)

@@ -18,7 +18,7 @@
 #
 # resolver: ./custom-snapshot.yaml
 # resolver: https://example.com/snapshots/2018-01-01.yaml
-resolver: lts-14.2
+resolver: lts-17.0
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -34,23 +34,39 @@ resolver: lts-14.2
 #  - auto-update
 #  - wai
 packages:
-- .
+- '.'
 # Dependency packages to be pulled from upstream that are not in the resolver
 # using the same syntax as the packages field.
 # (e.g., acme-missiles-0.3)
 extra-deps:
-- /home/anthony/Proyectos/Haskell/Projects/Packages/computational-algebra-master/halg-polynomials
-- /home/anthony/Proyectos/Haskell/Projects/Packages/computational-algebra-master/halg-core
-- algebra-4.3.1
-- algebraic-prelude-0.1.1.0
-- equational-reasoning-0.6.0.1
-- ghc-typelits-presburger-0.3.0.0
-- sized-0.4.0.0
-- type-natural-0.8.3.1
-- unamb-0.2.7
-- basic-prelude-0.6.1.1
-- ReadArgs-1.2.3
-- singletons-2.5.1
+- git: https://github.com/konn/computational-algebra
+  commit: "179c3617605c87daaac9f88ea81146c41e54f602"
+  subdirs:
+    - halg-core
+    - halg-polynomials
+- algebra-4.3.1@sha256:5bb7e0db14ee455e54005a6948fb9dd4440a1e5dc766480c2ac46cda01a6d2b1,4129
+- algebraic-prelude-0.1.1.0@sha256:08ee78346a36aee6533fa44acaeff3c5e94910a6413fb0d249e2c122ece3ad72,1247
+- basic-prelude-0.6.1.1@sha256:c798883a924cbd3f3071eaa3e951ba005f7d082e9aff119586ce0a05511ffebf,2051
+- semigroups-0.18.5@sha256:41ef9f5f183f66c519c5cddcb3fbfdbc9b67a2b7bfae7d81f91de9ff7367d8c6,5828
+- ReadArgs-1.2.3@sha256:c592c1e87db8e14e82a659e5b8b5d704b2a13263eaaab9934bfe807e8d415d50,3019
+- unamb-0.2.7@sha256:ce5db0575bca8ca04c9e9dce3ba75b6f9e5ceea834c6ba4fae45aca6fa963334,2385
+
+    # - algebraic-prelude
+# - basic-prelude-0.6.1.1@sha256:c798883a924cbd3f3071eaa3e951ba005f7d082e9aff119586ce0a05511ffebf,2051
+# - lens-4.19.2@sha256:d4d704141d7c322bbfb746157b0709f3b966dfec92421f571c34069893af08cc,16062
+# - semigroups-0.18.5@sha256:41ef9f5f183f66c519c5cddcb3fbfdbc9b67a2b7bfae7d81f91de9ff7367d8c6,5828
+# - Cabal-3.2.1.0@sha256:8743076ec022296f9771d962000c9ca3a0fe02e68c37b992c63e382a675f791d,27482
+# - ReadArgs-1.2.3@sha256:c592c1e87db8e14e82a659e5b8b5d704b2a13263eaaab9934bfe807e8d415d50,3019
+# - template-haskell-2.16.0.0@sha256:71d8c2e92b712695cb4fd0be9cd1a41b05c25315e9748cfef1132bf4d02b6556,1917
+
+# - equational-reasoning-0.6.0.1
+# - ghc-typelits-presburger-0.3.0.0
+# - sized-0.4.0.0
+# - type-natural-0.8.3.1
+# - unamb-0.2.7
+# - basic-prelude-0.6.1.1
+# - ReadArgs-1.2.3
+# - singletons-2.5.1
 # Override default flag values for local packages and extra-deps
 # flags: {}
 

@@ -1,60 +1,55 @@
--- This file has been generated from package.yaml by hpack version 0.28.2.
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.35.0.
 --
 -- see: https://github.com/sol/hpack
---
--- hash: 53dd4a7acd8ade173a39eac25004715c97d5308eda32dd85c431115e6b383c27
 
 name:           Wu-Char-Set
 version:        0.0.0
-homepage:       https://github.com/ferynando7/Wu-Char-Set#readme
-bug-reports:    https://github.com/ferynando7/Wu-Char-Set/issues
+homepage:       https://github.com/ferzcam/Wu-Char-Set#readme
+bug-reports:    https://github.com/ferzcam/Wu-Char-Set/issues
 author:         Fernando Zhapa
 maintainer:     Fernando Zhapa
---license:        MIT
+license:        MIT
+license-file:   LICENSE
 build-type:     Simple
-cabal-version:  >= 1.10
 extra-source-files:
     CHANGELOG.md
---    LICENSE.md
+    LICENSE
     package.yaml
     README.md
     stack.yaml
 
 source-repository head
   type: git
-  location: https://github.com/ferynando7/Wu-Char-Set
-
-
+  location: https://github.com/ferzcam/Wu-Char-Set
 
 library
   exposed-modules:
-      Example
-      Polynomial.Prelude
-      Polynomial.Wu
-      Polynomial.TheoremProver
-      Util.Tokenizer
       Core
+      Example
   other-modules:
+      Polynomial.Prelude
+      Polynomial.RandomPol
+      Polynomial.TheoremProver
+      Polynomial.Wu
+      Util.Tokenizer
       Paths_Wu_Char_Set
   hs-source-dirs:
       library
-  ghc-options:  -Wall,
-                -freverse-errors
+  ghc-options: -Wall -freverse-errors
   build-depends:
-      base, 
-      containers, 
-      algebra, 
-      halg-polynomials, 
-      sized, 
-      type-natural, 
-      matrix,
-      singletons,
-      random,
-      random-shuffle
+      algebra
+    , base >=4.7 && <5
+    , containers
+    , halg-core
+    , halg-polynomials
+    , matrix
+    , random
+    , random-shuffle
+    , sized
+    , type-natural
   default-language: Haskell2010
-
-
-
 
 executable Wu-Char-Set
   main-is: Main.hs
@@ -62,35 +57,34 @@ executable Wu-Char-Set
       Paths_Wu_Char_Set
   hs-source-dirs:
       executable
-  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N -freverse-errors
+  ghc-options: -Wall -freverse-errors
   build-depends:
       Wu-Char-Set
-    , base, containers
+    , base
+    , random
+    , random-shuffle
   default-language: Haskell2010
 
 test-suite Wu-Char-Set-test-suite
   type: exitcode-stdio-1.0
   main-is: Main.hs
   other-modules:
-      Paths_Wu_Char_Set
-      TPolynomial.TPrelude
+      Core
       Examples.Apolonius
       Examples.EquilateralTri
-      Examples.Pascal
+      Examples.NinePoints
       Examples.Parallelogram
-      Core
-      
+      Examples.Pascal
+      TPolynomial.TPrelude
+      Paths_Wu_Char_Set
   hs-source-dirs:
       test-suite
-  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N1 -freverse-errors  -Wname-shadowing
+  ghc-options: -Wall -freverse-errors
   build-depends:
-      Wu-Char-Set
-    , base
+      base
     , tasty
     , tasty-hspec
     , tasty-hunit
-    , containers
-    , halg-polynomials
   default-language: Haskell2010
 
 benchmark Wu-Char-Set-benchmarks
@@ -100,10 +94,8 @@ benchmark Wu-Char-Set-benchmarks
       Paths_Wu_Char_Set
   hs-source-dirs:
       benchmark
-  ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N4 -freverse-errors
+  ghc-options: -Wall -freverse-errors
   build-depends:
-      Wu-Char-Set
-    , base
+      base
     , criterion
   default-language: Haskell2010
-

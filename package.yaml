@@ -3,7 +3,7 @@
 # this file: <https://github.com/sol/hpack>.
 name: Wu-Char-Set
 version: '0.0.0'
-github: "ferynando7/Wu-Char-Set"
+github: "ferzcam/Wu-Char-Set"
 license: MIT
 author: "Fernando Zhapa"
 maintainer: "Fernando Zhapa"
@@ -13,7 +13,7 @@ maintainer: "Fernando Zhapa"
 
 extra-source-files:
 - CHANGELOG.md
-- LICENSE.md
+- LICENSE
 - package.yaml
 - README.md
 - stack.yaml
@@ -21,15 +21,25 @@ extra-source-files:
 ghc-options: -Wall
 
 library:
+  source-dirs: library
   dependencies:
-  - base
+  - base >=4.7 && <5
   - containers
+  - halg-core
+  - halg-polynomials
   - algebra
   - sized
+  - type-natural
   - matrix
+  - random
   - random-shuffle
-  extra-deps:
-  source-dirs: library
+  
+  exposed-modules:
+    - Core
+    - Example
+
+  ghc-options:
+    - -freverse-errors
 
 
 executables:
@@ -39,35 +49,37 @@ executables:
     dependencies:
     - base
     - Wu-Char-Set
+    - random
+    - random-shuffle
+    
     ghc-options:
-    - -rtsopts
-    - -threaded
-    - -with-rtsopts=-N
+      - -freverse-errors
 
+
+  
 benchmarks:
   Wu-Char-Set-benchmarks:
     source-dirs: benchmark
     main: Main.hs
     dependencies:
     - base
-    - Wu-Char-Set
     - criterion
-    ghc-options:
-    - -rtsopts
-    - -threaded
-    - -with-rtsopts=-N
 
+    ghc-options:
+      - -freverse-errors
+
+
+  
 tests:
   Wu-Char-Set-test-suite:
     source-dirs: test-suite
     main: Main.hs
     dependencies:
     - base
-    - Wu-Char-Set
     - tasty
     - tasty-hspec
     - tasty-hunit
+
     ghc-options:
-    - -rtsopts
-    - -threaded
-    - -with-rtsopts=-N
+      - -freverse-errors
+

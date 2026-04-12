@@ -15,11 +15,18 @@ import GHC.TypeLits
 -- Function that test a geometric theorem. 
 -- Inputs: hip, Hipotheses Polynomials; g, Theorem Polynomial. 
 -- Output: list of the pseudo remainders of g with respect to the ascending chain
-theoremProver :: (IsMonomialOrder n Grevlex, KnownNat n) 
+theoremProver :: (IsMonomialOrder n Grevlex, KnownNat n)
     => [Polynomial' n] -> Polynomial' n -> [Polynomial' n]
 theoremProver hip g = remWithChain wuChain g 0
-    where 
+    where
         wuChain =  charSet hip [] 0
+
+-- | Like 'theoremProver', but also returns the characteristic set (Wu chain).
+theoremProverVerbose :: (IsMonomialOrder n Grevlex, KnownNat n)
+    => [Polynomial' n] -> Polynomial' n -> ([Polynomial' n], [Polynomial' n])
+theoremProverVerbose hip g = (wuChain, remWithChain wuChain g 0)
+    where
+        wuChain = charSet hip [] 0
       
 -- Function that get the pseudoremider of a polinomial with
 -- respect to a set of polynomials

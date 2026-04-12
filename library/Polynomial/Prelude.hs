@@ -214,3 +214,7 @@ tryDiv' (a, f) (b, g)
 
 getArity :: Polynomial' n -> Int
 getArity = (length.DS.toList.getMonomial.fst.head.MS.toList._terms)
+
+-- | Number of terms in a polynomial
+polyNumTerms :: Polynomial' n -> Int
+polyNumTerms p = MS.size (_terms p)

@@ -8,10 +8,16 @@ triangle A B C
 on_line A1 B C
 on_line B1 A C
 on_line P A A1
-on_line Q B B1
+# Q is determined by: on BB1 and AB parallel PQ
+dep_point Q
+collinear B Q B1
 para A B P Q
-on_line P1 B1 P
+# P1 is determined by: on B1P and angle BAC = angle PP1C
+dep_point P1
+collinear B1 P1 P
 eqangle B A C P P1 C
-on_line Q1 A1 Q
+# Q1 is determined by: on A1Q and angle ABC = angle QQ1C
+dep_point Q1
+collinear A1 Q1 Q
 eqangle A B C Q Q1 C
 prove_cyclic P P1 Q Q1

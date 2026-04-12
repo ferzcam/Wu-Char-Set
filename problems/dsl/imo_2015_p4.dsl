@@ -1,24 +1,33 @@
-# IMO 2015 P4
-# Angle-chase heavy; translation is a compressed best-effort.
-# Chain: F with AF=BF and bisector; C on AF with BC perp BF;
-# D on AZ with AD=CD; E analogous. M midpoint CF; X via parallelogram;
-# Y = EM ∩ FX. Prove B, D, Y collinear.
+# IMO 2015 P4 (from AlphaGeometry formulation)
+# D on BC. E = other intersection of circle(A,D) and line BC.
+# F,G = two intersections of circles (A,D) and (O,A).
+# O1 = circumcenter(FBD), O2 = circumcenter(ECG).
+# K = other intersection of circle(O1,B) and line AB.
+# L = other intersection of circle(O2,C) and line AC.
+# X = FK ∩ GL. Prove A, O, X collinear.
+#
+# Uses mirror trick for trivial intersections and for
+# getting both circle-circle intersection points.
 
-triangle A B Z
-free F
-cong A F B F
-eqangle B A F F A Z
-on_line C A F
-perp B C B F
-on_line D A Z
-cong A D C D
-eqangle A C D D A C
-free E
-cong A E D E
-eqangle C A D D A E
-midpoint M C F
-free X
-para A E M X
-para A M E X
-inter_ll Y E M F X
-prove_collinear B D Y
+triangle A B C
+circumcenter O C B A
+on_line D B C
+# E = other intersection of circle(A,D) and line BC
+# (D is trivially on both; midpoint of DE = foot of A on BC)
+foot MDE A B C
+mirror E D MDE
+# F = one intersection of circles (A,D) and (O,A)
+inter_cc F A D O A
+# G = other intersection (mirror F through line of centers AO)
+foot HF F A O
+mirror G F HF
+circumcenter O1 F B D
+circumcenter O2 E C G
+# K = other intersection of circle(O1,B) and line AB (B is trivial)
+foot MBK O1 A B
+mirror K B MBK
+# L = other intersection of circle(O2,C) and line AC (C is trivial)
+foot MCL O2 A C
+mirror L C MCL
+inter_ll X F K G L
+prove_collinear A O X

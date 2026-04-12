@@ -3,26 +3,23 @@
 # from D to lines BC, CA, AB respectively. Show that PQ = QR if the bisectors
 # of angles ABC and ADC meet on segment AC.
 #
-# AlphaGeometry translation:
-# Let ABC be a triangle. Define O as circumcenter of CBA.
-# Define B1 on circle(O,A) such that angle(B1AC) = angle(ACB1).
-# Define D1 on circle(O,A) such that angle(ACD1) = angle(D1AC).
-# Define X as intersection of lines AC and BB1.
-# Define D as intersection of circle(O,A) and line D1X.
-# Define P as foot of D on BC.
-# Define Q as foot of D on AC.
-# Define R as foot of D on AB.
-# Prove PQ = QR.
+# AlphaGeometry formulation:
+# B1 on circumcircle with angle(B1AC)=angle(ACB1).
+# D1 on circumcircle with angle(ACD1)=angle(D1AC).
+# X = AC ∩ BB1. D = circumcircle ∩ line(D1,X).
+# P,Q,R feet from D. Prove PQ = QR.
 
 triangle A B C
 circumcenter O C B A
 
-# B1 on circle(O,A) with angle constraint
-on_circle B1 O A
+# B1 on circle(O,A) such that angle(B1AC) = angle(ACB1) (determined)
+dep_point B1
+cong O B1 O A
 eqangle B1 A C A C B1
 
-# D1 on circle(O,A) with angle constraint
-on_circle D1 O A
+# D1 on circle(O,A) such that angle(ACD1) = angle(D1AC) (determined)
+dep_point D1
+cong O D1 O A
 eqangle A C D1 D1 A C
 
 # X = intersection of AC and BB1

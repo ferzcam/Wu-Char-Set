@@ -1,12 +1,17 @@
 # IMO 2014 P4
-# P, Q on BC with angle conditions.
+# P on BC such that angle(BAC) = angle(AP,BC).
+# Q on BC such that angle(ABC) = angle(CAQ).
 # M = mirror A through P; N = mirror A through Q.
 # X = BM ∩ CN. O circumcenter. Prove AO = XO.
 
 triangle A B C
-on_line P B C
+# P on BC determined by angle condition
+dep_point P
+collinear B P C
 eqangle B A C A P B
-on_line Q B C
+# Q on BC determined by angle condition
+dep_point Q
+collinear B Q C
 eqangle A B C C A Q
 mirror M A P
 mirror N A Q

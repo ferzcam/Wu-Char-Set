@@ -210,6 +210,19 @@ corresponding `problems/*.txt`, read the original statement, verify the
 DSL preserves the same hypotheses and conclusion. Cross-reference the
 JGEX translations from Sinha et al. where available.
 
+### 4. Add a ratio-equality conclusion type
+
+**What.** `imo_2007_p4` requires proving `KK1/LL1 = RQ/RP` (a ratio of
+distances). The current DSL only supports `prove_cong`, `prove_collinear`,
+`prove_cyclic`, `prove_para`, `prove_perp`, and `prove_eqangle`. A ratio
+equality `|AB|/|CD| = |EF|/|GH|` is equivalent to the polynomial
+condition `|AB|²·|GH|² - |CD|²·|EF|² = 0`, which Wu's method can handle
+but the conclusion type doesn't exist yet.
+
+**How.** Add `prove_ratio A B C D E F G H` (meaning `|AB|/|CD| = |EF|/|GH|`)
+to `GeoConclusion`, the parser, and `conclusionToHyp`. The polynomial is
+the cross-multiplied squared-distance difference.
+
 ### Recommendation
 
 Do **(1) first** — single-line change, potentially unlocks many problems.

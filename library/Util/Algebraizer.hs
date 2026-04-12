@@ -41,7 +41,11 @@ data GeoStep
     -- ^ @free P@: unconstrained free point
   | GDepPoint String
     -- ^ @dep_point P@: fully-dependent point (2 X coords, no automatic constraints)
+  | GSemiFree String
+    -- ^ @semi_free P@: 1 free U coord + 1 dependent X coord, no automatic constraints
   -- Additional constraints (for "such that" conditions)
+  | GCollinear String String String
+    -- ^ @collinear A B C@: A, B, C are collinear
   | GPerp String String String String
     -- ^ @perp A B C D@: AB is perpendicular to CD
   | GPara String String String String
@@ -277,7 +281,18 @@ processStep (GDepPoint p) st =
   let (_, st1) = freshPointXX p st
   in st1
 
+-- Semi-free point (0 constraints here, 1 U + 1 X — constraint added separately)
+processStep (GSemiFree p) st =
+  let (_, st1) = freshPointUX p st
+  in st1
+
 -- Pure constraints (no new points)
+processStep (GCollinear a b c) st =
+  let ptA = lookupPt a st
+      ptB = lookupPt b st
+      ptC = lookupPt c st
+  in addHyps [Collinear ptA ptB ptC] st
+
 processStep (GPerp a b c d) st =
   let ptA = lookupPt a st
       ptB = lookupPt b st
@@ -370,6 +385,8 @@ algebraize prob =
 -- > on_line P A B
 -- > free P
 -- > dep_point P
+-- > semi_free P
+-- > collinear A B C
 -- > perp A B C D
 -- > para A B C D
 -- > cong A B C D
@@ -418,6 +435,8 @@ parseStep line = case words line of
   ("on_line":p:a:b:_)        -> GOnLine p a b
   ("free":p:_)               -> GFreePoint p
   ("dep_point":p:_)           -> GDepPoint p
+  ("semi_free":p:_)           -> GSemiFree p
+  ("collinear":a:b:c:_)      -> GCollinear a b c
   ("perp":a:b:c:d:_)         -> GPerp a b c d
   ("para":a:b:c:d:_)         -> GPara a b c d
   ("cong":a:b:c:d:_)         -> GCong a b c d

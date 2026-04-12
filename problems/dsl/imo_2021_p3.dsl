@@ -1,12 +1,14 @@
 # IMO 2021 P3
-# AD bisector of ∠BAC; E on AC with ∠ADE=∠BCD; F on AB with ∠ADF=∠CBD.
+# D on BC with AD bisector of ∠BAC (0 DOF — intersection of bisector with BC).
+# E on AC with ∠ADE=∠BCD; F on AB with ∠ADF=∠CBD.
 # X on AC with BX=CX. O1 circumcenter(CDA); O2 circumcenter(EDX).
 # Y = BC ∩ EF. Prove O1, O2, Y collinear.
 
 triangle A B C
-# D on the angle bisector of ∠BAC (1 DOF along the bisector)
-incenter I A B C
-on_line D A I
+# D = intersection of A-angle bisector with BC (determined)
+dep_point D
+collinear B D C
+eqangle B A D D A C
 # E on AC such that ∠ADE = ∠BCD (determined)
 dep_point E
 collinear A E C

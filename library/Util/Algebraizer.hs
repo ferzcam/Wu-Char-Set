@@ -77,32 +77,32 @@ data AlgResult = AlgResult
   { arPoints     :: Map.Map String Point
   , arHypotheses :: [Hypothesis]
   , arConclusion :: Conclusion
-  , arNumXVars   :: Int  -- ^ Number of dependent (X) variables
-  , arNumUVars   :: Int  -- ^ Number of free (U) parameters
+  , arNumXVars   :: Int      -- ^ Total number of X variables (free + dependent)
+  , arFreeVars   :: [Coord]  -- ^ Which X variables are free (unconstrained)
   } deriving (Show)
 
 -- | State threaded through algebraization
 data AlgState = AlgState
-  { asPoints  :: Map.Map String Point
-  , asHyps    :: [Hypothesis]
-  , asNextX   :: Int  -- ^ Next X variable index
-  , asNextU   :: Int  -- ^ Next U variable index
+  { asPoints    :: Map.Map String Point
+  , asHyps      :: [Hypothesis]
+  , asNextX     :: Int      -- ^ Next X variable index
+  , asFreeVars  :: [Coord]  -- ^ Accumulated free coordinates
   } deriving (Show)
 
 -- | Create initial state with coordinate frame fixed:
 -- First triangle vertex at origin, second on x-axis.
 initState :: AlgState
-initState = AlgState Map.empty [] 1 1
+initState = AlgState Map.empty [] 1 []
 
--- | Create a fresh dependent (X) coordinate
+-- | Create a fresh X coordinate
 freshX :: AlgState -> (Coord, AlgState)
 freshX st = (X ("x" ++ show (asNextX st)), st { asNextX = asNextX st + 1 })
 
--- | Create a fresh free (U) coordinate
-freshU :: AlgState -> (Coord, AlgState)
-freshU st = (U ("u" ++ show (asNextU st)), st { asNextU = asNextU st + 1 })
+-- | Mark a coordinate as free (unconstrained)
+markFree :: Coord -> AlgState -> AlgState
+markFree c st = st { asFreeVars = c : asFreeVars st }
 
--- | Create a fresh fully-determined point (2 X coords)
+-- | Create a fresh fully-determined point (2 X coords, both dependent)
 freshPointXX :: String -> AlgState -> (Point, AlgState)
 freshPointXX name st =
   let (cx, st1) = freshX st
@@ -110,23 +110,26 @@ freshPointXX name st =
       pt = Point cx cy
   in (pt, st2 { asPoints = Map.insert name pt (asPoints st2) })
 
--- | Create a fresh semi-free point (1 U, 1 X coord) — for points with 1 DOF
-freshPointUX :: String -> AlgState -> (Point, AlgState)
-freshPointUX name st =
-  let (cu, st1) = freshU st
-      (cx, st2) = freshX st1
-      pt = Point cu cx
-  in (pt, st2 { asPoints = Map.insert name pt (asPoints st2) })
+-- | Create a semi-free point (2 X coords, first is free, second dependent)
+freshPointFreeX :: String -> AlgState -> (Point, AlgState)
+freshPointFreeX name st =
+  let (cx, st1) = freshX st
+      st2 = markFree cx st1
+      (cy, st3) = freshX st2
+      pt = Point cx cy
+  in (pt, st3 { asPoints = Map.insert name pt (asPoints st3) })
 
--- | Create a fully free point (2 U coords)
-freshPointUU :: String -> AlgState -> (Point, AlgState)
-freshPointUU name st =
-  let (cu1, st1) = freshU st
-      (cu2, st2) = freshU st1
-      pt = Point cu1 cu2
-  in (pt, st2 { asPoints = Map.insert name pt (asPoints st2) })
+-- | Create a fully free point (2 X coords, both free)
+freshPointFreeFree :: String -> AlgState -> (Point, AlgState)
+freshPointFreeFree name st =
+  let (cx, st1) = freshX st
+      st2 = markFree cx st1
+      (cy, st3) = freshX st2
+      st4 = markFree cy st3
+      pt = Point cx cy
+  in (pt, st4 { asPoints = Map.insert name pt (asPoints st4) })
 
--- | Register a point with fixed coordinates (constants)
+-- | Register a point with fixed coordinates (constants or existing coords)
 fixedPoint :: String -> Coord -> Coord -> AlgState -> AlgState
 fixedPoint name cx cy st = st { asPoints = Map.insert name (Point cx cy) (asPoints st) }
 
@@ -143,15 +146,18 @@ addHyps hs st = st { asHyps = asHyps st ++ hs }
 -- | Process a single construction step
 processStep :: GeoStep -> AlgState -> AlgState
 
--- Triangle: A at origin, B on x-axis, C free
+-- Triangle: A at origin, B on x-axis (1 free coord), C free (2 free coords)
 processStep (GTriangle a b c) st =
-  let st1 = fixedPoint a (U "0") (U "0") st
-      (ub, st2) = freshU st1
-      st3 = fixedPoint b ub (U "0") st2
-      (uc1, st4) = freshU st3
-      (uc2, st5) = freshU st4
-      st6 = fixedPoint c uc1 uc2 st5
-  in st6
+  let st1 = fixedPoint a (Const 0) (Const 0) st
+      (bx, st2) = freshX st1
+      st3 = markFree bx st2
+      st4 = fixedPoint b bx (Const 0) st3
+      (cx, st5) = freshX st4
+      st6 = markFree cx st5
+      (cy, st7) = freshX st6
+      st8 = markFree cy st7
+      st9 = fixedPoint c cx cy st8
+  in st9
 
 -- Circumcenter: 2 constraints (equidistant from vertices)
 processStep (GCircumcenter o a b c) st =
@@ -255,17 +261,17 @@ processStep (GInterCC i o1 r1 o2 r2) st =
       h2 = SameLen (Line ptO2 ptI) (Line ptO2 ptR2)
   in addHyps [h1, h2] st1
 
--- Point on circle (1 DOF): 1 constraint
+-- Point on circle (1 DOF): 1 free coord + 1 dependent + 1 constraint
 processStep (GOnCircle p o r) st =
-  let (ptP, st1) = freshPointUX p st
+  let (ptP, st1) = freshPointFreeX p st
       ptO = lookupPt o st1
       ptR = lookupPt r st1
       h1 = SameLen (Line ptO ptP) (Line ptO ptR)
   in addHyps [h1] st1
 
--- Point on line (1 DOF): 1 constraint
+-- Point on line (1 DOF): 1 free coord + 1 dependent + 1 constraint
 processStep (GOnLine p a b) st =
-  let (ptP, st1) = freshPointUX p st
+  let (ptP, st1) = freshPointFreeX p st
       ptA = lookupPt a st1
       ptB = lookupPt b st1
       h1 = Collinear ptA ptP ptB
@@ -273,7 +279,7 @@ processStep (GOnLine p a b) st =
 
 -- Free point (0 constraints, 2 DOF)
 processStep (GFreePoint p) st =
-  let (_, st1) = freshPointUU p st
+  let (_, st1) = freshPointFreeFree p st
   in st1
 
 -- Dependent point (0 constraints here, 2 X coords — constraints added separately)
@@ -281,9 +287,9 @@ processStep (GDepPoint p) st =
   let (_, st1) = freshPointXX p st
   in st1
 
--- Semi-free point (0 constraints here, 1 U + 1 X — constraint added separately)
+-- Semi-free point (0 constraints here, 1 free + 1 dependent — constraint added separately)
 processStep (GSemiFree p) st =
-  let (_, st1) = freshPointUX p st
+  let (_, st1) = freshPointFreeX p st
   in st1
 
 -- Pure constraints (no new points)
@@ -360,7 +366,7 @@ algebraize prob =
     , arHypotheses = asHyps finalState
     , arConclusion = concl
     , arNumXVars   = asNextX finalState - 1
-    , arNumUVars   = asNextU finalState - 1
+    , arFreeVars   = reverse (asFreeVars finalState)
     }
 
 
@@ -456,9 +462,13 @@ parseConclusion line = case words line of
 
 -- | Pretty-print an AlgResult for inspection
 showAlgResult :: AlgResult -> String
-showAlgResult ar = unlines
-  [ "Number of X (dependent) variables: " ++ show (arNumXVars ar)
-  , "Number of U (free) parameters: " ++ show (arNumUVars ar)
+showAlgResult ar =
+  let nFree = length (arFreeVars ar)
+      nDep  = arNumXVars ar - nFree
+  in unlines
+  [ "Variables: " ++ show (arNumXVars ar)
+      ++ " total (" ++ show nDep ++ " dependent, " ++ show nFree ++ " free)"
+  , "Free vars: " ++ show (arFreeVars ar)
   , "Points:"
   , unlines [ "  " ++ name ++ " = " ++ show pt
             | (name, pt) <- Map.toAscList (arPoints ar) ]

@@ -36,7 +36,7 @@ g= (x5 - x7)^2 + (x6-x8)^2 - (x1-x7)^2 -x8^2
 
 testTheorem :: TestTree
 testTheorem = testCase "Test for Apolonius Theorem" $ do
-    last (theoremProver [h1,h2,h3,h4,h5,h6,h7,h8] g) @?= 0
+    last (theoremProver 8 [h1,h2,h3,h4,h5,h6,h7,h8] g) @?= 0
 
 testApolonius :: TestTree
 testApolonius = testGroup "Test for Apolonius Theorem" [testTheorem]

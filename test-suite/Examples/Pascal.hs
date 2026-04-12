@@ -1,6 +1,6 @@
 {-#LANGUAGE DataKinds#-}
 
-module Examples.Pascal (testPascal) where 
+module Examples.Pascal (testPascal) where
 
 
 import Algebra.Ring.Polynomial
@@ -10,16 +10,16 @@ import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
 import Polynomial.Wu
 import Polynomial.TheoremProver
-import Util.Tokenizer      
+import Util.Tokenizer
 
-a = Point (U "u1") (U "u1")
-b = Point (U "u3") (U "u1")
-c = Point (U "u5") (U "u6")
-d = Point (X "x1") (U "u7")
-e = Point (X "x2") (U "u8")
-f = Point (X "x3") (U "u9")
+a = Point (X "u1") (X "u1")
+b = Point (X "u3") (X "u1")
+c = Point (X "u5") (X "u6")
+d = Point (X "x1") (X "u7")
+e = Point (X "x2") (X "u8")
+f = Point (X "x3") (X "u9")
 o = Point (X "x4") (X "x5")
-p = Point (X "x6") (U "u1")
+p = Point (X "x6") (X "u1")
 q = Point (X "x7") (X "x8")
 s = Point (X "x9") (X "x10")
 
@@ -45,13 +45,14 @@ g = Collinear s q p
 
 hypsGeom = [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10]
 
-polys :: [Polynomial' 10]
-polys@(conclusion:hypotheses) = generatePolynomials hypsGeom g
+freeVars = [X "u1", X "u3", X "u5", X "u6", X "u7", X "u8", X "u9"]
+
+polys :: [Polynomial' 17]
+polys@(conclusion:hypotheses) = generatePolynomials hypsGeom g freeVars
 
 testTheorem :: TestTree
 testTheorem = testCase "Test for Pascal Theorem" $ do
-    last (theoremProver hypotheses conclusion) @?= 0
+    last (theoremProver 10 hypotheses conclusion) @?= 0
 
 testPascal :: TestTree
 testPascal = testGroup "Test for Pascal Theorem" [testTheorem]
-

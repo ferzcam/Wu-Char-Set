@@ -13,19 +13,21 @@ import GHC.TypeLits
 -- | This algorithm was taken from the book "Ideals, Varieties and Algorithms" 4th ed.
 
 -- | Algorithm to get characteristic set from a set of polynomials.
+-- The @numElim@ parameter is the number of dependent (X) variables to
+-- eliminate.  Variables at positions 0..numElim-1 are eliminated; any
+-- higher-indexed variables (free U-parameters) are treated as passive
+-- coefficients.
 charSet :: forall n. (IsMonomialOrder n Grevlex, KnownNat n)
-    => [Polynomial' n] -> [ Polynomial' n] -> Int -> [ Polynomial' n]
-charSet [] a _ = map (simplifyPolinomial) a
-charSet _ a var
-    | var >= arity = map (simplifyPolinomial) a
-  where
-    arity = fromIntegral (natVal (Proxy :: Proxy n))
-charSet p a var
-    | lenS == 0 = charSet p a (var+1)
-    | lenS == 1 = charSet c (a++s) (var+1)
+    => Int -> [Polynomial' n] -> [ Polynomial' n] -> Int -> [ Polynomial' n]
+charSet _ [] a _ = map (simplifyPolinomial) a
+charSet numElim _ a var
+    | var >= numElim = map (simplifyPolinomial) a
+charSet numElim p a var
+    | lenS == 0 = charSet numElim p a (var+1)
+    | lenS == 1 = charSet numElim c (a++s) (var+1)
     | otherwise = case existOneDegPoly s var of
-                    Just poly ->  charSet (c ++ rem poly) (a++[poly]) (var+1)
-                    Nothing -> charSet (c++r++newS) a var
+                    Just poly ->  charSet numElim (c ++ rem poly) (a++[poly]) (var+1)
+                    Nothing -> charSet numElim (c++r++newS) a var
 
     where
         c = dropPolys p s -- p/s

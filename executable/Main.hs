@@ -6,6 +6,7 @@ module Main where
 
 import Core
 import Control.Exception (SomeException, evaluate, try)
+import Control.Monad (when)
 import Data.Proxy (Proxy (..))
 import Data.Time.Clock (diffUTCTime, getCurrentTime)
 import GHC.TypeNats (KnownNat, SomeNat (..), someNatVal)
@@ -50,23 +51,50 @@ addDebugInfo chain rems (NotProved msg)
       in NotProved (msg ++ info)
 addDebugInfo _ _ outcome = outcome
 
+-- | Pretty-print a polynomial with a size guard.
+showPoly :: (KnownNat n) => Polynomial' n -> String
+showPoly p
+  | nt <= 200 = show p
+  | otherwise = "(too large: " ++ show nt ++ " terms)"
+  where nt = polyNumTerms p
+
 -- | Run the theorem prover for a problem already parameterized on @n@.
 -- Honors a per-problem timeout in seconds.
 runAt
   :: forall n. (KnownNat n)
   => Int -> Bool -> Proxy n -> AlgResult -> IO Outcome
 runAt tmoSecs verbose _ ar = do
-  let polys = generatePolynomials (arHypotheses ar) (arConclusion ar)
+  let nDep = arNumXVars ar - length (arFreeVars ar)
+      polys = generatePolynomials (arHypotheses ar) (arConclusion ar)
+                                  (arFreeVars ar)
               :: [Polynomial' n]
   case polys of
     []            -> pure (Errored "no polynomials generated")
     (concl:hyps) -> do
       let action
             | verbose = do
-                let (chain, rems) = theoremProverVerbose hyps concl
+                -- Print polynomials BEFORE pre-elimination
+                putStrLn "--- Polynomials (before pre-elimination) ---"
+                putStrLn $ "  conclusion: " ++ showPoly concl
+                mapM_ (\(i,h) -> putStrLn $ "  h" ++ show i ++ ": " ++ showPoly h)
+                      (zip [(1::Int)..] hyps)
+                hFlush stdout
+                -- Run prover (includes pre-elimination + charSet + remWithChain)
+                let (chain, rems, hyps', concl', elims) =
+                      theoremProverVerbose nDep hyps concl
+                -- Print polynomials AFTER pre-elimination
+                putStrLn "--- Polynomials (after pre-elimination) ---"
+                putStrLn $ "  Eliminated vars: " ++ show elims
+                         ++ " (" ++ show (length elims)
+                         ++ " of " ++ show nDep ++ " dependent)"
+                putStrLn $ "  conclusion: " ++ showPoly concl'
+                mapM_ (\(i,h) -> putStrLn $ "  h" ++ show i ++ ": " ++ showPoly h)
+                      (zip [(1::Int)..] hyps')
+                putStrLn "---"
+                hFlush stdout
                 outcome <- evaluate (classify rems)
                 pure (addDebugInfo chain rems outcome)
-            | otherwise = evaluate (classify (theoremProver hyps concl))
+            | otherwise = evaluate (classify (theoremProver nDep hyps concl))
       result <- try (timeout (tmoSecs * 1000000) action)
       case result of
         Left (e :: SomeException) -> pure (Errored (show e))
@@ -83,14 +111,25 @@ runProblemFile tmoSecs verbose path = do
     Left (e :: SomeException) ->
       putStrLn ("PARSE-ERROR: " ++ show e)
     Right ar -> do
-      let nX = max 1 (arNumXVars ar)
+      let nX    = arNumXVars ar
+          nFree = length (arFreeVars ar)
+          nDep  = nX - nFree
+      when verbose $ do
+        putStrLn ""
+        putStrLn "--- DSL source ---"
+        putStr src
+        putStrLn "--- Algebraization ---"
+        putStr (showAlgResult ar)
+        putStrLn "---"
+        hFlush stdout
       t0 <- getCurrentTime
-      outcome <- case someNatVal (fromIntegral nX) of
+      outcome <- case someNatVal (fromIntegral (max 1 nX)) of
         SomeNat (p :: Proxy n) -> runAt tmoSecs verbose p ar
       t1 <- getCurrentTime
       let secs = realToFrac (diffUTCTime t1 t0) :: Double
       case outcome of
-        Proved       -> putStrLn (showSecs secs ++ "s  OK  (nX=" ++ show nX ++ ")")
+        Proved       -> putStrLn (showSecs secs ++ "s  OK  (nDep="
+                     ++ show nDep ++ ", nFree=" ++ show nFree ++ ")")
         NotProved m  -> putStrLn (showSecs secs ++ "s  FAIL: " ++ m)
         Errored m    -> putStrLn (showSecs secs ++ "s  ERR:  " ++ take 120 m)
         TimedOut     -> putStrLn (showSecs secs ++ "s  TIMEOUT (>" ++ show tmoSecs ++ "s)")

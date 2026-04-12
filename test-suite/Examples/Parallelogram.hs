@@ -1,6 +1,6 @@
 {-#LANGUAGE DataKinds#-}
 
-module Examples.Parallelogram (testParallelogram) where 
+module Examples.Parallelogram (testParallelogram) where
 
 
 import Algebra.Ring.Polynomial
@@ -10,19 +10,19 @@ import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
 import Polynomial.Wu
 import Polynomial.TheoremProver
-import Util.Tokenizer    
+import Util.Tokenizer
 
 
-a = Point (U "u1") (U "u2")
-b = Point (U "u3") (U "u4")
-c = Point (U "u5") (U "u6")
+a = Point (X "u1") (X "u2")
+b = Point (X "u3") (X "u4")
+c = Point (X "u5") (X "u6")
 d = Point (X "x1") (X "x2")
 o = Point (X "x3") (X "x4")
 
 lac = Line a c
 lbd = Line b d
-lab = Line a b 
-lcd = Line c d 
+lab = Line a b
+lcd = Line c d
 lao = Line a o
 lco = Line c o
 
@@ -35,14 +35,15 @@ h3 = Collinear b o c
 h4 = Collinear a o d
 
 conc = SameLen lao ldo
---conc = SameLen lco lbo
 
-polys :: [Polynomial' 4]
-polys@(conclusion:hypotheses) = generatePolynomials [h1, h2, h3, h4] conc
+freeVars = [X "u1", X "u2", X "u3", X "u4", X "u5", X "u6"]
+
+polys :: [Polynomial' 10]
+polys@(conclusion:hypotheses) = generatePolynomials [h1, h2, h3, h4] conc freeVars
 
 testTheorem :: TestTree
 testTheorem = testCase "Test for Parallelogram Theorem" $ do
-    last (theoremProver hypotheses conclusion) @?= 0
+    last (theoremProver 4 hypotheses conclusion) @?= 0
 
 testParallelogram :: TestTree
 testParallelogram = testGroup "Test for Parallelogram Theorem" [testTheorem]

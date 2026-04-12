@@ -1,6 +1,6 @@
 {-#LANGUAGE DataKinds#-}
 
-module Examples.NinePoints (testNinePoints) where 
+module Examples.NinePoints (testNinePoints) where
 
 
 import Algebra.Ring.Polynomial
@@ -10,16 +10,16 @@ import qualified Data.Map.Strict as MS
 import Polynomial.Prelude
 import Polynomial.Wu
 import Polynomial.TheoremProver
-import Util.Tokenizer    
+import Util.Tokenizer
 import Data.List
 
-a = Point (U "u1") (U "u1")
-b = Point (X "x1") (U "u1")
+a = Point (X "u1") (X "u1")
+b = Point (X "x1") (X "u1")
 c = Point (X "x2") (X "x3")
 d = Point (X "x4") (X "x5")
 e = Point (X "x6") (X "x7")
-f = Point (X "x2") (U "u1")
-m = Point (X "x8") (U "u1")
+f = Point (X "x2") (X "u1")
+m = Point (X "x8") (X "u1")
 n = Point (X "x9") (X "xx10")
 
 
@@ -32,7 +32,7 @@ lne = Line n e
 lnd = Line n d
 lnm = Line n m
 
-h1 = Collinear d b c 
+h1 = Collinear d b c
 h2 = Perpendicular lad lcb
 h3 = Collinear e a c
 h4 = Perpendicular leb lca
@@ -42,14 +42,15 @@ h7 = SameLen lnf lnd
 
 g = SameLen lnf lnm
 
+freeVars = [X "u1"]
 
-polys :: [Polynomial' 10]
-polys@(conclusion:hypotheses) = generatePolynomials [h1, h2, h3, h4, h5, h6, h7] g
+polys :: [Polynomial' 11]
+polys@(conclusion:hypotheses) = generatePolynomials [h1, h2, h3, h4, h5, h6, h7] g freeVars
 
 
 testTheorem :: TestTree
 testTheorem = testCase "Test for NinePoints Theorem" $ do
-    last (theoremProver hypotheses conclusion) @?= 0
+    last (theoremProver 10 hypotheses conclusion) @?= 0
 
 testNinePoints :: TestTree
 testNinePoints = testGroup "Test for NinePoints Theorem" [testTheorem]

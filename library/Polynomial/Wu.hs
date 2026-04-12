@@ -1,8 +1,10 @@
 {-#LANGUAGE FlexibleContexts#-}
+{-#LANGUAGE ScopedTypeVariables#-}
 
 module Polynomial.Wu where
 
 import Algebra.Ring.Polynomial
+import Data.Proxy (Proxy (..))
 import Data.Type.Ordinal
 import Polynomial.Prelude
 import Data.List
@@ -11,9 +13,13 @@ import GHC.TypeLits
 -- | This algorithm was taken from the book "Ideals, Varieties and Algorithms" 4th ed.
 
 -- | Algorithm to get characteristic set from a set of polynomials.
-charSet :: (IsMonomialOrder n Grevlex, KnownNat n) 
+charSet :: forall n. (IsMonomialOrder n Grevlex, KnownNat n)
     => [Polynomial' n] -> [ Polynomial' n] -> Int -> [ Polynomial' n]
 charSet [] a _ = map (simplifyPolinomial) a
+charSet _ a var
+    | var >= arity = map (simplifyPolinomial) a
+  where
+    arity = fromIntegral (natVal (Proxy :: Proxy n))
 charSet p a var
     | lenS == 0 = charSet p a (var+1)
     | lenS == 1 = charSet c (a++s) (var+1)
@@ -23,7 +29,7 @@ charSet p a var
 
     where
         c = dropPolys p s -- p/s
-        s =  filter (`varInPoly` var) p 
+        s =  filter (`varInPoly` var) p
         lenS = length s
         rem poly =  pseudoRemainders (dropPolys s [poly]) poly var
         (newS, r) = analizeS s var

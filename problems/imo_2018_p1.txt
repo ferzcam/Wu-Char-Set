@@ -1,0 +1,1 @@
+Let ABC be a triangle. Define point O as the circumcenter of triangle CBA. Let D be any point on line AB. Define point E as the intersection of circle (A, D) and line AC. Define point F on circle (O, A) such that ]BDF = ]F BD. Define point G on circle (O, A) such that ]CEG = ]GCE. Prove that DE is parallel to F G

@@ -1,0 +1,1 @@
+Let B and C be any two distinct points. Define point O such that BO = CO. Let A be any point on circle (O, B). Define point E as the circumcenter of triangle BAO. Define point F as the circumcenter of triangle BAO. Let J be any point on line AC. Prove that CJ is the bisector of ]ECF

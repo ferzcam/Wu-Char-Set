@@ -1,0 +1,1 @@
+Let ABC be a triangle. Let A1 be any point on line BC. Let B1 be any point on line AC. Let P be any point on line AA1 . Define point Q on line BB1 such that AB is parallel to P Q. Define point P1 on line B1 P such that ]BAC = ]P P1 C. Define point Q1 on line A1 Q such that ]ABC = ]QQ1 C. Prove that P, P1 , Q, Q1 are cyclic

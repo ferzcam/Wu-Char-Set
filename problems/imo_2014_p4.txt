@@ -1,0 +1,1 @@
+Let ABC be a triangle. Define point P on line BC such that ]BAC = ] (AP, BC). Define point Q on line BC such that ]CAB = ] (AQ, BC) and ]ABC = ]CAQ. Define point M as the mirror of A through P . Define point N as the mirror of A through Q. Define point X as the intersection of lines BM and CN . Define point O as the circumcenter of triangle CBA. Prove that AO = XO

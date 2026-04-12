@@ -1,0 +1,1 @@
+Let C and A be any two distinct points. Define point B such that CA is perpendicular to CB. Define point D as the foot of C on line AB. Let X be any point on line CD. Define point K as the intersection of circle (B, C) and line AX. Define point L as the intersection of circle (A, C) and line BX. Define point M as the intersection of lines AL and BK. Prove that KM = LM

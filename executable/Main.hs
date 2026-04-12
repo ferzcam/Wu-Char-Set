@@ -1,63 +1,110 @@
-{-#LANGUAGE DataKinds#-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
--- It is generally a good idea to keep all your business logic in your library
--- and only use it in the executable. Doing so allows others to use what you
--- wrote in their libraries.
-import Example
-import System.Random
+module Main where
+
 import Core
-import System.Random.Shuffle
+import Control.Exception (SomeException, evaluate, try)
+import Data.Proxy (Proxy (..))
+import Data.Time.Clock (diffUTCTime, getCurrentTime)
+import GHC.TypeNats (KnownNat, SomeNat (..), someNatVal)
+import System.Directory (doesFileExist, listDirectory)
+import System.Environment (getArgs)
+import System.FilePath ((</>))
+import System.IO (hFlush, stdout)
+import System.Timeout (timeout)
+import Data.List (isSuffixOf, sort)
 
+defaultTimeoutSecs :: Int
+defaultTimeoutSecs = 30
 
+data Outcome
+  = Proved
+  | NotProved String
+  | Errored String
+  | TimedOut
+  deriving (Show)
 
-a = Point (U "u1") (U "u1")
-b = Point (X "x1") (U "u1")
-c = Point (X "x2") (X "x3")
-c1 = Point (X "x5") (X "x4")
-b1 = Point (X "x7") (X "x6")
-a1 = Point (X "x9") (X "x8")
-o = Point (X "xx11") (X "xx10")
+-- | Decide whether a run is a successful proof: all pseudoremainders vanish.
+classify :: (KnownNat n) => [Polynomial' n] -> Outcome
+classify [] = NotProved "empty remainder chain"
+classify rems
+  | last rems == 0 = Proved
+  | otherwise      = NotProved "last pseudoremainder /= 0"
 
+-- | Run the theorem prover for a problem already parameterized on @n@.
+-- Honors a per-problem timeout in seconds.
+runAt
+  :: forall n. (KnownNat n)
+  => Int -> Proxy n -> AlgResult -> IO Outcome
+runAt tmoSecs _ ar = do
+  let polys = generatePolynomials (arHypotheses ar) (arConclusion ar)
+              :: [Polynomial' n]
+  case polys of
+    []            -> pure (Errored "no polynomials generated")
+    (concl:hyps) -> do
+      let action = evaluate (classify (theoremProver hyps concl))
+      result <- try (timeout (tmoSecs * 1000000) action)
+      case result of
+        Left (e :: SomeException) -> pure (Errored (show e))
+        Right Nothing             -> pure TimedOut
+        Right (Just outcome)      -> pure outcome
 
+runProblemFile :: Int -> FilePath -> IO ()
+runProblemFile tmoSecs path = do
+  putStr (path ++ " ... ")
+  hFlush stdout
+  src <- readFile path
+  parseResult <- try (evaluate (algebraize (parseProblem src)))
+  case parseResult of
+    Left (e :: SomeException) ->
+      putStrLn ("PARSE-ERROR: " ++ show e)
+    Right ar -> do
+      let nX = max 1 (arNumXVars ar)
+      t0 <- getCurrentTime
+      outcome <- case someNatVal (fromIntegral nX) of
+        SomeNat (p :: Proxy n) -> runAt tmoSecs p ar
+      t1 <- getCurrentTime
+      let secs = realToFrac (diffUTCTime t1 t0) :: Double
+      case outcome of
+        Proved       -> putStrLn (showSecs secs ++ "s  OK  (nX=" ++ show nX ++ ")")
+        NotProved m  -> putStrLn (showSecs secs ++ "s  FAIL: " ++ m)
+        Errored m    -> putStrLn (showSecs secs ++ "s  ERR:  " ++ take 120 m)
+        TimedOut     -> putStrLn (showSecs secs ++ "s  TIMEOUT (>" ++ show tmoSecs ++ "s)")
+  where
+    showSecs s = let r = (fromIntegral (round (s * 1000) :: Int) :: Double) / 1000
+                 in show r
 
-lac1 = Line a c1
-lc1b = Line c1 b
-loa1 = Line o a1
-lob1 = Line o b1
-la1a = Line a1 a
-lb1b = Line b1 b
-loa = Line o a
-lob = Line o b
-lab = Line a b
-lb1c = Line b1 c
-lb1a = Line b1 a
-la1b = Line a1 b
-la1c = Line a1 c
+runAll :: Int -> FilePath -> IO ()
+runAll tmoSecs dir = do
+  entries <- listDirectory dir
+  let files = sort [dir </> f | f <- entries, ".dsl" `isSuffixOf` f]
+  mapM_ (runProblemFile tmoSecs) files
 
-ang1 = Angle c1 a b
-ang2 = Angle c a b1
-ang3 = Angle a1 b c
-
-h1 = SameLen lac1 lc1b 
-h2 = SameLen lac1 lab
-h3 = SameLen lb1c lb1a
-h4 = SameAcAngle ang1 ang2 
-h5 = SameAcAngle ang1 ang3
-h6 = SameLen la1b la1c
-h7 = Collinear o a1 a 
-h8 = Collinear o b1 b 
-
-
-g = Collinear c1 c o
-
-
-polys :: [Polynomial' 11]
-polys@(conclusion:hypotheses) = generatePolynomials [h1, h2, h3, h4, h5, h6, h7, h8] g
-
--- genMonomials arity size deg seed 
-p1, p2 :: Polynomial' 8
-p1 = randPol 8 2 8 13 
-p2 = randPol 8 3 4 25
+-- | Parse optional @--timeout N@ flag; return (timeout-secs, remaining-args).
+parseTimeout :: [String] -> (Int, [String])
+parseTimeout ("--timeout":n:rest) = (read n, rest)
+parseTimeout args                 = (defaultTimeoutSecs, args)
 
 main :: IO ()
-main = putStrLn "Main Excutable"
+main = do
+  rawArgs <- getArgs
+  let (tmoSecs, args) = parseTimeout rawArgs
+  case args of
+    [] ->
+      runAll tmoSecs "problems/dsl"
+    ["--all"] ->
+      runAll tmoSecs "problems/dsl"
+    ["--dir", d] ->
+      runAll tmoSecs d
+    paths -> do
+      existing <- filterM doesFileExist paths
+      mapM_ (runProblemFile tmoSecs) existing
+  where
+    filterM p = foldr go (pure [])
+      where
+        go x acc = do
+          keep <- p x
+          xs <- acc
+          pure (if keep then x : xs else xs)

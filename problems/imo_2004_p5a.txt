@@ -1,0 +1,1 @@
+Let ABC be a triangle. Define point O as the circumcenter of triangle CBA. Let D be any point on circle (O, A). Define point P such that ]ABD = ]P BC and ]ADB = ]P DC. Prove that AP = CP

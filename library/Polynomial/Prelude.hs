@@ -15,6 +15,7 @@ import qualified Data.Sized as DS
 import Control.Arrow
 import Data.Proxy
 import Data.Singletons
+import Data.Type.Natural (sNat)
 
 type Polynomial' n = OrderedPolynomial Rational Grevlex n
 type OrderedMonomial' n = OrderedMonomial Grevlex n
@@ -28,7 +29,10 @@ type OrderedMonomial' n = OrderedMonomial Grevlex n
 
 classVarDeg :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex)
         =>  Polynomial' n -> Int -> Int
-classVarDeg pol var = leadingMonomialDegs !! var
+classVarDeg pol var
+    | pol == 0 = 0
+    | var < 0 || var >= length leadingMonomialDegs = 0
+    | otherwise = leadingMonomialDegs !! var
         where
                 leadingMonomialDegs = S.toList $ getMonomial $ leadingMonomial pol var
 
@@ -51,7 +55,11 @@ replacePoly polys p q = q : dropPolys polys [p]
 existOneDegPoly :: [Polynomial' n] -> Int -> Maybe (Polynomial' n)
 existOneDegPoly polys var = find isOneDeg polys
         where
-            isOneDeg poly = (((\x -> x==1).last.sort)) (((map ((!! var) . S.toList . getMonomial . fst)) . MS.toList . _terms) poly) 
+            isOneDeg poly
+              | null degs = False
+              | otherwise = last (sort degs) == 1
+              where
+                degs = map ((!! var) . S.toList . getMonomial . fst) (MS.toList (_terms poly))
 
 pseudoRemainders :: (IsMonomialOrder n Grevlex, KnownNat n) => 
         [Polynomial' n] -> Polynomial' n -> Int -> [Polynomial' n]
@@ -60,7 +68,7 @@ pseudoRemainders polys poly var = map (\p -> snd $ pseudoRemainder p poly var) p
 
 pseudoRemainder :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex) 
         => Polynomial' n -> Polynomial' n -> Int -> (Polynomial' n, Polynomial' n)
-pseudoRemainder f g var =  trace ("\nVAR: " ++ show var ++ "\nREM Class Var : " ++ show (classVarDeg (simplifyPolinomial (snd pseudo)) var )) (fst pseudo, simplifyPolinomial (snd pseudo))
+pseudoRemainder f g var = (fst pseudo, simplifyPolinomial (snd pseudo))
         where 
                 m = classVarDeg g var
                 d = getCoeff factors var
@@ -99,7 +107,7 @@ leadingCoeff pol var = fst $ leadingTerm pol var
 
 
 toMonomial :: (KnownNat n) => [Int] -> OrderedMonomial Grevlex n
-toMonomial a = orderMonomial Proxy (fromList sing a)
+toMonomial a = orderMonomial Proxy (fromList sNat a)
 
 --Genera un polinomio del tipo p(x1,x2,...xn) = xi^k
 mon :: (IsOrder n Grevlex, KnownNat n, IsMonomialOrder n Grevlex)
@@ -126,11 +134,17 @@ chooseTermsWithVar pol var
                         auxMonom poly idx = MS.elemAt idx $ _terms poly
 
 simplifyMonomial ::(IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n)   =>  Polynomial' n -> Polynomial' n
-simplifyMonomial pol = pol // (1, commonMonomial pol)
+simplifyMonomial pol
+    | pol == 0 = 0
+    | otherwise = pol // (1, commonMonomial pol)
 
 
 simplifyPolinomial ::(IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n)   =>  Polynomial' n -> Polynomial' n
-simplifyPolinomial pol  = pol // commonTerm pol
+simplifyPolinomial pol
+    | pol == 0 = 0
+    | fst ct == 0 = 0  -- all coefficients are zero (structural ghost entries)
+    | otherwise = pol // ct
+    where ct = commonTerm pol
         
 getCoeff :: (IsMonomialOrder n Grevlex, IsOrder n Grevlex, KnownNat n)   =>  Polynomial' n -> Int -> Polynomial' n
 getCoeff pol var = pol // (1, classVariable)

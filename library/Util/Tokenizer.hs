@@ -31,16 +31,38 @@ data Hypothesis =   Collinear Point Point Point
 
 type Conclusion = Hypothesis
 
-generatePolynomials :: (KnownNat n) => [Hypothesis] -> Conclusion -> [Polynomial' n] 
+generatePolynomials :: (KnownNat n) => [Hypothesis] -> Conclusion -> [Polynomial' n]
 generatePolynomials hypotheses conclusion = map (flip geomToAlg variables) statements
-    where 
+    where
         points = nub $ concatMap flatten hypotheses
         variables = generateVariables points conclusion
         statements = conclusion:hypotheses
 
+-- | Numeric values substituted for free U-parameters when building the
+-- polynomial system. Wu's method is run on this concrete instance rather than
+-- symbolically, so a degenerate sequence (collinear, cocircular, zero leading
+-- coefficient) can make a true theorem fail spuriously. Swap this list to
+-- explore different instances.
+--
+-- Alternatives defined below: squares, naturalsFrom1, primes.
+uValues :: [Integer]
+uValues = primes
+
+squares :: [Integer]
+squares = map (^ (2 :: Int)) [1..]
+
+naturalsFrom1 :: [Integer]
+naturalsFrom1 = [1..]
+
+primes :: [Integer]
+primes = 2 : sieve [3,5..]
+  where
+    sieve (p:xs) = p : sieve [x | x <- xs, x `mod` p /= 0]
+    sieve []     = []
+
 
 generateVariables :: (KnownNat n) => [Point] -> Conclusion -> [(Coord, Polynomial' n)]
-generateVariables points conclusion = trace ("VARIABLES: " ++ show (zip finalVariables monicPolys)) zip finalVariables monicPolys
+generateVariables points conclusion = zip finalVariables monicPolys
     --trace ("VARIABLES: " ++ show (zip finalVariables monicPolys))
     where
         pointsConclusion = nub $ (concatMap (\(Point c1 c2) -> [c1, c2])) (flatten conclusion)
@@ -52,7 +74,7 @@ generateVariables points conclusion = trace ("VARIABLES: " ++ show (zip finalVar
         finalVariables = variablesConclusion ++ variablesNotConclusion ++ (variablesU)
         initialArrays = (toLists.identity) (length (variablesX))
         monomials = map toMonomial initialArrays
-        monicPolys = (map (toPolynomial . (1,)) monomials) ++ ((map ((^2).fromInteger) [0..]))
+        monicPolys = (map (toPolynomial . (1,)) monomials) ++ map fromInteger uValues
 
 -- trace ("VARIABLES: " ++ show (zip finalVariables monicPolys)) zip finalVariables 
 

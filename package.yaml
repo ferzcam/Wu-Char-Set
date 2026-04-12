@@ -7,13 +7,9 @@ github: "ferynando7/Wu-Char-Set"
 license: MIT
 author: "Fernando Zhapa"
 maintainer: "Fernando Zhapa"
-# synopsis: A new Haskeleton package.
-# description: Wu-Char-Set is a new Haskeleton package.
-# category: Other
 
 extra-source-files:
 - CHANGELOG.md
-- LICENSE.md
 - package.yaml
 - README.md
 - stack.yaml
@@ -21,16 +17,19 @@ extra-source-files:
 ghc-options: -Wall
 
 library:
+  source-dirs: library
   dependencies:
   - base
   - containers
   - algebra
+  - halg-core
+  - halg-polynomials
   - sized
+  - type-natural
+  - singletons
   - matrix
+  - random
   - random-shuffle
-  extra-deps:
-  source-dirs: library
-
 
 executables:
   Wu-Char-Set:
@@ -38,7 +37,13 @@ executables:
     main: Main.hs
     dependencies:
     - base
+    - containers
     - Wu-Char-Set
+    - random
+    - random-shuffle
+    - time
+    - directory
+    - filepath
     ghc-options:
     - -rtsopts
     - -threaded
@@ -67,6 +72,9 @@ tests:
     - tasty
     - tasty-hspec
     - tasty-hunit
+    - containers
+    - halg-core
+    - halg-polynomials
     ghc-options:
     - -rtsopts
     - -threaded

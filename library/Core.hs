@@ -3,7 +3,8 @@ module Core (
     module Polynomial.Wu,
     module Polynomial.RandomPol,
     module Polynomial.TheoremProver,
-    module Util.Tokenizer
+    module Util.Tokenizer,
+    module Util.Algebraizer
     )
 
 where
@@ -12,4 +13,5 @@ where
     import Polynomial.RandomPol
     import Polynomial.TheoremProver
     import Util.Tokenizer
+    import Util.Algebraizer
     

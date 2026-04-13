@@ -27,6 +27,7 @@ library
   exposed-modules:
       Core
       Example
+      Polynomial.Poly
       Polynomial.Prelude
       Polynomial.RandomPol
       Polynomial.TheoremProver
@@ -39,17 +40,11 @@ library
       library
   ghc-options: -Wall
   build-depends:
-      algebra
-    , base
+      base
     , containers
-    , halg-core
-    , halg-polynomials
-    , matrix
     , random
     , random-shuffle
-    , singletons
-    , sized
-    , type-natural
+    , vector
   default-language: Haskell2010
 
 executable Wu-Char-Set
@@ -89,10 +84,7 @@ test-suite Wu-Char-Set-test-suite
       Wu-Char-Set
     , base
     , containers
-    , halg-core
-    , halg-polynomials
     , tasty
-    , tasty-hspec
     , tasty-hunit
   default-language: Haskell2010
 

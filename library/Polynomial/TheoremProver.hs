@@ -1,95 +1,90 @@
-{-#LANGUAGE FlexibleContexts#-}
+-- | Theorem prover driver built on Wu's characteristic set method.
+module Polynomial.TheoremProver
+  ( theoremProver
+  , theoremProverVerbose
+  , remWithChain
+  , preElimLinear
+  ) where
 
-module Polynomial.TheoremProver where
-
-import Algebra.Ring.Polynomial
-import Data.Type.Ordinal
-import Polynomial.Prelude
-import Polynomial.Wu
-import Data.List
 import Data.Maybe (listToMaybe)
-import Debug.Trace
-import GHC.TypeLits
--- | This algorithm was taken from the book "Ideals, Varieties and Algorithms" 4th ed.
-
+import Polynomial.Poly
+import Polynomial.Prelude (simplifyPolinomial)
+import Polynomial.Wu (charSet)
 
 -- | Pre-eliminate linear constraints before the main Wu triangularization.
--- Scans all X-variables (0..numElim-1) for hypotheses that are degree 1 in
--- that variable, then uses pseudoRemainder to eliminate that variable from
--- all other hypotheses and from the conclusion.  Iterates until no more
--- linear eliminations are possible.
 --
--- This improves on charSet's built-in linear handling because:
--- (1) it processes easy variables first regardless of position ordering, and
--- (2) it also simplifies the conclusion, reducing work in remWithChain.
--- | Returns (simplifiedHyps, simplifiedConclusion, eliminatedVarIndices).
-preElimLinear :: (IsMonomialOrder n Grevlex, KnownNat n)
-    => Int -> [Polynomial' n] -> Polynomial' n
-    -> ([Polynomial' n], Polynomial' n, [Int])
-preElimLinear numElim hyps concl = go numElim hyps concl []
+-- Scans all X-variables (@0..numElim-1@) for hypotheses that are degree 1
+-- in that variable, then uses 'pseudoRemainder' to eliminate that variable
+-- from all other hypotheses and from the conclusion. Iterates until no
+-- more linear eliminations are possible.
+--
+-- This improves on 'charSet''s built-in linear handling because:
+--
+--   (1) it processes easy variables first regardless of position ordering,
+--   (2) it also simplifies the conclusion, reducing work in 'remWithChain'.
+--
+-- Returns @(simplifiedHyps, simplifiedConclusion, eliminatedVarIndices)@.
+preElimLinear :: Int -> [Poly] -> Poly -> ([Poly], Poly, [Int])
+preElimLinear numElim hyps0 concl0 = go numElim hyps0 concl0 []
   where
     go 0 hs c elims = (hs, c, reverse elims)  -- safety bound
     go fuel hs c elims = case findLinearHyp numElim hs of
-      Nothing            -> (hs, c, reverse elims)
-      Just (linP, var) ->
+      Nothing -> (hs, c, reverse elims)
+      Just (linP, v) ->
         let reduce p
-              | p == linP            = p  -- keep the linear hyp itself intact
-              | not (varInPoly p var) = p -- skip if p doesn't involve var
-              | otherwise = simplifyPolinomial (snd (pseudoRemainder p linP var))
-            hs' = filter (/= 0) (map reduce hs)  -- drop redundant constraints
-            c'  = if varInPoly c var
-                  then simplifyPolinomial (snd (pseudoRemainder c linP var))
-                  else c
-        in go (fuel - 1) hs' c' (var : elims)
+              | p == linP          = p  -- keep the linear hyp itself intact
+              | not (varInPoly p v) = p -- skip if p doesn't involve v
+              | otherwise = simplifyPolinomial (snd (pseudoRemainder p linP v))
+            hs' = filter (not . isZero) (map reduce hs)
+            c'  = if varInPoly c v
+                    then simplifyPolinomial (snd (pseudoRemainder c linP v))
+                    else c
+        in go (fuel - 1) hs' c' (v : elims)
 
 -- | Find a hypothesis that is degree 1 in some X-variable.
 -- Prefers variables that appear in fewer hypotheses (cheaper elimination).
-findLinearHyp :: (IsMonomialOrder n Grevlex, KnownNat n)
-    => Int -> [Polynomial' n] -> Maybe (Polynomial' n, Int)
-findLinearHyp numElim hyps =
-    listToMaybe candidates
+findLinearHyp :: Int -> [Poly] -> Maybe (Poly, Int)
+findLinearHyp numElim hyps = listToMaybe candidates
   where
     candidates =
-      [ (h, var)
-      | var <- [0..numElim-1]
-      , let polysWithVar = filter (`varInPoly` var) hyps
-      -- Only consider variables where at least 2 hypotheses involve them
-      -- (so the linear one can simplify the others).
+      [ (h, v)
+      | v <- [0 .. numElim - 1]
+      , let polysWithVar = filter (`varInPoly` v) hyps
       , length polysWithVar >= 2
-      , h <- take 1 [p | p <- polysWithVar, classVarDeg p var == 1]
+      , h <- take 1 [p | p <- polysWithVar, classVarDeg p v == 1]
       ]
 
-
--- Function that test a geometric theorem.
--- Inputs: hip, Hipotheses Polynomials; g, Theorem Polynomial;
---         numElim, number of dependent (X) variables to eliminate.
--- Output: list of the pseudo remainders of g with respect to the ascending chain
-theoremProver :: (IsMonomialOrder n Grevlex, KnownNat n)
-    => Int -> [Polynomial' n] -> Polynomial' n -> [Polynomial' n]
+-- | Test a geometric theorem.
+--
+-- Inputs:
+--
+--   * @numElim@: number of dependent (X) variables to eliminate;
+--   * @hip@: hypothesis polynomials;
+--   * @g@: conclusion polynomial.
+--
+-- Output: successive pseudo-remainders of @g@ w.r.t. the ascending Wu
+-- chain. The theorem holds iff the last remainder is zero.
+theoremProver :: Int -> [Poly] -> Poly -> [Poly]
 theoremProver numElim hip g = remWithChain wuChain g' 0
-    where
-        (hip', g', _) = preElimLinear numElim hip g
-        wuChain =  charSet numElim hip' [] 0
+  where
+    (hip', g', _) = preElimLinear numElim hip g
+    wuChain = charSet numElim hip' [] 0
 
--- | Like 'theoremProver', but also returns the characteristic set (Wu chain)
--- and pre-elimination diagnostics.
-theoremProverVerbose :: (IsMonomialOrder n Grevlex, KnownNat n)
-    => Int -> [Polynomial' n] -> Polynomial' n
-    -> ([Polynomial' n], [Polynomial' n], [Polynomial' n], Polynomial' n, [Int])
-    -- ^ (wuChain, remainders, preElimHyps, preElimConcl, eliminatedVars)
+-- | Like 'theoremProver', but also returns the characteristic set and
+-- pre-elimination diagnostics.
+theoremProverVerbose
+  :: Int -> [Poly] -> Poly
+  -> ([Poly], [Poly], [Poly], Poly, [Int])
+     -- ^ @(wuChain, remainders, preElimHyps, preElimConcl, eliminatedVars)@
 theoremProverVerbose numElim hip g =
-    (wuChain, remWithChain wuChain g' 0, hip', g', elims)
-    where
-        (hip', g', elims) = preElimLinear numElim hip g
-        wuChain = charSet numElim hip' [] 0
-      
--- Function that get the pseudoremider of a polinomial with
--- respect to a set of polynomials
-remWithChain :: (IsMonomialOrder n Grevlex, KnownNat n) 
-    => [Polynomial' n] -> Polynomial' n -> Int -> [ Polynomial' n]
+  (wuChain, remWithChain wuChain g' 0, hip', g', elims)
+  where
+    (hip', g', elims) = preElimLinear numElim hip g
+    wuChain = charSet numElim hip' [] 0
+
+-- | Pseudo-remainder of a polynomial with respect to an ascending chain.
+remWithChain :: [Poly] -> Poly -> Int -> [Poly]
 remWithChain [] _ _ = []
-remWithChain chain pol var = [rem]++(remWithChain newChain rem (var + 1))
-    where  
-        rem = snd $ pseudoRemainder pol elemChain var -- remainder
-        elemChain = head chain
-        newChain = tail chain
+remWithChain (c:cs) pol v = r : remWithChain cs r (v + 1)
+  where
+    r = snd (pseudoRemainder pol c v)

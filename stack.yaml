@@ -1,24 +1,4 @@
-resolver: lts-18.21
+resolver: lts-18.28
 
 packages:
 - .
-
-extra-deps:
-- git: https://github.com/konn/computational-algebra.git
-  commit: 179c3617605c87daaac9f88ea81146c41e54f602
-  subdirs:
-  - algebraic-prelude
-  - halg-core
-  - halg-core-test
-  - halg-polynomials
-  - halg-heaps
-  - halg-matrices
-  - halg-algorithms
-  - halg-galois-fields
-  - halg-factor
-  - halg-polyn-parser
-- algebra-4.3.1
-- control-monad-loop-0.1
-- unamb-0.2.7
-
-allow-newer: true

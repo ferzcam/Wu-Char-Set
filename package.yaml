@@ -21,13 +21,7 @@ library:
   dependencies:
   - base
   - containers
-  - algebra
-  - halg-core
-  - halg-polynomials
-  - sized
-  - type-natural
-  - singletons
-  - matrix
+  - vector
   - random
   - random-shuffle
 
@@ -70,11 +64,8 @@ tests:
     - base
     - Wu-Char-Set
     - tasty
-    - tasty-hspec
     - tasty-hunit
     - containers
-    - halg-core
-    - halg-polynomials
     ghc-options:
     - -rtsopts
     - -threaded

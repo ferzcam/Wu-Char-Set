@@ -1,5 +1,3 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE GADTs #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Main where
@@ -7,15 +5,13 @@ module Main where
 import Core
 import Control.Exception (SomeException, evaluate, try)
 import Control.Monad (when)
-import Data.Proxy (Proxy (..))
+import Data.List (isSuffixOf, sort)
 import Data.Time.Clock (diffUTCTime, getCurrentTime)
-import GHC.TypeNats (KnownNat, SomeNat (..), someNatVal)
 import System.Directory (doesFileExist, listDirectory)
 import System.Environment (getArgs)
 import System.FilePath ((</>))
 import System.IO (hFlush, stdout)
 import System.Timeout (timeout)
-import Data.List (isSuffixOf, sort)
 
 defaultTimeoutSecs :: Int
 defaultTimeoutSecs = 30
@@ -28,22 +24,20 @@ data Outcome
   deriving (Show)
 
 -- | Decide whether a run is a successful proof: all pseudoremainders vanish.
-classify :: (KnownNat n) => [Polynomial' n] -> Outcome
+classify :: [Poly] -> Outcome
 classify [] = NotProved "empty remainder chain"
 classify rems
-  | last rems == 0 = Proved
-  | otherwise      = NotProved "last pseudoremainder /= 0"
+  | isZero (last rems) = Proved
+  | otherwise          = NotProved "last pseudoremainder /= 0"
 
 -- | Enrich a NotProved outcome with diagnostic info (Wu chain + final remainder).
-addDebugInfo :: (KnownNat n)
-  => [Polynomial' n] -> [Polynomial' n] -> Outcome -> Outcome
+addDebugInfo :: [Poly] -> [Poly] -> Outcome -> Outcome
 addDebugInfo chain rems (NotProved msg)
-  | not (null rems) && last rems /= 0 =
+  | not (null rems) && not (isZero (last rems)) =
       let lastRem = last rems
-          nt = polyNumTerms lastRem
-          remStr = if nt <= 200
-                   then show lastRem
-                   else "(too large: " ++ show nt ++ " terms)"
+          nt = numTerms lastRem
+          remStr | nt <= 200 = show lastRem
+                 | otherwise = "(too large: " ++ show nt ++ " terms)"
           info = "\n  Wu chain: " ++ show (length chain) ++ " polynomials"
               ++ "\n  Remainder chain: " ++ show (length rems) ++ " steps"
               ++ "\n  Final remainder (" ++ show nt ++ " terms):"
@@ -52,49 +46,45 @@ addDebugInfo chain rems (NotProved msg)
 addDebugInfo _ _ outcome = outcome
 
 -- | Pretty-print a polynomial with a size guard.
-showPoly :: (KnownNat n) => Polynomial' n -> String
-showPoly p
+showPolySafe :: Poly -> String
+showPolySafe p
   | nt <= 200 = show p
   | otherwise = "(too large: " ++ show nt ++ " terms)"
-  where nt = polyNumTerms p
+  where nt = numTerms p
 
--- | Run the theorem prover for a problem already parameterized on @n@.
--- Honors a per-problem timeout in seconds.
-runAt
-  :: forall n. (KnownNat n)
-  => Int -> Bool -> Proxy n -> AlgResult -> IO Outcome
-runAt tmoSecs verbose _ ar = do
+-- | Run the theorem prover for a single algebraized problem.
+runProblem :: Int -> Bool -> AlgResult -> IO Outcome
+runProblem tmoSecs verbose ar = do
   let nDep = arNumXVars ar - length (arFreeVars ar)
       polys = generatePolynomials (arHypotheses ar) (arConclusion ar)
                                   (arFreeVars ar)
-              :: [Polynomial' n]
   case polys of
-    []            -> pure (Errored "no polynomials generated")
+    [] -> pure (Errored "no polynomials generated")
     (concl:hyps) -> do
       let action
             | verbose = do
-                -- Print polynomials BEFORE pre-elimination
                 putStrLn "--- Polynomials (before pre-elimination) ---"
-                putStrLn $ "  conclusion: " ++ showPoly concl
-                mapM_ (\(i,h) -> putStrLn $ "  h" ++ show i ++ ": " ++ showPoly h)
-                      (zip [(1::Int)..] hyps)
+                putStrLn $ "  conclusion: " ++ showPolySafe concl
+                mapM_ (\(i, h) -> putStrLn $ "  h" ++ show i ++ ": "
+                                             ++ showPolySafe h)
+                      (zip [(1::Int) ..] hyps)
                 hFlush stdout
-                -- Run prover (includes pre-elimination + charSet + remWithChain)
                 let (chain, rems, hyps', concl', elims) =
                       theoremProverVerbose nDep hyps concl
-                -- Print polynomials AFTER pre-elimination
                 putStrLn "--- Polynomials (after pre-elimination) ---"
                 putStrLn $ "  Eliminated vars: " ++ show elims
-                         ++ " (" ++ show (length elims)
-                         ++ " of " ++ show nDep ++ " dependent)"
-                putStrLn $ "  conclusion: " ++ showPoly concl'
-                mapM_ (\(i,h) -> putStrLn $ "  h" ++ show i ++ ": " ++ showPoly h)
-                      (zip [(1::Int)..] hyps')
+                        ++ " (" ++ show (length elims)
+                        ++ " of " ++ show nDep ++ " dependent)"
+                putStrLn $ "  conclusion: " ++ showPolySafe concl'
+                mapM_ (\(i, h) -> putStrLn $ "  h" ++ show i ++ ": "
+                                             ++ showPolySafe h)
+                      (zip [(1::Int) ..] hyps')
                 putStrLn "---"
                 hFlush stdout
                 outcome <- evaluate (classify rems)
                 pure (addDebugInfo chain rems outcome)
-            | otherwise = evaluate (classify (theoremProver nDep hyps concl))
+            | otherwise =
+                evaluate (classify (theoremProver nDep hyps concl))
       result <- try (timeout (tmoSecs * 1000000) action)
       case result of
         Left (e :: SomeException) -> pure (Errored (show e))
@@ -123,19 +113,20 @@ runProblemFile tmoSecs verbose path = do
         putStrLn "---"
         hFlush stdout
       t0 <- getCurrentTime
-      outcome <- case someNatVal (fromIntegral (max 1 nX)) of
-        SomeNat (p :: Proxy n) -> runAt tmoSecs verbose p ar
+      outcome <- runProblem tmoSecs verbose ar
       t1 <- getCurrentTime
       let secs = realToFrac (diffUTCTime t1 t0) :: Double
       case outcome of
-        Proved       -> putStrLn (showSecs secs ++ "s  OK  (nDep="
-                     ++ show nDep ++ ", nFree=" ++ show nFree ++ ")")
-        NotProved m  -> putStrLn (showSecs secs ++ "s  FAIL: " ++ m)
-        Errored m    -> putStrLn (showSecs secs ++ "s  ERR:  " ++ take 120 m)
-        TimedOut     -> putStrLn (showSecs secs ++ "s  TIMEOUT (>" ++ show tmoSecs ++ "s)")
+        Proved      -> putStrLn (showSecs secs ++ "s  OK  (nDep="
+                      ++ show nDep ++ ", nFree=" ++ show nFree ++ ")")
+        NotProved m -> putStrLn (showSecs secs ++ "s  FAIL: " ++ m)
+        Errored m   -> putStrLn (showSecs secs ++ "s  ERR:  " ++ take 120 m)
+        TimedOut    -> putStrLn (showSecs secs ++ "s  TIMEOUT (>"
+                      ++ show tmoSecs ++ "s)")
   where
-    showSecs s = let r = (fromIntegral (round (s * 1000) :: Int) :: Double) / 1000
-                 in show r
+    showSecs s =
+      let r = (fromIntegral (round (s * 1000) :: Int) :: Double) / 1000
+      in show r
 
 runAll :: Int -> Bool -> FilePath -> IO ()
 runAll tmoSecs verbose dir = do
@@ -143,12 +134,12 @@ runAll tmoSecs verbose dir = do
   let files = sort [dir </> f | f <- entries, ".dsl" `isSuffixOf` f]
   mapM_ (runProblemFile tmoSecs verbose) files
 
--- | Parse optional flags; return (timeout-secs, verbose, remaining-args).
+-- | Parse optional flags; return @(timeout-secs, verbose, remaining-args)@.
 parseArgs :: [String] -> (Int, Bool, [String])
 parseArgs = go defaultTimeoutSecs False
   where
-    go t v ("--timeout":n:rest) = go (read n) v rest
-    go t v ("--verbose":rest)   = go t True rest
+    go _ v ("--timeout":n:rest) = go (read n) v rest
+    go t _ ("--verbose":rest)   = go t True rest
     go t v rest                 = (t, v, rest)
 
 main :: IO ()
@@ -156,17 +147,14 @@ main = do
   rawArgs <- getArgs
   let (tmoSecs, verbose, args) = parseArgs rawArgs
   case args of
-    [] ->
-      runAll tmoSecs verbose "problems/dsl"
-    ["--all"] ->
-      runAll tmoSecs verbose "problems/dsl"
-    ["--dir", d] ->
-      runAll tmoSecs verbose d
+    []           -> runAll tmoSecs verbose "problems/dsl"
+    ["--all"]    -> runAll tmoSecs verbose "problems/dsl"
+    ["--dir", d] -> runAll tmoSecs verbose d
     paths -> do
-      existing <- filterM doesFileExist paths
+      existing <- filterM' doesFileExist paths
       mapM_ (runProblemFile tmoSecs verbose) existing
   where
-    filterM p = foldr go (pure [])
+    filterM' p = foldr go (pure [])
       where
         go x acc = do
           keep <- p x

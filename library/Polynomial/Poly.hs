@@ -297,13 +297,6 @@ existOneDegPoly polys v = find isOneDeg polys
   where
     isOneDeg p = not (isZero p) && classVarDeg p v == 1
 
--- | Drop the leading term in @v@ (assumes the root is exactly @v@ with
--- the given degree). Used in 'pseudoRemainder' to precompute @g_lo@.
-stripLeadingV :: TPoly -> Int -> Int -> TPoly
-stripLeadingV (TNode x d _ r) v m
-  | x == v && d == m = r
-stripLeadingV p _ _ = p
-
 -- ---------------------------------------------------------------------------
 -- coefGcd and factor1 (ported from Java PolyBasic)
 -- ---------------------------------------------------------------------------
@@ -358,12 +351,20 @@ factor1 (Poly ar _ p) = mkPoly ar (tFactor1 p)
 tFactor1 :: TPoly -> TPoly
 tFactor1 TZero       = TZero
 tFactor1 (TConst n)  = TConst n
-tFactor1 p =
+tFactor1 p@(TNode rootVar _ _ _) =
   case collectExpMaps p of
     []     -> p
-    [_]    -> p                             -- single monomial → nothing to share
     (m:ms) ->
-      let mins = combineMins m ms
+      -- Match Java PolyBasic.get_factor1 (PolyBasic.java:634-654): walk
+      -- the chain starting at m.coef, i.e. skip the root variable. In
+      -- Haskell's mirrored convention root = smallest index, so we
+      -- build the min-exponent map over all monomials and then delete
+      -- the root. This (a) fixes the single-monomial case so that a
+      -- poly like -Ey*Bx is reduced to -Ey under the non-degeneracy
+      -- assumption Bx /= 0, and (b) prevents incorrectly factoring out
+      -- the root variable when every monomial happens to share it.
+      let mins0 = combineMins m ms
+          mins  = IntMap.delete rootVar mins0
       in if IntMap.null mins then p else dropFactor mins p
 
 -- | Walk the tree, returning one exponent map per monomial. Ancestors'
@@ -426,7 +427,15 @@ pseudoRemainder (Poly arF _ f) (Poly arG _ g) v =
   let ar  = max arF arG
       m   = tClassVarDeg g v
       d   = tLeadingCoeff g v
-      gLo = stripLeadingV g v m
+      -- gLo = g with its leading-in-v term removed. We compute this as
+      -- @g - d*x_v^m@ rather than via 'stripLeadingV' because @v@ may be
+      -- nested below the root of @g@ (root = smallest variable in the
+      -- Haskell mirror convention), and 'stripLeadingV' only handles the
+      -- root case. See historical bug: with g = x1*x9 - x0*x10 and v=x1,
+      -- the old code returned gLo = g unchanged, causing 'findQR' to
+      -- loop forever multiplying the leading-in-v coefficient by -d on
+      -- every step.
+      gLo = tsub g (shiftVarDeg v m d)
       r0  = findQR v m d gLo f
       r1  = tCoefGcd (tFactor1 r0)
   in (zeroPoly, mkPoly ar r1)

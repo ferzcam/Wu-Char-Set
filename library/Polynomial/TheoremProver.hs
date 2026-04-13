@@ -27,19 +27,20 @@ import Polynomial.Wu (charSet)
 preElimLinear :: Int -> [Poly] -> Poly -> ([Poly], Poly, [Int])
 preElimLinear numElim hyps0 concl0 = go numElim hyps0 concl0 []
   where
-    go 0 hs c elims = (hs, c, reverse elims)  -- safety bound
-    go fuel hs c elims = case findLinearHyp numElim hs of
-      Nothing -> (hs, c, reverse elims)
-      Just (linP, v) ->
-        let reduce p
-              | p == linP          = p  -- keep the linear hyp itself intact
-              | not (varInPoly p v) = p -- skip if p doesn't involve v
-              | otherwise = simplifyPolinomial (snd (pseudoRemainder p linP v))
-            hs' = filter (not . isZero) (map reduce hs)
-            c'  = if varInPoly c v
-                    then simplifyPolinomial (snd (pseudoRemainder c linP v))
-                    else c
-        in go (fuel - 1) hs' c' (v : elims)
+    go 0    hs c elims = (hs, c, reverse elims)
+    go fuel hs c elims =
+      case findLinearHyp numElim hs of
+        Nothing        -> (hs, c, reverse elims)
+        Just (linP, v) ->
+          let reduce p
+                | p == linP          = p
+                | not (varInPoly p v) = p
+                | otherwise = simplifyPolinomial (snd (pseudoRemainder p linP v))
+              hs' = filter (not . isZero) (map reduce hs)
+              c'  = if varInPoly c v
+                      then simplifyPolinomial (snd (pseudoRemainder c linP v))
+                      else c
+          in go (fuel - 1) hs' c' (v : elims)
 
 -- | Find a hypothesis that is degree 1 in some X-variable.
 -- Prefers variables that appear in fewer hypotheses (cheaper elimination).

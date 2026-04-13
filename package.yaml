@@ -18,6 +18,8 @@ ghc-options: -Wall
 
 library:
   source-dirs: library
+  ghc-prof-options:
+  - -fprof-auto
   dependencies:
   - base
   - containers
@@ -42,6 +44,8 @@ executables:
     - -rtsopts
     - -threaded
     - -with-rtsopts=-N
+    ghc-prof-options:
+    - -fprof-auto
 
 benchmarks:
   Wu-Char-Set-benchmarks:

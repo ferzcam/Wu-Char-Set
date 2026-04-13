@@ -39,6 +39,7 @@ library
   hs-source-dirs:
       library
   ghc-options: -Wall
+  ghc-prof-options: -fprof-auto
   build-depends:
       base
     , containers
@@ -54,6 +55,7 @@ executable Wu-Char-Set
   hs-source-dirs:
       executable
   ghc-options: -Wall -rtsopts -threaded -with-rtsopts=-N
+  ghc-prof-options: -fprof-auto
   build-depends:
       Wu-Char-Set
     , base

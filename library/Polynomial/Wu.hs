@@ -15,8 +15,7 @@ module Polynomial.Wu
   , maxNpseudo
   ) where
 
-import Data.List (foldl', sortBy)
-import Data.Ord (comparing)
+import Data.List (foldl')
 import Polynomial.Poly
 import Polynomial.Prelude (dropPolys, replacePoly, simplifyPolinomial)
 
@@ -67,10 +66,7 @@ maxNpseudo f g v
 -- Java's @PolyBasic.getMinV@ selection.
 analizeS :: [Poly] -> Int -> ([Poly], [Poly])
 analizeS ls v =
-  let -- Sort ascending by degree in v; pick the smallest as divisor.
-      sorted = sortBy (comparing (\p -> classVarDeg p v)) ls
-      divisor = head sorted
-      dividend = head (tail sorted)
+  let (divisor, dividend) = twoSmallestByDeg v ls
       (r, maxP) = maxNpseudo dividend divisor v
       dR = classVarDeg r v
       newls = replacePoly ls maxP r
@@ -78,6 +74,29 @@ analizeS ls v =
        0 -> (dropPolys newls [maxP], [r])
        1 -> (newls, [])
        _ -> analizeS newls v
+
+-- | Return the two polynomials with the smallest degree in variable @v@,
+-- as @(smallest, second-smallest)@. Single linear pass matching Java
+-- @PolyBasic.getMinV@'s selection pattern, avoiding the prior
+-- @sortBy@-based O(n log n) + repeated @classVarDeg@ walks.
+--
+-- Precondition: @length ls >= 2@ (callers in 'analizeS' gate on this).
+twoSmallestByDeg :: Int -> [Poly] -> (Poly, Poly)
+twoSmallestByDeg v (x0:x1:xs) =
+  let d0 = classVarDeg x0 v
+      d1 = classVarDeg x1 v
+      initial
+        | d0 <= d1  = ((x0, d0), (x1, d1))
+        | otherwise = ((x1, d1), (x0, d0))
+      (lo, hi) = foldl' step initial xs
+  in (fst lo, fst hi)
+  where
+    step (loP@(_, dLo), hiP@(_, dHi)) y =
+      let dy = classVarDeg y v
+      in if dy < dLo      then ((y, dy), loP)
+         else if dy < dHi then (loP, (y, dy))
+         else                   (loP, hiP)
+twoSmallestByDeg _ _ = error "twoSmallestByDeg: need at least 2 polys"
 
 -- ---------------------------------------------------------------------------
 -- Reduction pass (port of CharSet.reduce)

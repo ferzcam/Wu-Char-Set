@@ -14,6 +14,7 @@
 -- Wu's elimination because variables are processed in ascending order.
 module Polynomial.Poly
   ( Poly(..)
+  , mkPoly
   , isZero
   , zeroPoly
   , constPoly
@@ -44,6 +45,8 @@ import qualified Data.Vector.Unboxed as V
 import Data.Vector.Unboxed (Vector)
 import Data.List (foldl', find, intercalate, sortBy)
 import Data.Ord (comparing, Down(..))
+import Data.IORef (IORef, atomicModifyIORef', newIORef)
+import System.IO.Unsafe (unsafePerformIO)
 
 -- ---------------------------------------------------------------------------
 -- Core recursive type
@@ -66,23 +69,48 @@ data TPoly
   --       v    d    coef    rest
   deriving Eq
 
--- | A multivariate polynomial with 'Integer' coefficients. The 'Int'
--- field records an advisory arity (number of variables the problem is
--- formulated over); it is used by callers but does not constrain the
--- internal structure.
+-- | A multivariate polynomial with 'Integer' coefficients. The '_polyId'
+-- field is a globally-unique identity assigned at construction time —
+-- 'Eq' compares on id, not structure, matching the reference-equality
+-- semantics Java relies on for @TMono@ in @CharSet.charset@ and
+-- @PolyBasic@. Always build 'Poly' via 'mkPoly' so the id is freshly
+-- allocated.
 data Poly = Poly
   { _polyArity :: {-# UNPACK #-} !Int
+  , _polyId    :: {-# UNPACK #-} !Int
   , _polyBody  :: !TPoly
   }
 
 polyArity :: Poly -> Int
 polyArity = _polyArity
 
+-- | Identity-based equality. Two polys are equal iff they came from the
+-- same 'mkPoly' call. This matches Java's reference equality on @TMono@.
 instance Eq Poly where
-  a == b = _polyBody a == _polyBody b
+  a == b = _polyId a == _polyId b
 
 instance Show Poly where
   show = showPoly
+
+-- ---------------------------------------------------------------------------
+-- Identity allocation
+-- ---------------------------------------------------------------------------
+
+-- | Global counter for 'Poly' identities. Accessed via 'unsafePerformIO'
+-- so that pure construction sites can allocate a fresh id. NOINLINE is
+-- essential: GHC would otherwise share the single call across all users
+-- and give every 'Poly' the same id.
+{-# NOINLINE polyIdCounter #-}
+polyIdCounter :: IORef Int
+polyIdCounter = unsafePerformIO (newIORef 0)
+
+-- | Smart constructor that allocates a fresh identity. Use this in place
+-- of the raw 'Poly' constructor everywhere so equality is identity-based.
+{-# NOINLINE mkPoly #-}
+mkPoly :: Int -> TPoly -> Poly
+mkPoly ar body = unsafePerformIO $ do
+  i <- atomicModifyIORef' polyIdCounter (\n -> (n + 1, n))
+  pure (Poly ar i body)
 
 -- ---------------------------------------------------------------------------
 -- Smart constructors
@@ -101,25 +129,26 @@ tNode v d c rest
 -- ---------------------------------------------------------------------------
 
 zeroPoly :: Poly
-zeroPoly = Poly 0 TZero
+zeroPoly = mkPoly 0 TZero
 
 isZero :: Poly -> Bool
-isZero (Poly _ TZero) = True
-isZero _              = False
+isZero p = case _polyBody p of
+  TZero -> True
+  _     -> False
 
 constPoly :: Int -> Integer -> Poly
-constPoly ar 0 = Poly ar TZero
-constPoly ar n = Poly ar (TConst n)
+constPoly ar 0 = mkPoly ar TZero
+constPoly ar n = mkPoly ar (TConst n)
 
 -- | @var arity i@ creates the polynomial @x_i@.
 var :: Int -> Int -> Poly
-var ar i = Poly ar (TNode i 1 (TConst 1) TZero)
+var ar i = mkPoly ar (TNode i 1 (TConst 1) TZero)
 
 -- | Build a polynomial from a list of @(exponent-vector, coefficient)@
 -- pairs. Matching keys are summed; zero coefficients are dropped.
 fromTerms :: Int -> [(Vector Int, Integer)] -> Poly
 fromTerms ar ts =
-  Poly ar $ foldl' (\acc (vec, c) -> tadd acc (monomialFromVec vec c)) TZero ts
+  mkPoly ar $ foldl' (\acc (vec, c) -> tadd acc (monomialFromVec vec c)) TZero ts
 
 -- | Build a single monomial from an exponent vector and a coefficient.
 monomialFromVec :: Vector Int -> Integer -> TPoly
@@ -131,7 +160,7 @@ monomialFromVec vec c =
   in foldr (\(i, e) acc -> TNode i e acc TZero) (TConst c) vars
 
 numTerms :: Poly -> Int
-numTerms (Poly _ p) = go p
+numTerms (Poly _ _ p) = go p
   where
     go TZero            = 0
     go (TConst _)       = 1
@@ -202,14 +231,14 @@ shiftVarDeg v d p@(TNode x deg c r)
 -- ---------------------------------------------------------------------------
 
 instance Num Poly where
-  Poly ar1 p + Poly ar2 q = Poly (max ar1 ar2) (tadd p q)
-  Poly ar1 p - Poly ar2 q = Poly (max ar1 ar2) (tsub p q)
-  Poly ar1 p * Poly ar2 q = Poly (max ar1 ar2) (tmul p q)
+  Poly ar1 _ p + Poly ar2 _ q = mkPoly (max ar1 ar2) (tadd p q)
+  Poly ar1 _ p - Poly ar2 _ q = mkPoly (max ar1 ar2) (tsub p q)
+  Poly ar1 _ p * Poly ar2 _ q = mkPoly (max ar1 ar2) (tmul p q)
   abs = id
-  signum p = if isZero p then 0 else Poly (_polyArity p) (TConst 1)
-  fromInteger 0 = Poly 0 TZero
-  fromInteger n = Poly 0 (TConst n)
-  negate (Poly ar p) = Poly ar (tneg p)
+  signum p = if isZero p then 0 else mkPoly (_polyArity p) (TConst 1)
+  fromInteger 0 = mkPoly 0 TZero
+  fromInteger n = mkPoly 0 (TConst n)
+  negate (Poly ar _ p) = mkPoly ar (tneg p)
 
 -- ---------------------------------------------------------------------------
 -- Class variable operations
@@ -219,7 +248,7 @@ instance Num Poly where
 -- is the root variable (the common case during elimination); /O(n)/
 -- otherwise.
 classVarDeg :: Poly -> Int -> Int
-classVarDeg (Poly _ p) v = tClassVarDeg p v
+classVarDeg (Poly _ _ p) v = tClassVarDeg p v
 
 tClassVarDeg :: TPoly -> Int -> Int
 tClassVarDeg TZero      _ = 0
@@ -230,7 +259,7 @@ tClassVarDeg (TNode x d c r) v
   | otherwise = max (tClassVarDeg c v) (tClassVarDeg r v)
 
 varInPoly :: Poly -> Int -> Bool
-varInPoly (Poly _ p) v = tVarIn p v
+varInPoly (Poly _ _ p) v = tVarIn p v
 
 tVarIn :: TPoly -> Int -> Bool
 tVarIn TZero      _ = False
@@ -243,7 +272,7 @@ tVarIn (TNode x _ c r) v
 -- | Coefficient of @x_v^{deg}@ where @deg = 'classVarDeg' p v@. Returns
 -- @p@ itself when @v@ is absent from @p@.
 leadingCoeffPoly :: Poly -> Int -> Poly
-leadingCoeffPoly (Poly ar p) v = Poly ar (tLeadingCoeff p v)
+leadingCoeffPoly (Poly ar _ p) v = mkPoly ar (tLeadingCoeff p v)
 
 tLeadingCoeff :: TPoly -> Int -> TPoly
 tLeadingCoeff TZero        _ = TZero
@@ -311,7 +340,7 @@ divideCoeffs g (TNode x d c r)  = TNode x d (divideCoeffs g c) (divideCoeffs g r
 -- | Divide all coefficients by their GCD and normalise the sign of the
 -- leading monomial to be positive. (Java: @PolyBasic.coefgcd@.)
 coefGcd :: Poly -> Poly
-coefGcd (Poly ar p) = Poly ar (tCoefGcd p)
+coefGcd (Poly ar _ p) = mkPoly ar (tCoefGcd p)
 
 tCoefGcd :: TPoly -> TPoly
 tCoefGcd TZero = TZero
@@ -324,7 +353,7 @@ tCoefGcd p =
 -- | Extract common variable powers shared by every monomial. (Java:
 -- @PolyBasic.factor1@.)
 factor1 :: Poly -> Poly
-factor1 (Poly ar p) = Poly ar (tFactor1 p)
+factor1 (Poly ar _ p) = mkPoly ar (tFactor1 p)
 
 tFactor1 :: TPoly -> TPoly
 tFactor1 TZero       = TZero
@@ -393,14 +422,14 @@ exactDiv _ _ = Nothing
 -- Applies 'coefGcd' after every reduction step to keep coefficients
 -- bounded (Java: @PolyBasic.prem1@).
 pseudoRemainder :: Poly -> Poly -> Int -> (Poly, Poly)
-pseudoRemainder (Poly arF f) (Poly arG g) v =
+pseudoRemainder (Poly arF _ f) (Poly arG _ g) v =
   let ar  = max arF arG
       m   = tClassVarDeg g v
       d   = tLeadingCoeff g v
       gLo = stripLeadingV g v m
       r0  = findQR v m d gLo f
       r1  = tCoefGcd (tFactor1 r0)
-  in (zeroPoly, Poly ar r1)
+  in (zeroPoly, mkPoly ar r1)
 
 -- | Inner loop of pseudo-remainder. @v@ is the class variable, @m@ the
 -- degree of the divisor in @v@, @d@ its leading coefficient (in @v@),
@@ -517,7 +546,7 @@ collectMonomials = go IntMap.empty
       go (IntMap.insert x d ctx) c ++ go ctx r
 
 showPoly :: Poly -> String
-showPoly (Poly _ p) =
+showPoly (Poly _ _ p) =
   case collectMonomials p of
     []   -> "0"
     mons -> intercalate " + " (map showMono (sortBy (comparing (Down . fst)) mons))

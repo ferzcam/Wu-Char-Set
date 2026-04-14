@@ -1,18 +1,26 @@
-# IMO 2000 P1
-# Incenter I, contact triangle T1,T2,T3, orthic triangle H1,H2,H3.
-# Circle intersections, prove T1 I = I Z.
+# imo_2000_p1
+# Translated from simplegeometry .gex file.
 
-triangle A B C
-incenter I A B C
-foot T1 I B C
-foot T2 I A C
-foot T3 I A B
-foot H1 A B C
-foot H2 B A C
-foot H3 C A B
-inter_cc X1 T1 H1 T2 H1
-inter_cc X2 T1 H2 T2 H2
-inter_cc Y2 T2 H2 T3 H2
-inter_cc Y3 T2 H3 T3 H3
-inter_ll Z X1 X2 Y2 Y3
-prove_cong T1 I I Z
+free A
+free B
+on_tline G1 A B A
+on_tline G2 B B A
+inter_cc M G1 A G2 B
+# radical-axis form for second intersection of same circles
+dep_point N
+perp N M G1 G2
+cong G1 N G1 A
+dep_point C
+para M C B A
+cong G1 C G1 A
+dep_point D
+para M D B A
+cong G2 D G2 B
+dep_point E
+para A E C A
+para B E D B
+on_pline X C D C
+inter_ll P A N C X
+inter_ll Q B N C X
+
+prove_cong E P E Q

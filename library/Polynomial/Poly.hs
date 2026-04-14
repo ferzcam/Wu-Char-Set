@@ -26,6 +26,7 @@ module Polynomial.Poly
   -- Class variable operations
   , classVarDeg
   , varInPoly
+  , topVarPoly
   , leadingCoeffPoly
   , existOneDegPoly
   -- Simplification (ported from Java PolyBasic)
@@ -269,6 +270,29 @@ tVarIn (TNode x _ c r) v
   | x >  v    = False
   | otherwise = tVarIn c v || tVarIn r v
 
+-- | Largest variable index present in @p@. Returns 'maxBound' for a
+-- zero or bare-constant polynomial (so they sort to the end of a pool
+-- ordered ascending by 'topVarPoly'). Matches Java's @PolyBasic.lv(m) =
+-- m.x@, which is the topmost (= largest-index) variable of the tree.
+-- The Haskell canonical form stores the /smallest/ variable at the
+-- root, so we walk the entire tree taking the max of every node's
+-- variable index.
+topVarPoly :: Poly -> Int
+topVarPoly (Poly _ _ p) = case tTopVar p of
+                            Nothing -> maxBound
+                            Just v  -> v
+
+tTopVar :: TPoly -> Maybe Int
+tTopVar TZero            = Nothing
+tTopVar (TConst _)       = Nothing
+tTopVar (TNode x _ c r)  =
+  let m = case (tTopVar c, tTopVar r) of
+            (Nothing, Nothing) -> x
+            (Just a,  Nothing) -> max x a
+            (Nothing, Just b)  -> max x b
+            (Just a,  Just b)  -> max x (max a b)
+  in Just m
+
 -- | Coefficient of @x_v^{deg}@ where @deg = 'classVarDeg' p v@. Returns
 -- @p@ itself when @v@ is absent from @p@.
 leadingCoeffPoly :: Poly -> Int -> Poly
@@ -351,20 +375,29 @@ factor1 (Poly ar _ p) = mkPoly ar (tFactor1 p)
 tFactor1 :: TPoly -> TPoly
 tFactor1 TZero       = TZero
 tFactor1 (TConst n)  = TConst n
-tFactor1 p@(TNode rootVar _ _ _) =
+tFactor1 p =
   case collectExpMaps p of
     []     -> p
     (m:ms) ->
-      -- Match Java PolyBasic.get_factor1 (PolyBasic.java:634-654): walk
-      -- the chain starting at m.coef, i.e. skip the root variable. In
-      -- Haskell's mirrored convention root = smallest index, so we
-      -- build the min-exponent map over all monomials and then delete
-      -- the root. This (a) fixes the single-monomial case so that a
-      -- poly like -Ey*Bx is reduced to -Ey under the non-degeneracy
-      -- assumption Bx /= 0, and (b) prevents incorrectly factoring out
-      -- the root variable when every monomial happens to share it.
-      let mins0 = combineMins m ms
-          mins  = IntMap.delete rootVar mins0
+      -- Java PolyBasic.get_factor1 (PolyBasic.java:634-654) builds the
+      -- min-exponent map over every monomial of @m@ and then factors
+      -- out those powers, /except/ for @m.x@ — the polynomial's class
+      -- variable (= Java's @lv(m)@, the largest variable present).
+      -- Skipping the class var is essential: if we factored it out,
+      -- the resulting chain entry would no longer constrain the
+      -- variable it's supposed to define.
+      --
+      -- We protect the /largest/ variable (matching Java's @m.x@). An
+      -- earlier version deleted the TNode's literal @x@ field, which
+      -- in Haskell's canonical form is the /smallest/ variable — the
+      -- exact opposite — leaving clingy leading-coef factors like the
+      -- @B.y@ in @B.y * (C.x - M.x)@ unstripped, which in turn made
+      -- 'reducePass' over-reduce dependent hypotheses downstream.
+      let mins0  = combineMins m ms
+          topVar = case tTopVar p of
+                     Just v  -> v
+                     Nothing -> minBound  -- unreachable: p is non-const
+          mins   = IntMap.delete topVar mins0
       in if IntMap.null mins then p else dropFactor mins p
 
 -- | Walk the tree, returning one exponent map per monomial. Ancestors'

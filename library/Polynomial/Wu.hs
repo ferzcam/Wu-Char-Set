@@ -2,25 +2,27 @@
 -- | Wu's characteristic set construction.
 --
 -- Structural port of @maths/CharSet.java:charset@. The pool of pending
--- polynomials is kept sorted by 'rootVar' (smallest variable index
--- present) — Haskell's inverted-root equivalent of Java's
--- @lv(m) = m.x@, which in Java's convention is the /largest/ variable
--- of the tree. Concretely:
+-- polynomials is kept sorted ascending by 'rootVar', which here is the
+-- /largest/ variable index present in a polynomial — mirroring Java's
+-- @PolyBasic.lv(m) = m.x@. Concretely:
 --
 --   * We pop the first /group/ — the maximal prefix of the pool sharing
 --     the same 'rootVar' @vra@.
 --   * A group of one is emitted directly to the chain.
---   * Otherwise we pick the minimum-degree-in-@vra@ element as divisor
---     (@PolyBasic.getMinV@) and pseudo-remainder every other group
---     member against it. Each reduced remainder has @rootVar > vra@ by
---     construction (prem eliminated @vra@), so it folds back into the
---     pool at a later position.
+--   * Otherwise we pick the minimum-positive-degree-in-@vra@ element as
+--     divisor (@PolyBasic.getMinV@) and pseudo-remainder every other
+--     group member against it. Each reduced remainder has @rootVar <
+--     vra@ by construction (prem eliminated the topmost variable), so
+--     it folds back into the pool at an earlier position.
 --   * The divisor becomes the group's chain entry, and we recurse on
 --     the updated pool.
 --
--- A trailing 'reducePass' + 'cfinished' check guards against chains
--- that still share a root var across entries (Java re-invokes
--- @charset(tp)@ in the same situation).
+-- Picking the /largest/ variable as the group key is the whole reason
+-- this version avoids the mid-chain term explosion the old
+-- smallest-var-first driver was hitting on @imo_2000_p1@. Eliminating
+-- the latest-constructed point's coordinate first exploits the
+-- typically-linear dependence of each new constraint on the point it
+-- defines, keeping intermediate remainders small.
 module Polynomial.Wu
   ( charSet
   , charSetIO
@@ -29,6 +31,7 @@ module Polynomial.Wu
   ) where
 
 import Data.List (foldl', partition, sortOn)
+import qualified Data.Set as S
 import Polynomial.Poly
 import Polynomial.Prelude (simplifyPolinomial)
 
@@ -36,26 +39,16 @@ import Polynomial.Prelude (simplifyPolinomial)
 -- Root-variable helpers
 -- ---------------------------------------------------------------------------
 
--- | Smallest variable index present in @p@, or @maxBound@ if @p@ is
--- zero or a nonzero constant. Matches Java's @lv(m) = m.x@ under
--- Haskell's inverted root convention: in Java @m.x@ is the /largest/
--- variable of the tree, in Haskell it is the /smallest/. Wu's elimination
--- direction is flipped accordingly (smallest-first here, largest-first
--- in Java), so the chain produced is structurally equivalent.
+-- | Largest variable index present in @p@, or @maxBound@ if @p@ is
+-- zero or a nonzero constant. Matches Java's @lv(m) = m.x@: the
+-- topmost (highest-indexed) variable of the polynomial, which is the
+-- one eliminated by the group this poly belongs to in Wu's main loop.
 --
--- A polynomial with no variables is parked at @maxBound@ so it sorts to
--- the end of the pool and is naturally skipped by the main loop's
--- @rootVar p >= numElim@ guard.
+-- A polynomial with no variables is parked at @maxBound@ so it sorts
+-- to the end of the pool and is emitted as a trivial singleton chain
+-- entry.
 rootVar :: Poly -> Int
-rootVar p
-  | isZero p  = maxBound
-  | otherwise =
-      let ar = polyArity p
-          go !i
-            | i >= ar        = maxBound
-            | varInPoly p i  = i
-            | otherwise      = go (i + 1)
-      in go 0
+rootVar = topVarPoly
 
 -- ---------------------------------------------------------------------------
 -- Pool operations
@@ -102,42 +95,72 @@ spanGroup (p:ps)   =
 
 -- | Characteristic-set construction.
 --
--- @charSet numElim hyps _acc _v0@ triangulates @hyps@ with respect to
--- variables @[0 .. numElim - 1]@. Variables @>= numElim@ are free
--- U-parameters and never become chain entries. The legacy accumulator
--- and start-var arguments are ignored.
+-- @charSet _numElim hyps _acc _v0@ triangulates @hyps@. The legacy
+-- @numElim@ / accumulator / start-var arguments are kept for
+-- call-site compatibility but are no longer needed: with @Tokenizer@
+-- assigning free vars the lowest class indices and deps above them,
+-- an all-free poly (if one is ever produced) has @rootVar < numFree@
+-- and simply gets emitted as a trivial singleton chain entry that is
+-- a no-op for 'remWithChain'.
 --
--- Structurally the loop is 'runLoop', which pops one 'rootVar' group at
--- a time and emits exactly one chain entry per group — so its output
--- is 'cfinished' by construction and needs neither a post-'reducePass'
--- (which could rewrite a chain entry to a different 'rootVar' and break
--- the invariant) nor Java's @cfinished@ recursion.
+-- Structurally the loop is 'runLoop', which pops one 'rootVar' group
+-- at a time and emits exactly one chain entry per group.
 charSet :: Int -> [Poly] -> [Poly] -> Int -> [Poly]
-charSet numElim p0 _ _ =
-  let initialPool =
-        sortPool . reducePass . sortPool . map simplify . filter (not . isZero) $ p0
-  in map simplify (runLoop initialPool)
+charSet _numElim p0 _ _ = map simplify (go p0)
   where
+    go :: [Poly] -> [Poly]
+    go input =
+      let pool = sortPool . reducePass . sortPool
+               . map simplify . filter (not . isZero) $ input
+          chain = runLoop pool
+      in if cfinished chain then chain else go chain
+
     runLoop :: [Poly] -> [Poly]
     runLoop []   = []
     runLoop pool =
       let (grp, rest) = spanGroup pool
           v           = rootVar (head grp)
-      in if v >= numElim
-           then []  -- everything left lives in free U-params
-           else case grp of
-                  [single] -> single : runLoop rest
-                  _        ->
-                    let (divor, reinserts) = reduceGroup v grp
-                        newPool = foldl' (flip insertByRoot) rest reinserts
-                    in divor : runLoop newPool
+      in case grp of
+           [single] -> single : runLoop rest
+           _        ->
+             let (divor, reinserts) = reduceGroup v grp
+                 newPool = foldl' (flip insertByRoot) rest reinserts
+             in divor : runLoop newPool
 
--- | Within a group sharing @rootVar = v@, pick a min-degree-in-@v@
--- divisor and pseudo-remainder every other group member against it.
--- Remainders with @rootVar > v@ are returned as reinserts; a defensive
--- inner loop handles the pathological "stayed" case where prem returns
--- a result still rooted at @v@ (shouldn't happen with a correct
--- 'pseudoRemainder', but Java's CharSet.java:72-100 defends against it).
+-- | A chain is \"c-finished\" iff all its entries have distinct
+-- 'rootVar' — i.e. it is a proper triangular set. Mirrors Java
+-- @CharSet.cfinished@ semantically; Java's version only checks
+-- /adjacent/ entries because its chain is kept sorted via @ppush@,
+-- so adjacency implies global distinctness. Our 'runLoop' emits in
+-- processing order, which can put duplicates at non-adjacent
+-- positions (when a reduceGroup reinsert lands at a 'rootVar' that
+-- was already processed earlier), so we must scan all pairs — a set
+-- of 'rootVar's with size equal to the list length.
+--
+-- When this is false, 'charSet' re-runs the pipeline on that chain
+-- until it triangulates cleanly.
+cfinished :: [Poly] -> Bool
+cfinished xs =
+  let rs = map rootVar xs
+  in length rs == length (nubOrd rs)
+  where
+    nubOrd = go S.empty
+      where
+        go _    []     = []
+        go seen (y:ys)
+          | S.member y seen = go seen ys
+          | otherwise       = y : go (S.insert y seen) ys
+
+-- | Within a group sharing @rootVar = v@ (largest variable of the
+-- poly), pick a min-positive-degree-in-@v@ divisor and
+-- pseudo-remainder every other group member against it. Prem
+-- eliminates @v@ from each remainder, so its new 'rootVar' (largest
+-- var) is strictly less than @v@ and it folds earlier in the pool.
+-- The defensive inner loop handles the "stayed" case where prem
+-- returns a result whose largest var is still @v@ (lower degree in
+-- @v@) — this is expected whenever the divisor did not have minimum
+-- positive degree, matching Java's CharSet.java:140-190 re-loop on
+-- @divor + stayed@.
 reduceGroup :: Int -> [Poly] -> (Poly, [Poly])
 reduceGroup v = go []
   where
@@ -151,7 +174,7 @@ reduceGroup v = go []
                    , let r = simplifyPolinomial r0
                    , not (isZero r)
                    ]
-          (fwd, stayed) = partition (\r -> rootVar r > v) rems
+          (fwd, stayed) = partition (\r -> rootVar r < v) rems
       in if null stayed
            then (divor, acc ++ fwd)
            else go (acc ++ fwd) (divor : stayed)
@@ -222,54 +245,58 @@ showPolyShort p
 
 -- | IO variant of 'charSet' that logs every group processed.
 charSetIO :: (String -> IO ()) -> Int -> [Poly] -> [Poly] -> Int -> IO [Poly]
-charSetIO logIO numElim p0 _ _ = do
-  logIO $ "[charSet] entry on " ++ show (length p0) ++ " polys"
-  let !simplified = map simplify (filter (not . isZero) p0)
-      !sorted1    = sortPool simplified
-      !reduced    = reducePass sorted1
-      !pool0      = sortPool reduced
-  logIO $ "[charSet] after entry simplify+sort+reducePass+resort: "
-         ++ show (length pool0) ++ " polys"
-  mapM_ (\(i, pp) -> logIO $ "  p" ++ show i
-                            ++ " rootVar=" ++ show (rootVar pp)
-                            ++ " terms="   ++ show (numTerms pp)
-                            ++ " "          ++ showPolyShort pp)
-        (zip [(0::Int)..] pool0)
-  chain <- runLoopIO pool0
-  logIO $ "[charSet] chain length = " ++ show (length chain)
-  mapM_ (\(i, pp) -> logIO $ "  h" ++ show i
-                            ++ " rootVar=" ++ show (rootVar pp)
-                            ++ " terms="   ++ show (numTerms pp)
-                            ++ " "          ++ showPolyShort pp)
-        (zip [(0::Int)..] chain)
-  pure (map simplify chain)
+charSetIO logIO _numElim p0 _ _ = fmap (map simplify) (goIO 0 p0)
   where
+    goIO :: Int -> [Poly] -> IO [Poly]
+    goIO depth input = do
+      logIO $ "[charSet] entry on " ++ show (length input) ++ " polys"
+             ++ (if depth > 0 then "  (cfinished recursion depth "
+                                    ++ show depth ++ ")"
+                              else "")
+      let !simplified = map simplify (filter (not . isZero) input)
+          !sorted1    = sortPool simplified
+          !reduced    = reducePass sorted1
+          !pool0      = sortPool reduced
+      logIO $ "[charSet] after entry simplify+sort+reducePass+resort: "
+             ++ show (length pool0) ++ " polys"
+      mapM_ (\(i, pp) -> logIO $ "  p" ++ show i
+                                ++ " rootVar=" ++ show (rootVar pp)
+                                ++ " terms="   ++ show (numTerms pp)
+                                ++ " "          ++ showPolyShort pp)
+            (zip [(0::Int)..] pool0)
+      chain <- runLoopIO pool0
+      logIO $ "[charSet] chain length = " ++ show (length chain)
+      mapM_ (\(i, pp) -> logIO $ "  h" ++ show i
+                                ++ " rootVar=" ++ show (rootVar pp)
+                                ++ " terms="   ++ show (numTerms pp)
+                                ++ " "          ++ showPolyShort pp)
+            (zip [(0::Int)..] chain)
+      if cfinished chain
+        then pure chain
+        else do
+          logIO $ "[charSet] not cfinished — duplicate rootVar detected, recursing"
+          goIO (depth + 1) chain
     runLoopIO :: [Poly] -> IO [Poly]
     runLoopIO []   = pure []
     runLoopIO pool = do
       let (grp, rest) = spanGroup pool
           v           = rootVar (head grp)
-      if v >= numElim
-        then do
-          logIO $ "[charSet] done: remaining pool head rootVar=" ++ show v
-                 ++ " >= numElim=" ++ show numElim
-          pure []
-        else case grp of
-          [single] -> do
-            logIO $ "[charSet] v=" ++ show v ++ " single poly -> chain: "
-                   ++ showPolyShort single
-            (single :) <$> runLoopIO rest
-          _ -> do
-            logIO $ "[charSet] v=" ++ show v
-                   ++ " group size=" ++ show (length grp)
-            let (divor, reinserts) = reduceGroup v grp
-            logIO $ "  divor terms=" ++ show (numTerms divor)
-                   ++ " deg_v=" ++ show (classVarDeg divor v)
-                   ++ " " ++ showPolyShort divor
-            mapM_ (\(i, r) -> logIO $ "    reinsert[" ++ show i ++ "] rootVar="
-                                     ++ show (rootVar r)
-                                     ++ " terms=" ++ show (numTerms r)
-                                     ++ " " ++ showPolyShort r)
-                  (zip [(0::Int)..] reinserts)
-            let newPool = foldl' (flip insertByRoot) rest reinserts
-            (divor :) <$> runLoopIO newPool
+      case grp of
+        [single] -> do
+          logIO $ "[charSet] v=" ++ show v ++ " single poly -> chain: "
+                 ++ showPolyShort single
+          (single :) <$> runLoopIO rest
+        _ -> do
+          logIO $ "[charSet] v=" ++ show v
+                 ++ " group size=" ++ show (length grp)
+          let (divor, reinserts) = reduceGroup v grp
+          logIO $ "  divor terms=" ++ show (numTerms divor)
+                 ++ " deg_v=" ++ show (classVarDeg divor v)
+                 ++ " " ++ showPolyShort divor
+          mapM_ (\(i, r) -> logIO $ "    reinsert[" ++ show i ++ "] rootVar="
+                                   ++ show (rootVar r)
+                                   ++ " terms=" ++ show (numTerms r)
+                                   ++ " " ++ showPolyShort r)
+                (zip [(0::Int)..] reinserts)
+          let newPool = foldl' (flip insertByRoot) rest reinserts
+          (divor :) <$> runLoopIO newPool

@@ -100,7 +100,12 @@ data AlgState = AlgState
   , asHyps      :: [Hypothesis]
   , asNextX     :: Int      -- ^ Next X variable index
   , asFreeVars  :: [Coord]  -- ^ Accumulated free coordinates
-  , asFrameUsed :: Int      -- ^ How many frame slots used (0, 1, or 2)
+  , asFrameUsed :: Int      -- ^ How many frame slots consumed (0..3).
+                            -- Slot 0 = origin (first free point),
+                            -- slot 1 = y-axis anchor (second free point),
+                            -- slot 2 = x-axis anchor (reserved for a
+                            -- subsequent 'GOnTLine' that places its new
+                            -- point on the x-axis).
   } deriving (Show)
 
 -- | Create initial state. The coordinate frame is fixed lazily as the
@@ -370,6 +375,27 @@ processStep (GEqAngle a b c d e f) st =
   in addHyps [SameAcAngle (Angle ptA ptB ptC) (Angle ptD ptE ptF)] st
 
 -- AG-style loose constructors: new semi-free point + 1 constraint.
+--
+-- Special case — third frame slot. When the frame has only the origin
+-- and the y-axis anchor consumed (@asFrameUsed == 2@) and the step is
+-- @on_tline P Q R S@ with @Q@ at the origin and both @R@ and @S@ on the
+-- current y-axis (i.e. their x-coords are the literal @Const 0@), the
+-- line @RS@ is the y-axis and @P@ lies on the x-axis. Pre-place
+-- @P = (px, 0)@ with @px@ a single free parameter and drop the
+-- perpendicularity constraint entirely — it is now trivially satisfied.
+-- This mirrors Java's @DrawProcess.SetVarable@ placement of the first
+-- @on_tline@ point, saving one dependent class variable and one
+-- hypothesis on problems that start @free; free; on_tline …@.
+processStep (GOnTLine p q a b) st
+  | asFrameUsed st == 2
+  , Just (Point (Const 0) (Const 0)) <- Map.lookup q (asPoints st)
+  , Just (Point (Const 0) _)         <- Map.lookup a (asPoints st)
+  , Just (Point (Const 0) _)         <- Map.lookup b (asPoints st)
+  =
+      let (px, st1) = freshX st
+          st2       = markFree px st1
+          st3       = fixedPoint p px (Const 0) st2
+      in st3 { asFrameUsed = 3 }
 processStep (GOnTLine p q a b) st =
   let (ptP, st1) = freshPointFreeX p st
       ptQ = lookupPt q st1
@@ -377,8 +403,20 @@ processStep (GOnTLine p q a b) st =
       ptB = lookupPt b st1
   in addHyps [Perpendicular (Line ptQ ptP) (Line ptA ptB)] st1
 
+-- @on_pline P Q A B@ creates @P@ on the line through @Q@ parallel to
+-- @AB@. Both coordinates of @P@ are allocated as /dependent/ variables
+-- (matching Java's GEX algebraization) rather than pre-stripping one
+-- to a free slot. The single Parallel constraint leaves 1 DOF; Wu's
+-- method handles the under-determined case naturally, and crucially
+-- /which/ coordinate gets the chain entry is decided by Wu — not
+-- pre-committed here. This matters whenever the leading coefficient
+-- in one variable degenerates: e.g. in @imo_2000_p1@, after
+-- @C.x = D.x = M.x@ propagates via short reducers, the @y@-coordinate
+-- coefficient of the XC∥DC constraint vanishes, and the equation
+-- flips to a pure-in-@X.x@ form. With a pre-stripped @X.x@-as-free
+-- slot that flip is impossible and the chain loses its @X@ entry.
 processStep (GOnPLine p q a b) st =
-  let (ptP, st1) = freshPointFreeX p st
+  let (ptP, st1) = freshPointXX p st
       ptQ = lookupPt q st1
       ptA = lookupPt a st1
       ptB = lookupPt b st1

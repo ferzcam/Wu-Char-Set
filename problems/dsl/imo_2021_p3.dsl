@@ -1,27 +1,20 @@
-# IMO 2021 P3
-# D on BC with AD bisector of ∠BAC (0 DOF — intersection of bisector with BC).
-# E on AC with ∠ADE=∠BCD; F on AB with ∠ADF=∠CBD.
-# X on AC with BX=CX. O1 circumcenter(CDA); O2 circumcenter(EDX).
-# Y = BC ∩ EF. Prove O1, O2, Y collinear.
+# imo_2021_p3
+# Translated from simplegeometry .gex file.
+# WARNING: contains unsupported predicates: unknown: ON_ALINE E D A D C B, unknown: ON_ALINE F D A D B C
 
 triangle A B C
-# D = intersection of A-angle bisector with BC (determined)
-dep_point D
-collinear B D C
-eqangle B A D D A C
-# E on AC such that ∠ADE = ∠BCD (determined)
-dep_point E
-collinear A E C
-eqangle A D E B C D
-# F on AB such that ∠ADF = ∠CBD (determined)
-dep_point F
-collinear A F B
-eqangle A D F C B D
-# X on AC with BX = CX (determined)
+angle_bisector D B A C
+# UNSUPPORTED: ON_ALINE E D A D C B
+on_line E A C
+# UNSUPPORTED: ON_ALINE F D A D B C
+on_line F A B
 dep_point X
+cong X B X C
 collinear A X C
-cong B X C X
-circumcenter O1 C D A
-circumcenter O2 E D X
-inter_ll Y B C E F
-prove_collinear O1 O2 Y
+circumcenter O1 A D C
+circumcenter O2 E X D
+dep_point Y
+para B Y C B
+para F Y F E
+
+prove_collinear Y O1 O2

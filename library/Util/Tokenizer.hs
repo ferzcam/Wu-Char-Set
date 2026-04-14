@@ -45,21 +45,23 @@ generatePolynomials hypotheses conclusion freeVars =
 -- new polys into @polylist@ so that it is sorted /ascending/ by @lv@, then
 -- @CharSet.charset@ processes the head first — i.e. eliminates the /smallest/
 -- @lv@ (earliest-constructed point's coordinate) first. Haskell's 'rootVar'
--- is the /smallest/ variable present, and 'charSet' also processes smallest
--- rootVar first. For the two conventions to produce the same chain we need
--- each constraint poly to be rooted (in its own convention) at the same
--- construction-order position: Java uses largest = latest, Haskell uses
--- smallest = earliest. A poly tying point_k to earlier points therefore
--- wants class index @k@ in /both/ systems, which means Haskell should assign
--- ascending class indices in construction order — smallest suffix → index 0.
+-- is now the /largest/ variable present (a direct port of Java's
+-- @PolyBasic.lv@), and 'charSet' also processes smallest rootVar first, so a
+-- poly tying point_k to earlier points gets class index @k@ in both systems:
+-- assign ascending class indices in construction order — smallest suffix →
+-- index 0 → earliest-constructed dep var.
 --
---   1. Dependent variables /not/ in the conclusion, ascending by suffix.
---      Index 0 goes to the earliest-constructed non-conclusion dep var.
---   2. Dependent variables /in/ the conclusion, ascending by suffix.
---      These come /after/ the non-conclusion deps so they're eliminated
---      last among class variables, leaving 'remWithChain' with the
---      conclusion points at the tip of the chain.
---   3. Free U-parameters last (passive coefficients).
+--   1. Free U-parameters /first/ (smallest indices). They are passive
+--      coefficients and must not dominate the 'rootVar' (= largest var)
+--      of any poly that also contains a dep — otherwise Wu would group
+--      constraints by their free parameter rather than by the point
+--      they define.
+--   2. Dependent variables /not/ in the conclusion, ascending by suffix
+--      (earliest-constructed non-conclusion dep var comes first).
+--   3. Dependent variables /in/ the conclusion, ascending by suffix.
+--      These get the /largest/ indices so they're eliminated last in
+--      the chain, leaving 'remWithChain' with the conclusion points at
+--      the tip.
 --
 -- Numeric (not lex) sort of suffixes is required so that @x10@ sorts after
 -- @x2@ rather than before it.
@@ -77,7 +79,7 @@ generateVariables points conclusion freeVars = zip finalVariables monicPolys
     depConclusion = filter (`elem` depVars) pointsConclusion
     depNotConclusion = depVars \\ depConclusion
 
-    finalVariables = depNotConclusion ++ depConclusion ++ freePresent
+    finalVariables = freePresent ++ depNotConclusion ++ depConclusion
     nTotal = length finalVariables
     monicPolys = [var nTotal i | i <- [0 .. nTotal - 1]]
 

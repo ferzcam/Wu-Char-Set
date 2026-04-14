@@ -1,22 +1,24 @@
-# IMO 2011 P6
-# Heavy translation: P on (O,A), Q with OP perp PQ; PA,PB,PC,QA,QB,QC
-# are second intersections of pairs of equal-radius circles. Triangles
-# A1B1C1 built from line intersections; O1 its circumcenter.
+# imo_2011_p6
+# Translated from simplegeometry .gex file.
 
 triangle A B C
-circumcenter O C B A
+circumcenter O A B C
 on_circle P O A
-free Q
-perp O P P Q
-inter_cc PA B P C P
-inter_cc PB A P C P
-inter_cc PC A P B P
-inter_cc QA B Q C Q
-inter_cc QB A Q C Q
-inter_cc QC A Q B Q
-inter_ll A1 PB QB PC QC
-inter_ll B1 PA QA PC QC
-inter_ll C1 PA QA PB QB
-circumcenter O1 B1 A1 C1
+on_tline Q P P O
+sym F P B C
+sym G Q B C
+sym H P A C
+sym I Q A C
+sym J P A B
+sym K Q A B
+dep_point A1
+para J A1 K J
+dep_point C1
+para F C1 G F
+para H A1 I H
+inter_ll B1 F G H I
+collinear J C1 K
+circumcenter O1 A1 C1 B1
 inter_cc X O A O1 A1
-prove_collinear X O O1
+
+prove_collinear O X O1

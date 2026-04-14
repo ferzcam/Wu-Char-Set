@@ -1,14 +1,21 @@
-# IMO 2002 P2b
-# NOTE: the AlphaGeometry text defines E and F as the SAME point
-# (both "circumcenter of BAO"). Likely corruption; we keep both
-# to preserve the pipeline but this problem will be degenerate.
+# imo_2002_p2b
+# Translated from simplegeometry .gex file.
 
-free B
 free C
-on_line O B C
-cong B O C O
+free B
+midpoint O B C
 on_circle A O B
-circumcenter E B A O
-circumcenter F B A O
-on_line J A C
-prove_eqangle E C J J C F
+dep_point D
+cong D A D B
+cong O D O B
+dep_point F
+cong F O F A
+dep_point E
+cong E O E A
+cong O F O B
+cong O E O B
+dep_point J
+para O J D A
+collinear C J A
+
+prove_eqangle C E C J C J C F

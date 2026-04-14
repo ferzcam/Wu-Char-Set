@@ -1,0 +1,797 @@
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :msgFmt_dePo UP-TO-DATE
+> Task :msgFmt_faPo UP-TO-DATE
+> Task :msgFmt_frPo UP-TO-DATE
+> Task :msgFmt_hePo UP-TO-DATE
+> Task :msgFmt_huPo UP-TO-DATE
+> Task :msgFmt_itPo UP-TO-DATE
+> Task :msgFmt_plPo UP-TO-DATE
+> Task :msgFmt_ptPo UP-TO-DATE
+> Task :msgFmt_rsPo UP-TO-DATE
+> Task :msgFmt_zh_CNPo UP-TO-DATE
+> Task :msgFmtAll UP-TO-DATE
+
+> Task :run
+Java Geometry Expert 0.87
+Language loaded: English
+[charSet] entry on: 1 polys
+  p0 rootVar=6 terms=1 x4x6
+[charSet] after reduce1: 1 polys
+  p0 rootVar=6 terms=1 x4x6
+[charSet] v=6 single poly -> chain: x4x6
+[charSet] pre-reduce output: 1 polys
+  p0 rootVar=6 terms=1 x4x6
+[charSet] post-reduce output: 1 polys
+  p0 rootVar=6 terms=1 x4x6
+[charSet] reversed output: 1 polys
+  p0 rootVar=6 terms=1 x4x6
+[charSet] final chain: 1 polys
+  p0 rootVar=6 terms=1 x4x6
+[charSet] entry on: 2 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x4x8 - x4^2
+[charSet] after reduce1: 2 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+[charSet] v=6 single poly -> chain: x6
+[charSet] v=8 single poly -> chain: x8 - x4
+[charSet] pre-reduce output: 2 polys
+  p0 rootVar=8 terms=2 x8 - x4
+  p1 rootVar=6 terms=1 x6
+[charSet] post-reduce output: 2 polys
+  p0 rootVar=8 terms=2 x8 - x4
+  p1 rootVar=6 terms=1 x6
+[charSet] reversed output: 2 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+[charSet] final chain: 2 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+[charSet] entry on: 4 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=10 terms=6 x10^2 - 2x8x10 + x9^2 - 2x7x9 + 2x4x8 - x4^2
+  p3 rootVar=10 terms=3 x10^2 + x9^2 - 2x5x9
+[charSet] after reduce1: 4 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=10 terms=5 x10^2 - 2x4x10 + x9^2 - 2x7x9 + x4^2
+  p3 rootVar=10 terms=3 x10^2 + x9^2 - 2x5x9
+[charSet] v=6 single poly -> chain: x6
+[charSet] v=8 single poly -> chain: x8 - x4
+[charSet] v=10 group size=2
+  divor terms=5 deg_v=2 x10^2 - 2x4x10 + x9^2 - 2x7x9 + x4^2
+    stayed rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  same-group remainders present, re-loop on divor + stayed
+  divor terms=4 deg_v=1 2x4x10 + (2x7 - 2x5)x9 - x4^2
+    reinsert[0] rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  emit divor to chain terms=4
+[charSet] v=9 single poly -> chain: (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+[charSet] pre-reduce output: 4 polys
+  p0 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p1 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p2 rootVar=8 terms=2 x8 - x4
+  p3 rootVar=6 terms=1 x6
+[charSet] post-reduce output: 4 polys
+  p0 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p1 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p2 rootVar=8 terms=2 x8 - x4
+  p3 rootVar=6 terms=1 x6
+[charSet] reversed output: 4 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+[charSet] final chain: 4 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+[charSet] entry on: 6 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=12 terms=7 (x7 - x5)x12 - x8x11 + (x7 - x5)x10 - x8x9 + 2x5x8
+  p5 rootVar=12 terms=6 x8x12 + (x7 - x5)x11 - x8x10 + (-x7 + x5)x9
+[charSet] after reduce1: 6 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p5 rootVar=12 terms=6 x4x12 + (x7 - x5)x11 - x4x10 + (-x7 + x5)x9
+[charSet] v=6 single poly -> chain: x6
+[charSet] v=8 single poly -> chain: x8 - x4
+[charSet] v=9 single poly -> chain: (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+[charSet] v=10 single poly -> chain: 2x4x10 + (2x7 - 2x5)x9 - x4^2
+[charSet] v=12 group size=2
+  divor terms=7 deg_v=1 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+    reinsert[0] rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  emit divor to chain terms=7
+[charSet] v=11 single poly -> chain: (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+[charSet] pre-reduce output: 6 polys
+  p0 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p1 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p2 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p3 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p4 rootVar=8 terms=2 x8 - x4
+  p5 rootVar=6 terms=1 x6
+[charSet] post-reduce output: 6 polys
+  p0 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p1 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p2 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p3 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p4 rootVar=8 terms=2 x8 - x4
+  p5 rootVar=6 terms=1 x6
+[charSet] reversed output: 6 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+[charSet] final chain: 6 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+[charSet] entry on: 7 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x4x13 - x4x9
+[charSet] after reduce1: 7 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+[charSet] v=6 single poly -> chain: x6
+[charSet] v=8 single poly -> chain: x8 - x4
+[charSet] v=9 single poly -> chain: (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+[charSet] v=10 single poly -> chain: 2x4x10 + (2x7 - 2x5)x9 - x4^2
+[charSet] v=11 single poly -> chain: (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+[charSet] v=12 single poly -> chain: (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+[charSet] v=13 single poly -> chain: x13 - x9
+[charSet] pre-reduce output: 7 polys
+  p0 rootVar=13 terms=2 x13 - x9
+  p1 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p2 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p5 rootVar=8 terms=2 x8 - x4
+  p6 rootVar=6 terms=1 x6
+[charSet] post-reduce output: 7 polys
+  p0 rootVar=13 terms=2 x13 - x9
+  p1 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p2 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p5 rootVar=8 terms=2 x8 - x4
+  p6 rootVar=6 terms=1 x6
+[charSet] reversed output: 7 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+[charSet] final chain: 7 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+[charSet] entry on: 8 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x13^2 - 2x5x13
+[charSet] after reduce1: 8 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+[charSet] v=6 single poly -> chain: x6
+[charSet] v=8 single poly -> chain: x8 - x4
+[charSet] v=9 single poly -> chain: (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+[charSet] v=10 single poly -> chain: 2x4x10 + (2x7 - 2x5)x9 - x4^2
+[charSet] v=11 single poly -> chain: (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+[charSet] v=12 single poly -> chain: (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+[charSet] v=13 single poly -> chain: x13 - x9
+[charSet] v=14 single poly -> chain: x14^2 + x9^2 - 2x5x9
+[charSet] pre-reduce output: 8 polys
+  p0 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p1 rootVar=13 terms=2 x13 - x9
+  p2 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p3 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p4 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p5 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p6 rootVar=8 terms=2 x8 - x4
+  p7 rootVar=6 terms=1 x6
+[charSet] post-reduce output: 8 polys
+  p0 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p1 rootVar=13 terms=2 x13 - x9
+  p2 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p3 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p4 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p5 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p6 rootVar=8 terms=2 x8 - x4
+  p7 rootVar=6 terms=1 x6
+[charSet] reversed output: 8 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+[charSet] final chain: 8 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+[charSet] entry on: 9 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x4x15 - x4x9
+[charSet] after reduce1: 9 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+[charSet] v=6 single poly -> chain: x6
+[charSet] v=8 single poly -> chain: x8 - x4
+[charSet] v=9 single poly -> chain: (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+[charSet] v=10 single poly -> chain: 2x4x10 + (2x7 - 2x5)x9 - x4^2
+[charSet] v=11 single poly -> chain: (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+[charSet] v=12 single poly -> chain: (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+[charSet] v=13 single poly -> chain: x13 - x9
+[charSet] v=14 single poly -> chain: x14^2 + x9^2 - 2x5x9
+[charSet] v=15 single poly -> chain: x15 - x9
+[charSet] pre-reduce output: 9 polys
+  p0 rootVar=15 terms=2 x15 - x9
+  p1 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p2 rootVar=13 terms=2 x13 - x9
+  p3 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p6 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p7 rootVar=8 terms=2 x8 - x4
+  p8 rootVar=6 terms=1 x6
+[charSet] post-reduce output: 9 polys
+  p0 rootVar=15 terms=2 x15 - x9
+  p1 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p2 rootVar=13 terms=2 x13 - x9
+  p3 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p6 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p7 rootVar=8 terms=2 x8 - x4
+  p8 rootVar=6 terms=1 x6
+[charSet] reversed output: 9 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+[charSet] final chain: 9 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+[charSet] entry on: 10 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=6 x16^2 - 2x8x16 + x15^2 - 2x7x15 + 2x4x8 - x4^2
+[charSet] after reduce1: 10 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+[charSet] v=6 single poly -> chain: x6
+[charSet] v=8 single poly -> chain: x8 - x4
+[charSet] v=9 single poly -> chain: (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+[charSet] v=10 single poly -> chain: 2x4x10 + (2x7 - 2x5)x9 - x4^2
+[charSet] v=11 single poly -> chain: (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+[charSet] v=12 single poly -> chain: (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+[charSet] v=13 single poly -> chain: x13 - x9
+[charSet] v=14 single poly -> chain: x14^2 + x9^2 - 2x5x9
+[charSet] v=15 single poly -> chain: x15 - x9
+[charSet] v=16 single poly -> chain: x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+[charSet] pre-reduce output: 10 polys
+  p0 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p1 rootVar=15 terms=2 x15 - x9
+  p2 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p3 rootVar=13 terms=2 x13 - x9
+  p4 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p5 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p6 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p7 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p8 rootVar=8 terms=2 x8 - x4
+  p9 rootVar=6 terms=1 x6
+[charSet] post-reduce output: 10 polys
+  p0 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p1 rootVar=15 terms=2 x15 - x9
+  p2 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p3 rootVar=13 terms=2 x13 - x9
+  p4 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p5 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p6 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p7 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p8 rootVar=8 terms=2 x8 - x4
+  p9 rootVar=6 terms=1 x6
+[charSet] reversed output: 10 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+[charSet] final chain: 10 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+[charSet] entry on: 11 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=18 terms=2 x13x18 - x14x17
+[charSet] after reduce1: 11 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=18 terms=2 x9x18 - x14x17
+[charSet] v=6 single poly -> chain: x6
+[charSet] v=8 single poly -> chain: x8 - x4
+[charSet] v=9 single poly -> chain: (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+[charSet] v=10 single poly -> chain: 2x4x10 + (2x7 - 2x5)x9 - x4^2
+[charSet] v=11 single poly -> chain: (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+[charSet] v=12 single poly -> chain: (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+[charSet] v=13 single poly -> chain: x13 - x9
+[charSet] v=14 single poly -> chain: x14^2 + x9^2 - 2x5x9
+[charSet] v=15 single poly -> chain: x15 - x9
+[charSet] v=16 single poly -> chain: x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+[charSet] v=18 single poly -> chain: x9x18 - x14x17
+[charSet] pre-reduce output: 11 polys
+  p0 rootVar=18 terms=2 x9x18 - x14x17
+  p1 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p2 rootVar=15 terms=2 x15 - x9
+  p3 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p4 rootVar=13 terms=2 x13 - x9
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p7 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p8 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p9 rootVar=8 terms=2 x8 - x4
+  p10 rootVar=6 terms=1 x6
+[charSet] post-reduce output: 11 polys
+  p0 rootVar=18 terms=2 x9x18 - x14x17
+  p1 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p2 rootVar=15 terms=2 x15 - x9
+  p3 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p4 rootVar=13 terms=2 x13 - x9
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p7 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p8 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p9 rootVar=8 terms=2 x8 - x4
+  p10 rootVar=6 terms=1 x6
+[charSet] reversed output: 11 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=18 terms=2 x9x18 - x14x17
+[charSet] final chain: 11 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=18 terms=2 x9x18 - x14x17
+[charSet] entry on: 12 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=18 terms=2 x9x18 - x14x17
+  p11 rootVar=18 terms=4 x15x18 + (-x16 + x4)x17 - x4x15
+[charSet] after reduce1: 12 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=18 terms=2 x9x18 - x14x17
+  p11 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+[charSet] v=6 single poly -> chain: x6
+[charSet] v=8 single poly -> chain: x8 - x4
+[charSet] v=9 single poly -> chain: (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+[charSet] v=10 single poly -> chain: 2x4x10 + (2x7 - 2x5)x9 - x4^2
+[charSet] v=11 single poly -> chain: (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+[charSet] v=12 single poly -> chain: (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+[charSet] v=13 single poly -> chain: x13 - x9
+[charSet] v=14 single poly -> chain: x14^2 + x9^2 - 2x5x9
+[charSet] v=15 single poly -> chain: x15 - x9
+[charSet] v=16 single poly -> chain: x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+[charSet] v=18 single poly -> chain: x9x18 - x14x17
+[charSet] v=17 single poly -> chain: (x16 - x14 - x4)x17 + x4x9
+[charSet] pre-reduce output: 12 polys
+  p0 rootVar=18 terms=2 x9x18 - x14x17
+  p1 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p2 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p3 rootVar=15 terms=2 x15 - x9
+  p4 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p5 rootVar=13 terms=2 x13 - x9
+  p6 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p7 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p8 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p9 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p10 rootVar=8 terms=2 x8 - x4
+  p11 rootVar=6 terms=1 x6
+[charSet] post-reduce output: 12 polys
+  p0 rootVar=18 terms=2 x9x18 - x14x17
+  p1 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p2 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p3 rootVar=15 terms=2 x15 - x9
+  p4 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p5 rootVar=13 terms=2 x13 - x9
+  p6 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p7 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p8 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p9 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p10 rootVar=8 terms=2 x8 - x4
+  p11 rootVar=6 terms=1 x6
+[charSet] reversed output: 12 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p11 rootVar=18 terms=2 x9x18 - x14x17
+[charSet] final chain: 12 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p11 rootVar=18 terms=2 x9x18 - x14x17
+[charSet] entry on: 13 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p11 rootVar=18 terms=2 x9x18 - x14x17
+  p12 rootVar=20 terms=6 (x15 - x13)x20 + (-x16 + x14)x19 + x13x16 - x14x15
+[charSet] after reduce1: 13 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p11 rootVar=18 terms=2 x9x18 - x14x17
+  p12 rootVar=19 terms=4 (x16 - x14)x19 - x9x16 + x9x14
+[charSet] v=6 single poly -> chain: x6
+[charSet] v=8 single poly -> chain: x8 - x4
+[charSet] v=9 single poly -> chain: (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+[charSet] v=10 single poly -> chain: 2x4x10 + (2x7 - 2x5)x9 - x4^2
+[charSet] v=11 single poly -> chain: (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+[charSet] v=12 single poly -> chain: (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+[charSet] v=13 single poly -> chain: x13 - x9
+[charSet] v=14 single poly -> chain: x14^2 + x9^2 - 2x5x9
+[charSet] v=15 single poly -> chain: x15 - x9
+[charSet] v=16 single poly -> chain: x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+[charSet] v=17 single poly -> chain: (x16 - x14 - x4)x17 + x4x9
+[charSet] v=18 single poly -> chain: x9x18 - x14x17
+[charSet] v=19 single poly -> chain: (x16 - x14)x19 - x9x16 + x9x14
+[charSet] pre-reduce output: 13 polys
+  p0 rootVar=19 terms=4 (x16 - x14)x19 - x9x16 + x9x14
+  p1 rootVar=18 terms=2 x9x18 - x14x17
+  p2 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p3 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p4 rootVar=15 terms=2 x15 - x9
+  p5 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p8 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p9 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p10 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p11 rootVar=8 terms=2 x8 - x4
+  p12 rootVar=6 terms=1 x6
+[charSet] post-reduce output: 13 polys
+  p0 rootVar=19 terms=4 (x16 - x14)x19 - x9x16 + x9x14
+  p1 rootVar=18 terms=2 x9x18 - x14x17
+  p2 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p3 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p4 rootVar=15 terms=2 x15 - x9
+  p5 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p8 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p9 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p10 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p11 rootVar=8 terms=2 x8 - x4
+  p12 rootVar=6 terms=1 x6
+[charSet] reversed output: 13 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p11 rootVar=18 terms=2 x9x18 - x14x17
+  p12 rootVar=19 terms=4 (x16 - x14)x19 - x9x16 + x9x14
+[charSet] final chain: 13 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p11 rootVar=18 terms=2 x9x18 - x14x17
+  p12 rootVar=19 terms=4 (x16 - x14)x19 - x9x16 + x9x14
+[charSet] entry on: 15 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p11 rootVar=18 terms=2 x9x18 - x14x17
+  p12 rootVar=19 terms=4 (x16 - x14)x19 - x9x16 + x9x14
+  p13 rootVar=22 terms=6 (x19 - x13)x22 + (-x20 + x14)x21 + x13x20 - x14x19
+  p14 rootVar=22 terms=2 x11x22 - x12x21
+[charSet] after reduce1: 15 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p11 rootVar=18 terms=2 x9x18 - x14x17
+  p12 rootVar=19 terms=4 (x16 - x14)x19 - x9x16 + x9x14
+  p13 rootVar=22 terms=6 (x19 - x9)x22 + (-x20 + x14)x21 + x9x20 - x14x19
+  p14 rootVar=22 terms=2 x11x22 - x12x21
+[charSet] v=6 single poly -> chain: x6
+[charSet] v=8 single poly -> chain: x8 - x4
+[charSet] v=9 single poly -> chain: (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+[charSet] v=10 single poly -> chain: 2x4x10 + (2x7 - 2x5)x9 - x4^2
+[charSet] v=11 single poly -> chain: (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+[charSet] v=12 single poly -> chain: (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+[charSet] v=13 single poly -> chain: x13 - x9
+[charSet] v=14 single poly -> chain: x14^2 + x9^2 - 2x5x9
+[charSet] v=15 single poly -> chain: x15 - x9
+[charSet] v=16 single poly -> chain: x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+[charSet] v=17 single poly -> chain: (x16 - x14 - x4)x17 + x4x9
+[charSet] v=18 single poly -> chain: x9x18 - x14x17
+[charSet] v=19 single poly -> chain: (x16 - x14)x19 - x9x16 + x9x14
+[charSet] v=22 group size=2
+  divor terms=6 deg_v=1 (x19 - x9)x22 + (-x20 + x14)x21 + x9x20 - x14x19
+    reinsert[0] rootVar=21 terms=6 (x11x20 - x12x19 - x11x14 + x9x12)x21 - x9x11x20 + x11x14x19
+  emit divor to chain terms=6
+[charSet] v=21 single poly -> chain: (x11x20 - x12x19 - x11x14 + x9x12)x21 - x9x11x20 + x11x14x19
+[charSet] pre-reduce output: 15 polys
+  p0 rootVar=22 terms=6 (x19 - x9)x22 + (-x20 + x14)x21 + x9x20 - x14x19
+  p1 rootVar=21 terms=6 (x11x20 - x12x19 - x11x14 + x9x12)x21 - x9x11x20 + x11x14x19
+  p2 rootVar=19 terms=4 (x16 - x14)x19 - x9x16 + x9x14
+  p3 rootVar=18 terms=2 x9x18 - x14x17
+  p4 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p5 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p6 rootVar=15 terms=2 x15 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=13 terms=2 x13 - x9
+  p9 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p10 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p11 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p12 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p13 rootVar=8 terms=2 x8 - x4
+  p14 rootVar=6 terms=1 x6
+[charSet] post-reduce output: 15 polys
+  p0 rootVar=22 terms=6 (x19 - x9)x22 + (-x20 + x14)x21 + x9x20 - x14x19
+  p1 rootVar=21 terms=6 (x11x20 - x12x19 - x11x14 + x9x12)x21 - x9x11x20 + x11x14x19
+  p2 rootVar=19 terms=4 (x16 - x14)x19 - x9x16 + x9x14
+  p3 rootVar=18 terms=2 x9x18 - x14x17
+  p4 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p5 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p6 rootVar=15 terms=2 x15 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=13 terms=2 x13 - x9
+  p9 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p10 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p11 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p12 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p13 rootVar=8 terms=2 x8 - x4
+  p14 rootVar=6 terms=1 x6
+[charSet] reversed output: 15 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p11 rootVar=18 terms=2 x9x18 - x14x17
+  p12 rootVar=19 terms=4 (x16 - x14)x19 - x9x16 + x9x14
+  p13 rootVar=21 terms=6 (x11x20 - x12x19 - x11x14 + x9x12)x21 - x9x11x20 + x11x14x19
+  p14 rootVar=22 terms=6 (x19 - x9)x22 + (-x20 + x14)x21 + x9x20 - x14x19
+[charSet] final chain: 15 polys
+  p0 rootVar=6 terms=1 x6
+  p1 rootVar=8 terms=2 x8 - x4
+  p2 rootVar=9 terms=7 (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4
+  p3 rootVar=10 terms=4 2x4x10 + (2x7 - 2x5)x9 - x4^2
+  p4 rootVar=11 terms=11 (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5
+  p5 rootVar=12 terms=7 (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5
+  p6 rootVar=13 terms=2 x13 - x9
+  p7 rootVar=14 terms=3 x14^2 + x9^2 - 2x5x9
+  p8 rootVar=15 terms=2 x15 - x9
+  p9 rootVar=16 terms=5 x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2
+  p10 rootVar=17 terms=4 (x16 - x14 - x4)x17 + x4x9
+  p11 rootVar=18 terms=2 x9x18 - x14x17
+  p12 rootVar=19 terms=4 (x16 - x14)x19 - x9x16 + x9x14
+  p13 rootVar=21 terms=6 (x11x20 - x12x19 - x11x14 + x9x12)x21 - x9x11x20 + x11x14x19
+  p14 rootVar=22 terms=6 (x19 - x9)x22 + (-x20 + x14)x21 + x9x20 - x14x19
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.5/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 1m 2s
+13 actionable tasks: 1 executed, 12 up-to-date

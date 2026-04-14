@@ -1,15 +1,13 @@
-# IMO 2009 P2
-# Incenter I, circle-line intersection D, point E on circumcircle
-# with angle condition, midpoint G, intersection K.
-# Prove AO = OK.
+# imo_2009_p2
+# Translated from simplegeometry .gex file.
 
-triangle A B C
-circumcenter O C B A
-incenter I A B C
-inter_cl D O A A I
-on_line F B C
-on_circle E O A
-eqangle B A F E A C
-midpoint G I F
-inter_ll K I E D G
-prove_cong A O O K
+triangle M L K
+circumcenter W M L K
+on_tline Q M W M
+mirror P Q M
+mirror B P K
+mirror C Q L
+inter_ll A Q B P C
+circumcenter O A B C
+
+prove_cong O P O Q

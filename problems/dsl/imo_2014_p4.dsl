@@ -1,20 +1,17 @@
-# IMO 2014 P4
-# P on BC such that angle(BAC) = angle(AP,BC).
-# Q on BC such that angle(ABC) = angle(CAQ).
-# M = mirror A through P; N = mirror A through Q.
-# X = BM ∩ CN. O circumcenter. Prove AO = XO.
+# imo_2014_p4
+# Translated from simplegeometry .gex file.
+# WARNING: contains unsupported predicates: unknown: ON_ALINE P A B B C A, unknown: ON_ALINE Q A C C B A
 
 triangle A B C
-# P on BC determined by angle condition
-dep_point P
-collinear B P C
-eqangle B A C A P B
-# Q on BC determined by angle condition
-dep_point Q
-collinear B Q C
-eqangle A B C C A Q
+# UNSUPPORTED: ON_ALINE P A B B C A
+on_line P B C
+# UNSUPPORTED: ON_ALINE Q A C C B A
+on_line Q B C
 mirror M A P
 mirror N A Q
-inter_ll X B M C N
-circumcenter O C B A
-prove_cong A O X O
+dep_point X
+para M X M B
+para N X N C
+circumcenter O A B C
+
+prove_cong O X O A

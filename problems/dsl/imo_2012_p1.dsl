@@ -1,16 +1,26 @@
-# IMO 2012 P1
-# J is the incenter (A- and C-angle bisectors).
-# M,L,K feet of J on BC, AC, AB.
-# F = BJ ∩ LM, G = CJ ∩ KM; S,T on BC via AF,AG.
-# Prove MS = MT.
+# imo_2012_p1
+# Translated from simplegeometry .gex file.
 
 triangle A B C
-incenter J A B C
-foot M J B C
-foot L J A C
+on_pline TEMP1 A C A
+on_pline TEMP2 B C B
+dep_point J
+eqangle TEMP1 A J J A B
+eqangle TEMP2 B J J B A
 foot K J A B
-inter_ll F B J L M
-inter_ll G C J K M
-inter_ll S A F B C
-inter_ll T A G B C
-prove_cong M S M T
+inter_cl M J K B C
+inter_cl L J K A TEMP1
+dep_point F
+para M F L M
+para B F J B
+dep_point G
+para M G M K
+para C G J C
+dep_point S
+para F S F A
+collinear B S TEMP2
+dep_point T
+para G T G A
+para C T C B
+
+prove_midpoint M S T

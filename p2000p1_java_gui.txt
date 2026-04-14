@@ -1,0 +1,60 @@
+❯ I see. So let's take 2000 p1 problem. it is solved The Algebraic Form:                                                                                 
+  A: (0,0)  B: (0,x4)  G1: (x5,0)  G2: (x7,x8)  M: (x9,x10)  N: (x11,x12)                                                                                
+  C: (x13,x14)  D: (x15,x16)  E: (x17,x18)  X: (x19,x20)  P: (x21,x22)                                                                                   
+  Q: (x23,x24)                                                                                                                                           
+                                                                                                                                                         
+  The equational hypotheses:                                                                                                                             
+  1: G2B ⊥ BA                                                                                                                                            
+    x4x8 - x4^2 =0                                                                                                                                       
+  2: M = C(G1A) ∩ C(G2B)                                                                                                                                 
+    x10^2 - 2x8x10 + x9^2 - 2x7x9 + 2x4x8 - x4^2 =0                                                                                                      
+    x10^2 + x9^2 - 2x5x9 =0                                                                                                                              
+  3: N = C(G1M) ∩ C(G2M)                                                                                                                                 
+    (x7 - x5)x12 - x8x11 + (x7 - x5)x10 - x8x9 + 2x5x8 =0                                                                                                
+    x8x12 + (x7 - x5)x11 - x8x10 + (-x7 + x5)x9 =0                                                                                                       
+  4: CM ∥ BA                                                                                                                                             
+    x4x13 - x4x9 =0                                                                                                                                      
+  5: C: on circle (G1,A)                                                                                                                                 
+    x14^2 + x13^2 - 2x5x13 =0                                                                                                                            
+  6: DM ∥ BA                                                                                                                                             
+    x4x15 - x4x9 =0                                                                                                                                      
+  7: D: on circle (G2,B)                                                                                                                                 
+    x16^2 - 2x8x16 + x15^2 - 2x7x15 + 2x4x8 - x4^2 =0                                                                                                    
+  8: EA ∥ CA                                                                                                                                             
+    x13x18 - x14x17 =0                                                                                                                                   
+  9: EB ∥ DB                                                                                                                                             
+    x15x18 + (-x16 + x4)x17 - x4x15 =0                                                                                                                   
+  10: XC ∥ DC                                                                                                                                            
+    (x15 - x13)x20 + (-x16 + x14)x19 + x13x16 - x14x15 =0                                                                                                
+  11: P = AN ∩ CX                                                                                                                                        
+    (x19 - x13)x22 + (-x20 + x14)x21 + x13x20 - x14x19 =0                                                                                                
+    x11x22 - x12x21 =0                                                                                                                                   
+                                                                                                                                                         
+  The Triangulized Hypotheses:                                                                                                                           
+  h0: x6 =0                                                                                                                                              
+  h1: x8 - x4 =0                                                                                                                                         
+  h2: (4x7^2 - 8x5x7 + 4x5^2 + 4x4^2)x9^2 + (-4x4^2x7 - 4x4^2x5)x9 + x4^4 =0                                                                             
+  h3: 2x4x10 + (2x7 - 2x5)x9 - x4^2 =0                                                                                                                   
+  h4: (x7^2 - 2x5x7 + x5^2 + x4^2)x11 + (-2x4x7 + 2x4x5)x10 + (-x7^2 + 2x5x7 - x5^2 + x4^2)x9 - 2x4^2x5 =0                                               
+  h5: (x7 - x5)x12 - x4x11 + (x7 - x5)x10 - x4x9 + 2x4x5 =0                                                                                              
+  h6: x13 - x9 =0                                                                                                                                        
+  h7: x14^2 + x9^2 - 2x5x9 =0                                                                                                                            
+  h8: x15 - x9 =0                                                                                                                                        
+  h9: x16^2 - 2x4x16 + x9^2 - 2x7x9 + x4^2 =0                                                                                                            
+  h10: (x16 - x14 - x4)x17 + x4x9 =0                                                                                                                     
+  h11: x9x18 - x14x17 =0                                                                                                                                 
+  h12: (x16 - x14)x19 - x9x16 + x9x14 =0                                                                                                                 
+  h13: (x11x20 - x12x19 - x11x14 + x9x12)x21 - x9x11x20 + x11x14x19 =0                                                                                   
+  h14: (x19 - x9)x22 + (-x20 + x14)x21 + x9x20 - x14x19 =0                                                                                               
+                                                                                                                                                         
+  The conclusion:                                                                                                                                        
+  |EP| = |EQ|                                                                                                                                            
+  x24^2 - 2x18x24 + x23^2 - 2x17x23 - x22^2 + 2x18x22 - x21^2 + 2x17x21 =0                                                                               
+                                                                                                                                                         
+  Successive Pseudo Remainder of the conclusion wrt Triangulized Hypotheses:                                                                             
+  R_15 = [x24^2, 8]                                                                                                                                      
+  R_14 = prem(R_15, h_14) =  [x24^2, 36]                                                                                                                 
+  R_13 = prem(R_14, h_13) =  [x24^2, 142]                                                                                                                
+  R_12 = prem(R_13, h_12) =  [0, 0]                                                                                                                      
+  Remainder = R_12 = 0                                                                                                                                   
+   The conclusion is true  

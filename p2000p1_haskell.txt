@@ -1,0 +1,586 @@
+problems/dsl/imo_2000_p1.dsl ... 
+--- DSL source ---
+# imo_2000_p1
+# Translated from simplegeometry .gex file.
+
+free A
+free B
+on_tline G1 A B A
+on_tline G2 B B A
+inter_cc M G1 A G2 B
+# radical-axis form for second intersection of same circles
+dep_point N
+perp N M G1 G2
+cong G1 N G1 A
+dep_point C
+para M C B A
+cong G1 C G1 A
+dep_point D
+para M D B A
+cong G2 D G2 B
+dep_point E
+para A E C A
+para B E D B
+on_pline X C D C
+inter_ll P A N C X
+inter_ll Q B N C X
+
+prove_cong E P E Q
+--- Algebraization ---
+Variables: 20 total (17 dependent, 3 free)
+Free vars: [X "x1",X "x2",X "x3"]
+Points:
+  A = Point (Const 0) (Const 0)
+  B = Point (Const 0) (X "x1")
+  C = Point (X "x9") (X "x10")
+  D = Point (X "x11") (X "x12")
+  E = Point (X "x13") (X "x14")
+  G1 = Point (X "x2") (Const 0)
+  G2 = Point (X "x3") (X "x4")
+  M = Point (X "x5") (X "x6")
+  N = Point (X "x7") (X "x8")
+  P = Point (X "x17") (X "x18")
+  Q = Point (X "x19") (X "x20")
+  X = Point (X "x15") (X "x16")
+
+Hypotheses (16):
+  Perpendicular (Line (Point (Const 0) (X "x1")) (Point (X "x3") (X "x4"))) (Line (Point (Const 0) (X "x1")) (Point (Const 0) (Const 0)))
+  SameLen (Line (Point (X "x2") (Const 0)) (Point (X "x5") (X "x6"))) (Line (Point (X "x2") (Const 0)) (Point (Const 0) (Const 0)))
+  SameLen (Line (Point (X "x3") (X "x4")) (Point (X "x5") (X "x6"))) (Line (Point (X "x3") (X "x4")) (Point (Const 0) (X "x1")))
+  Perpendicular (Line (Point (X "x7") (X "x8")) (Point (X "x5") (X "x6"))) (Line (Point (X "x2") (Const 0)) (Point (X "x3") (X "x4")))
+  SameLen (Line (Point (X "x2") (Const 0)) (Point (X "x7") (X "x8"))) (Line (Point (X "x2") (Const 0)) (Point (Const 0) (Const 0)))
+  Parallel (Line (Point (X "x5") (X "x6")) (Point (X "x9") (X "x10"))) (Line (Point (Const 0) (X "x1")) (Point (Const 0) (Const 0)))
+  SameLen (Line (Point (X "x2") (Const 0)) (Point (X "x9") (X "x10"))) (Line (Point (X "x2") (Const 0)) (Point (Const 0) (Const 0)))
+  Parallel (Line (Point (X "x5") (X "x6")) (Point (X "x11") (X "x12"))) (Line (Point (Const 0) (X "x1")) (Point (Const 0) (Const 0)))
+  SameLen (Line (Point (X "x3") (X "x4")) (Point (X "x11") (X "x12"))) (Line (Point (X "x3") (X "x4")) (Point (Const 0) (X "x1")))
+  Parallel (Line (Point (Const 0) (Const 0)) (Point (X "x13") (X "x14"))) (Line (Point (X "x9") (X "x10")) (Point (Const 0) (Const 0)))
+  Parallel (Line (Point (Const 0) (X "x1")) (Point (X "x13") (X "x14"))) (Line (Point (X "x11") (X "x12")) (Point (Const 0) (X "x1")))
+  Parallel (Line (Point (X "x9") (X "x10")) (Point (X "x15") (X "x16"))) (Line (Point (X "x11") (X "x12")) (Point (X "x9") (X "x10")))
+  Collinear (Point (Const 0) (Const 0)) (Point (X "x17") (X "x18")) (Point (X "x7") (X "x8"))
+  Collinear (Point (X "x9") (X "x10")) (Point (X "x17") (X "x18")) (Point (X "x15") (X "x16"))
+  Collinear (Point (Const 0) (X "x1")) (Point (X "x19") (X "x20")) (Point (X "x7") (X "x8"))
+  Collinear (Point (X "x9") (X "x10")) (Point (X "x19") (X "x20")) (Point (X "x15") (X "x16"))
+
+Conclusion: SameLen (Line (Point (X "x13") (X "x14")) (Point (X "x17") (X "x18"))) (Line (Point (X "x13") (X "x14")) (Point (X "x19") (X "x20")))
+---
+--- Polynomials (before pre-elimination) ---
+  conclusion: -x19^2 + -x18^2 + x17^2 + x16^2 + 2*x15x19 + -2*x15x17 + 2*x14x18 + -2*x14x16
+  h1: x0^2 + -x0x3
+  h2: x5^2 + x4^2 + -2*x1x4
+  h3: x5^2 + x4^2 + -2*x3x5 + -2*x2x4 + -x0^2 + 2*x0x3
+  h4: -x3x7 + x3x5 + -x2x6 + x2x4 + x1x6 + -x1x4
+  h5: x7^2 + x6^2 + -2*x1x6
+  h6: x0x8 + -x0x4
+  h7: x9^2 + x8^2 + -2*x1x8
+  h8: x0x10 + -x0x4
+  h9: x11^2 + x10^2 + -2*x3x11 + -2*x2x10 + -x0^2 + 2*x0x3
+  h10: x9x14 + -x8x15
+  h11: x11x14 + -x10x15 + -x0x14 + x0x10
+  h12: x11x12 + -x10x13 + -x9x12 + x9x10 + x8x13 + -x8x11
+  h13: -x7x16 + x6x17
+  h14: -x13x16 + x12x17 + x9x16 + -x9x12 + -x8x17 + x8x13
+  h15: -x7x18 + x6x19 + x0x18 + -x0x6
+  h16: -x13x18 + x12x19 + x9x18 + -x9x12 + -x8x19 + x8x13
+[theoremProver] 16 hyps, 17 dep vars
+  conclusion: -x19^2 + -x18^2 + x17^2 + x16^2 + 2*x15x19 + -2*x15x17 + 2*x14x18 + -2*x14x16
+[buildChain] step 0: chain size 0 + hyp rootVar=3 terms=2 x0^2 + -x0x3
+[charSet] entry on 1 polys
+[charSet] after entry simplify+sort+reducePass+resort: 1 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] chain length = 1
+  h0 rootVar=3 terms=2 -x3 + x0
+[buildChain] step 1: chain size 1 + hyp rootVar=5 terms=3 x5^2 + x4^2 + -2*x1x4
+[charSet] entry on 2 polys
+[charSet] after entry simplify+sort+reducePass+resort: 2 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=5 terms=3 -x5^2 + -x4^2 + 2*x1x4
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=5 single poly -> chain: -x5^2 + -x4^2 + 2*x1x4
+[charSet] chain length = 2
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=5 terms=3 -x5^2 + -x4^2 + 2*x1x4
+[buildChain] step 2: chain size 2 + hyp rootVar=5 terms=6 x5^2 + x4^2 + -2*x3x5 + -2*x2x4 + -x0^2 + 2*x0x3
+[charSet] entry on 3 polys
+[charSet] after entry simplify+sort+reducePass+resort: 3 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=5 terms=3 -x5^2 + -x4^2 + 2*x1x4
+  p2 rootVar=5 terms=5 x5^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x5
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=5 group size=2
+  divor terms=4 deg_v=1 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+    reinsert[0] rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] chain length = 3
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h2 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[buildChain] step 3: chain size 3 + hyp rootVar=7 terms=6 -x3x7 + x3x5 + -x2x6 + x2x4 + x1x6 + -x1x4
+[charSet] entry on 4 polys
+[charSet] after entry simplify+sort+reducePass+resort: 4 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  p2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  p3 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=5 single poly -> chain: -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+[charSet] v=7 single poly -> chain: -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[charSet] chain length = 4
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  h2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h3 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[buildChain] step 4: chain size 4 + hyp rootVar=7 terms=3 x7^2 + x6^2 + -2*x1x6
+[charSet] entry on 5 polys
+[charSet] after entry simplify+sort+reducePass+resort: 5 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  p2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  p3 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  p4 rootVar=7 terms=3 -x7^2 + -x6^2 + 2*x1x6
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=5 single poly -> chain: -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+[charSet] v=7 group size=2
+  divor terms=6 deg_v=1 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+    reinsert[0] rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[charSet] v=6 single poly -> chain: -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[charSet] chain length = 5
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  h2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h3 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  h4 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[buildChain] step 5: chain size 5 + hyp rootVar=8 terms=2 x0x8 + -x0x4
+[charSet] entry on 6 polys
+[charSet] after entry simplify+sort+reducePass+resort: 6 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  p2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  p3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  p4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  p5 rootVar=8 terms=2 -x8 + x4
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=5 single poly -> chain: -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+[charSet] v=6 single poly -> chain: -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[charSet] v=7 single poly -> chain: -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[charSet] v=8 single poly -> chain: -x8 + x4
+[charSet] chain length = 6
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  h2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  h4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  h5 rootVar=8 terms=2 -x8 + x4
+[buildChain] step 6: chain size 6 + hyp rootVar=9 terms=3 x9^2 + x8^2 + -2*x1x8
+[charSet] entry on 7 polys
+[charSet] after entry simplify+sort+reducePass+resort: 7 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  p2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  p3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  p4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  p5 rootVar=8 terms=2 -x8 + x4
+  p6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=5 single poly -> chain: -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+[charSet] v=6 single poly -> chain: -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[charSet] v=7 single poly -> chain: -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[charSet] v=8 single poly -> chain: -x8 + x4
+[charSet] v=9 single poly -> chain: -x9^2 + -x4^2 + 2*x1x4
+[charSet] chain length = 7
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  h2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  h4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  h5 rootVar=8 terms=2 -x8 + x4
+  h6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+[buildChain] step 7: chain size 7 + hyp rootVar=10 terms=2 x0x10 + -x0x4
+[charSet] entry on 8 polys
+[charSet] after entry simplify+sort+reducePass+resort: 8 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  p2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  p3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  p4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  p5 rootVar=8 terms=2 -x8 + x4
+  p6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  p7 rootVar=10 terms=2 -x10 + x4
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=5 single poly -> chain: -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+[charSet] v=6 single poly -> chain: -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[charSet] v=7 single poly -> chain: -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[charSet] v=8 single poly -> chain: -x8 + x4
+[charSet] v=9 single poly -> chain: -x9^2 + -x4^2 + 2*x1x4
+[charSet] v=10 single poly -> chain: -x10 + x4
+[charSet] chain length = 8
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  h2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  h4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  h5 rootVar=8 terms=2 -x8 + x4
+  h6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  h7 rootVar=10 terms=2 -x10 + x4
+[buildChain] step 8: chain size 8 + hyp rootVar=11 terms=6 x11^2 + x10^2 + -2*x3x11 + -2*x2x10 + -x0^2 + 2*x0x3
+[charSet] entry on 9 polys
+[charSet] after entry simplify+sort+reducePass+resort: 9 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  p2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  p3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  p4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  p5 rootVar=8 terms=2 -x8 + x4
+  p6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  p7 rootVar=10 terms=2 -x10 + x4
+  p8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=5 single poly -> chain: -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+[charSet] v=6 single poly -> chain: -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[charSet] v=7 single poly -> chain: -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[charSet] v=8 single poly -> chain: -x8 + x4
+[charSet] v=9 single poly -> chain: -x9^2 + -x4^2 + 2*x1x4
+[charSet] v=10 single poly -> chain: -x10 + x4
+[charSet] v=11 single poly -> chain: x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+[charSet] chain length = 9
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  h2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  h4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  h5 rootVar=8 terms=2 -x8 + x4
+  h6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  h7 rootVar=10 terms=2 -x10 + x4
+  h8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+[buildChain] step 9: chain size 9 + hyp rootVar=15 terms=2 x9x14 + -x8x15
+[charSet] entry on 10 polys
+[charSet] after entry simplify+sort+reducePass+resort: 10 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  p2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  p3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  p4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  p5 rootVar=8 terms=2 -x8 + x4
+  p6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  p7 rootVar=10 terms=2 -x10 + x4
+  p8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  p9 rootVar=15 terms=2 -x9x14 + x4x15
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=5 single poly -> chain: -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+[charSet] v=6 single poly -> chain: -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[charSet] v=7 single poly -> chain: -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[charSet] v=8 single poly -> chain: -x8 + x4
+[charSet] v=9 single poly -> chain: -x9^2 + -x4^2 + 2*x1x4
+[charSet] v=10 single poly -> chain: -x10 + x4
+[charSet] v=11 single poly -> chain: x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+[charSet] v=15 single poly -> chain: -x9x14 + x4x15
+[charSet] chain length = 10
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  h2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  h4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  h5 rootVar=8 terms=2 -x8 + x4
+  h6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  h7 rootVar=10 terms=2 -x10 + x4
+  h8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  h9 rootVar=15 terms=2 -x9x14 + x4x15
+[buildChain] step 10: chain size 10 + hyp rootVar=15 terms=4 x11x14 + -x10x15 + -x0x14 + x0x10
+[charSet] entry on 11 polys
+[charSet] after entry simplify+sort+reducePass+resort: 11 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  p2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  p3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  p4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  p5 rootVar=8 terms=2 -x8 + x4
+  p6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  p7 rootVar=10 terms=2 -x10 + x4
+  p8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  p9 rootVar=14 terms=4 x11x14 + -x9x14 + -x0x14 + x0x4
+  p10 rootVar=15 terms=2 -x9x14 + x4x15
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=5 single poly -> chain: -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+[charSet] v=6 single poly -> chain: -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[charSet] v=7 single poly -> chain: -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[charSet] v=8 single poly -> chain: -x8 + x4
+[charSet] v=9 single poly -> chain: -x9^2 + -x4^2 + 2*x1x4
+[charSet] v=10 single poly -> chain: -x10 + x4
+[charSet] v=11 single poly -> chain: x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+[charSet] v=14 single poly -> chain: x11x14 + -x9x14 + -x0x14 + x0x4
+[charSet] v=15 single poly -> chain: -x9x14 + x4x15
+[charSet] chain length = 11
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  h2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  h4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  h5 rootVar=8 terms=2 -x8 + x4
+  h6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  h7 rootVar=10 terms=2 -x10 + x4
+  h8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  h9 rootVar=14 terms=4 x11x14 + -x9x14 + -x0x14 + x0x4
+  h10 rootVar=15 terms=2 -x9x14 + x4x15
+[buildChain] step 11: chain size 11 + hyp rootVar=13 terms=6 x11x12 + -x10x13 + -x9x12 + x9x10 + x8x13 + -x8x11
+[charSet] entry on 12 polys
+[charSet] after entry simplify+sort+reducePass+resort: 12 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  p2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  p3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  p4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  p5 rootVar=8 terms=2 -x8 + x4
+  p6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  p7 rootVar=10 terms=2 -x10 + x4
+  p8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  p9 rootVar=12 terms=4 x11x12 + -x9x12 + -x4x11 + x4x9
+  p10 rootVar=14 terms=4 x11x14 + -x9x14 + -x0x14 + x0x4
+  p11 rootVar=15 terms=2 -x9x14 + x4x15
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=5 single poly -> chain: -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+[charSet] v=6 single poly -> chain: -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[charSet] v=7 single poly -> chain: -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[charSet] v=8 single poly -> chain: -x8 + x4
+[charSet] v=9 single poly -> chain: -x9^2 + -x4^2 + 2*x1x4
+[charSet] v=10 single poly -> chain: -x10 + x4
+[charSet] v=11 single poly -> chain: x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+[charSet] v=12 single poly -> chain: x11x12 + -x9x12 + -x4x11 + x4x9
+[charSet] v=14 single poly -> chain: x11x14 + -x9x14 + -x0x14 + x0x4
+[charSet] v=15 single poly -> chain: -x9x14 + x4x15
+[charSet] chain length = 12
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  h2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  h4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  h5 rootVar=8 terms=2 -x8 + x4
+  h6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  h7 rootVar=10 terms=2 -x10 + x4
+  h8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  h9 rootVar=12 terms=4 x11x12 + -x9x12 + -x4x11 + x4x9
+  h10 rootVar=14 terms=4 x11x14 + -x9x14 + -x0x14 + x0x4
+  h11 rootVar=15 terms=2 -x9x14 + x4x15
+[buildChain] step 12: chain size 12 + hyp rootVar=17 terms=2 -x7x16 + x6x17
+[charSet] entry on 13 polys
+[charSet] after entry simplify+sort+reducePass+resort: 13 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  p2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  p3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  p4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  p5 rootVar=8 terms=2 -x8 + x4
+  p6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  p7 rootVar=10 terms=2 -x10 + x4
+  p8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  p9 rootVar=12 terms=4 x11x12 + -x9x12 + -x4x11 + x4x9
+  p10 rootVar=14 terms=4 x11x14 + -x9x14 + -x0x14 + x0x4
+  p11 rootVar=15 terms=2 -x9x14 + x4x15
+  p12 rootVar=17 terms=2 -x7x16 + x6x17
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=5 single poly -> chain: -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+[charSet] v=6 single poly -> chain: -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[charSet] v=7 single poly -> chain: -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[charSet] v=8 single poly -> chain: -x8 + x4
+[charSet] v=9 single poly -> chain: -x9^2 + -x4^2 + 2*x1x4
+[charSet] v=10 single poly -> chain: -x10 + x4
+[charSet] v=11 single poly -> chain: x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+[charSet] v=12 single poly -> chain: x11x12 + -x9x12 + -x4x11 + x4x9
+[charSet] v=14 single poly -> chain: x11x14 + -x9x14 + -x0x14 + x0x4
+[charSet] v=15 single poly -> chain: -x9x14 + x4x15
+[charSet] v=17 single poly -> chain: -x7x16 + x6x17
+[charSet] chain length = 13
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  h2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  h4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  h5 rootVar=8 terms=2 -x8 + x4
+  h6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  h7 rootVar=10 terms=2 -x10 + x4
+  h8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  h9 rootVar=12 terms=4 x11x12 + -x9x12 + -x4x11 + x4x9
+  h10 rootVar=14 terms=4 x11x14 + -x9x14 + -x0x14 + x0x4
+  h11 rootVar=15 terms=2 -x9x14 + x4x15
+  h12 rootVar=17 terms=2 -x7x16 + x6x17
+[buildChain] step 13: chain size 13 + hyp rootVar=17 terms=6 -x13x16 + x12x17 + x9x16 + -x9x12 + -x8x17 + x8x13
+[charSet] entry on 14 polys
+[charSet] after entry simplify+sort+reducePass+resort: 14 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  p2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  p3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  p4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  p5 rootVar=8 terms=2 -x8 + x4
+  p6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  p7 rootVar=10 terms=2 -x10 + x4
+  p8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  p9 rootVar=12 terms=4 x11x12 + -x9x12 + -x4x11 + x4x9
+  p10 rootVar=14 terms=4 x11x14 + -x9x14 + -x0x14 + x0x4
+  p11 rootVar=15 terms=2 -x9x14 + x4x15
+  p12 rootVar=16 terms=6 x7x12x16 + -x6x13x16 + x6x9x16 + -x6x9x12 + -x4x7x16 + x4x6x13
+  p13 rootVar=17 terms=2 -x7x16 + x6x17
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=5 single poly -> chain: -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+[charSet] v=6 single poly -> chain: -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[charSet] v=7 single poly -> chain: -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[charSet] v=8 single poly -> chain: -x8 + x4
+[charSet] v=9 single poly -> chain: -x9^2 + -x4^2 + 2*x1x4
+[charSet] v=10 single poly -> chain: -x10 + x4
+[charSet] v=11 single poly -> chain: x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+[charSet] v=12 single poly -> chain: x11x12 + -x9x12 + -x4x11 + x4x9
+[charSet] v=14 single poly -> chain: x11x14 + -x9x14 + -x0x14 + x0x4
+[charSet] v=15 single poly -> chain: -x9x14 + x4x15
+[charSet] v=16 single poly -> chain: x7x12x16 + -x6x13x16 + x6x9x16 + -x6x9x12 + -x4x7x16 + x4x6x13
+[charSet] v=17 single poly -> chain: -x7x16 + x6x17
+[charSet] chain length = 14
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  h2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  h4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  h5 rootVar=8 terms=2 -x8 + x4
+  h6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  h7 rootVar=10 terms=2 -x10 + x4
+  h8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  h9 rootVar=12 terms=4 x11x12 + -x9x12 + -x4x11 + x4x9
+  h10 rootVar=14 terms=4 x11x14 + -x9x14 + -x0x14 + x0x4
+  h11 rootVar=15 terms=2 -x9x14 + x4x15
+  h12 rootVar=16 terms=6 x7x12x16 + -x6x13x16 + x6x9x16 + -x6x9x12 + -x4x7x16 + x4x6x13
+  h13 rootVar=17 terms=2 -x7x16 + x6x17
+[buildChain] step 14: chain size 14 + hyp rootVar=19 terms=4 -x7x18 + x6x19 + x0x18 + -x0x6
+[charSet] entry on 15 polys
+[charSet] after entry simplify+sort+reducePass+resort: 15 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  p2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  p3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  p4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  p5 rootVar=8 terms=2 -x8 + x4
+  p6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  p7 rootVar=10 terms=2 -x10 + x4
+  p8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  p9 rootVar=12 terms=4 x11x12 + -x9x12 + -x4x11 + x4x9
+  p10 rootVar=14 terms=4 x11x14 + -x9x14 + -x0x14 + x0x4
+  p11 rootVar=15 terms=2 -x9x14 + x4x15
+  p12 rootVar=16 terms=6 x7x12x16 + -x6x13x16 + x6x9x16 + -x6x9x12 + -x4x7x16 + x4x6x13
+  p13 rootVar=17 terms=2 -x7x16 + x6x17
+  p14 rootVar=19 terms=4 x7x18 + -x6x19 + -x0x18 + x0x6
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=5 single poly -> chain: -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+[charSet] v=6 single poly -> chain: -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[charSet] v=7 single poly -> chain: -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[charSet] v=8 single poly -> chain: -x8 + x4
+[charSet] v=9 single poly -> chain: -x9^2 + -x4^2 + 2*x1x4
+[charSet] v=10 single poly -> chain: -x10 + x4
+[charSet] v=11 single poly -> chain: x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+[charSet] v=12 single poly -> chain: x11x12 + -x9x12 + -x4x11 + x4x9
+[charSet] v=14 single poly -> chain: x11x14 + -x9x14 + -x0x14 + x0x4
+[charSet] v=15 single poly -> chain: -x9x14 + x4x15
+[charSet] v=16 single poly -> chain: x7x12x16 + -x6x13x16 + x6x9x16 + -x6x9x12 + -x4x7x16 + x4x6x13
+[charSet] v=17 single poly -> chain: -x7x16 + x6x17
+[charSet] v=19 single poly -> chain: x7x18 + -x6x19 + -x0x18 + x0x6
+[charSet] chain length = 15
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  h2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  h4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  h5 rootVar=8 terms=2 -x8 + x4
+  h6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  h7 rootVar=10 terms=2 -x10 + x4
+  h8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  h9 rootVar=12 terms=4 x11x12 + -x9x12 + -x4x11 + x4x9
+  h10 rootVar=14 terms=4 x11x14 + -x9x14 + -x0x14 + x0x4
+  h11 rootVar=15 terms=2 -x9x14 + x4x15
+  h12 rootVar=16 terms=6 x7x12x16 + -x6x13x16 + x6x9x16 + -x6x9x12 + -x4x7x16 + x4x6x13
+  h13 rootVar=17 terms=2 -x7x16 + x6x17
+  h14 rootVar=19 terms=4 x7x18 + -x6x19 + -x0x18 + x0x6
+[buildChain] step 15: chain size 15 + hyp rootVar=19 terms=6 -x13x18 + x12x19 + x9x18 + -x9x12 + -x8x19 + x8x13
+[charSet] entry on 16 polys
+[charSet] after entry simplify+sort+reducePass+resort: 16 polys
+  p0 rootVar=3 terms=2 -x3 + x0
+  p1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  p2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  p3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  p4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  p5 rootVar=8 terms=2 -x8 + x4
+  p6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  p7 rootVar=10 terms=2 -x10 + x4
+  p8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  p9 rootVar=12 terms=4 x11x12 + -x9x12 + -x4x11 + x4x9
+  p10 rootVar=14 terms=4 x11x14 + -x9x14 + -x0x14 + x0x4
+  p11 rootVar=15 terms=2 -x9x14 + x4x15
+  p12 rootVar=16 terms=6 x7x12x16 + -x6x13x16 + x6x9x16 + -x6x9x12 + -x4x7x16 + x4x6x13
+  p13 rootVar=17 terms=2 -x7x16 + x6x17
+  p14 rootVar=19 terms=4 x7x18 + -x6x19 + -x0x18 + x0x6
+  p15 rootVar=19 terms=6 -x13x18 + x12x19 + x9x18 + -x9x12 + -x4x19 + x4x13
+[charSet] v=3 single poly -> chain: -x3 + x0
+[charSet] v=4 single poly -> chain: 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+[charSet] v=5 single poly -> chain: -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+[charSet] v=6 single poly -> chain: -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+[charSet] v=7 single poly -> chain: -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+[charSet] v=8 single poly -> chain: -x8 + x4
+[charSet] v=9 single poly -> chain: -x9^2 + -x4^2 + 2*x1x4
+[charSet] v=10 single poly -> chain: -x10 + x4
+[charSet] v=11 single poly -> chain: x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+[charSet] v=12 single poly -> chain: x11x12 + -x9x12 + -x4x11 + x4x9
+[charSet] v=14 single poly -> chain: x11x14 + -x9x14 + -x0x14 + x0x4
+[charSet] v=15 single poly -> chain: -x9x14 + x4x15
+[charSet] v=16 single poly -> chain: x7x12x16 + -x6x13x16 + x6x9x16 + -x6x9x12 + -x4x7x16 + x4x6x13
+[charSet] v=17 single poly -> chain: -x7x16 + x6x17
+[charSet] v=19 group size=2
+  divor terms=4 deg_v=1 x7x18 + -x6x19 + -x0x18 + x0x6
+    reinsert[0] rootVar=18 terms=10 -x7x12x18 + x6x13x18 + -x6x9x18 + x6x9x12 + x4x7x18 + -x4x6x13 + x0x12x18 + -x0x6x12 + -x0x4x18 + x0x4x6
+[charSet] v=18 single poly -> chain: -x7x12x18 + x6x13x18 + -x6x9x18 + x6x9x12 + x4x7x18 + -x4x6x13 + x0x12x18 + -x0x6x12 + -x0x4x18 + x0x4x6
+[charSet] chain length = 16
+  h0 rootVar=3 terms=2 -x3 + x0
+  h1 rootVar=4 terms=7 4*x2^2x4^2 + 4*x1^2x4^2 + -8*x1x2x4^2 + x0^4 + 4*x0^2x4^2 + -4*x0^2x2x4 + -4*x0^2x1x4
+  h2 rootVar=5 terms=4 -2*x2x4 + 2*x1x4 + x0^2 + -2*x0x5
+  h3 rootVar=6 terms=16 -x2^2x6^2 + -x2^2x4^2 + 2*x2^2x4x6 + -x1^2x6^2 + -x1^2x4^2 + 2*x1^2x4x6 + 2*x1x2x6^2 + 2*x1x2x4^2 + -4*x1x2x4x6 + -x0^2x6^2 + -x0^2x5^2 + 2*x0^2x1x6 + 2*x0x2x5x6 + -2*x0x2x4x5 + -2*x0x1x5x6 + 2*x0x1x4x5
+  h4 rootVar=7 terms=6 -x2x6 + x2x4 + x1x6 + -x1x4 + -x0x7 + x0x5
+  h5 rootVar=8 terms=2 -x8 + x4
+  h6 rootVar=9 terms=3 -x9^2 + -x4^2 + 2*x1x4
+  h7 rootVar=10 terms=2 -x10 + x4
+  h8 rootVar=11 terms=5 x11^2 + x4^2 + -2*x2x4 + x0^2 + -2*x0x11
+  h9 rootVar=12 terms=4 x11x12 + -x9x12 + -x4x11 + x4x9
+  h10 rootVar=14 terms=4 x11x14 + -x9x14 + -x0x14 + x0x4
+  h11 rootVar=15 terms=2 -x9x14 + x4x15
+  h12 rootVar=16 terms=6 x7x12x16 + -x6x13x16 + x6x9x16 + -x6x9x12 + -x4x7x16 + x4x6x13
+  h13 rootVar=17 terms=2 -x7x16 + x6x17
+  h14 rootVar=19 terms=4 x7x18 + -x6x19 + -x0x18 + x0x6
+  h15 rootVar=18 terms=10 -x7x12x18 + x6x13x18 + -x6x9x18 + x6x9x12 + x4x7x18 + -x4x6x13 + x0x12x18 + -x0x6x12 + -x0x4x18 + x0x4x6
+[remChain] reducing conclusion through 16-poly chain
+  R(v=19): deg=0 terms=15 x7^2x18^2 + x6^2x18^2 + -x6^2x17^2 + -x6^2x16^2 + 2*x6^2x15x17 + -2*x6^2x14x18 + 2*x6^2x14x16 + -2*x6x7x15x18 + x0^2x18^2 + x0^2x6^2 + -2*x0^2x6x18 + -2*x0x7x18^2 + -2*x0x6^2x15 + 2*x0x6x15x18 + 2*x0x6x7x18
+  R(v=18): deg=0 terms=163 <163 terms>
+  R(v=17): deg=0 terms=163 <163 terms>
+  R(v=16): deg=0 terms=395 <395 terms>
+  R(v=15): deg=0 terms=395 <395 terms>
+  R(v=14): deg=0 terms=557 <557 terms>
+  R(v=12): deg=0 terms=215 <215 terms>
+  R(v=11): deg=1 terms=475 <475 terms>
+  R(v=10): deg=0 terms=475 <475 terms>
+  R(v=9): deg=1 terms=808 <808 terms>
+  R(v=8): deg=0 terms=808 <808 terms>
+  R(v=7): deg=0 terms=1387 <1387 terms>
+  R(v=6): deg=1 terms=2497 <2497 terms>
+  R(v=5): deg=0 terms=1191 <1191 terms>
+  R(v=4): deg=1 terms=8595 <8595 terms>
+  R(v=3): deg=0 terms=8595 <8595 terms>
+[remChain] done, 16 remainders
+0.695s  FAIL: last pseudoremainder /= 0
+  Wu chain: 16 polynomials
+  Remainder chain: 16 steps
+  Final remainder (8595 terms):
+  (too large: 8595 terms)

@@ -1,20 +1,20 @@
-# IMO 2017 P4
-# R, S free. T = mirror R through S. O with OR = OS (1 DOF).
-# J on circle(O,S). O1 = circumcenter(SJT).
-# A on circle(O1,S) with AR perp OR (determined).
-# K = circle(O,S) ∩ line(AJ). Prove KT perp O1T.
+# imo_2017_p4
+# Translated from simplegeometry .gex file.
 
 free R
 free S
 mirror T R S
-# O such that OR = OS (1 DOF: on perpendicular bisector of RS)
-semi_free O
-cong O R O S
+on_bline O R S
 on_circle J O S
-circumcenter O1 S J T
-# A on circle(O1,S) such that AR perp OR (determined: 2 constraints)
+circumcenter O1 J S T
 dep_point A
+perp R A O R
 cong O1 A O1 S
-perp A R O R
-inter_cl K O S A J
+dep_point B
+para A B A R
+cong O1 B O1 S
+dep_point K
+para J K A J
+cong O K O S
+
 prove_perp K T O1 T

@@ -1,14 +1,19 @@
-# IMO 2010 P2
-# W = circumcenter of LMK. Q with MW perp MQ. Mirrors.
-# A = intersection. O = circumcenter of CBA. Prove QO = PO.
+# imo_2010_p2
+# Translated from simplegeometry .gex file.
+# WARNING: contains unsupported predicates: unknown: ON_ALINE E A C B A F
 
-triangle M L K
-circumcenter W L M K
-free Q
-perp M W M Q
-mirror P Q M
-mirror B P K
-mirror C Q L
-inter_ll A Q B P C
-circumcenter O C B A
-prove_cong Q O P O
+triangle A B C
+circumcenter O A B C
+incenter I A B C
+dep_point D
+para I D I A
+cong O D O A
+on_line F B C
+# UNSUPPORTED: ON_ALINE E A C B A F
+on_circle E O A
+midpoint G F I
+dep_point K
+para I K E I
+para G K G D
+
+prove_cong O A O K

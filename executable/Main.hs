@@ -61,6 +61,7 @@ runProblem tmoSecs verbose ar = do
   case polys of
     [] -> pure (Errored "no polynomials generated")
     (concl:hyps) -> do
+      let logIO s = putStrLn s >> hFlush stdout
       let action
             | verbose = do
                 putStrLn "--- Polynomials (before pre-elimination) ---"
@@ -69,18 +70,8 @@ runProblem tmoSecs verbose ar = do
                                              ++ showPolySafe h)
                       (zip [(1::Int) ..] hyps)
                 hFlush stdout
-                let (chain, rems, hyps', concl', elims) =
-                      theoremProverVerbose nDep hyps concl
-                putStrLn "--- Polynomials (after pre-elimination) ---"
-                putStrLn $ "  Eliminated vars: " ++ show elims
-                        ++ " (" ++ show (length elims)
-                        ++ " of " ++ show nDep ++ " dependent)"
-                putStrLn $ "  conclusion: " ++ showPolySafe concl'
-                mapM_ (\(i, h) -> putStrLn $ "  h" ++ show i ++ ": "
-                                             ++ showPolySafe h)
-                      (zip [(1::Int) ..] hyps')
-                putStrLn "---"
-                hFlush stdout
+                (chain, rems, _hyps', _concl', _elims) <-
+                  theoremProverIO logIO nDep hyps concl
                 outcome <- evaluate (classify rems)
                 pure (addDebugInfo chain rems outcome)
             | otherwise =

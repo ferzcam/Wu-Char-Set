@@ -402,15 +402,133 @@ dropFactor factor (TNode x d c r) =
 simplify :: Poly -> Poly
 simplify = coefGcd . factor1
 
--- | Stub: the flat-Map implementation tried an exact polynomial division
--- by the leading-coef factor. Porting exact division to the recursive
--- form is non-trivial and belongs in a later incremental pass.
+-- | If @p2@ divides @p1@ exactly, return the quotient; otherwise @p1@.
+-- Mirrors Java @PolyBasic.factor_remove@ (PolyBasic.java:721): a cheap
+-- "strip a shared multi-term factor" operation used by @prem@ to cancel
+-- the dividend's and divisor's leading-in-@v@ coefficients against the
+-- raw pseudoremainder so they don't inflate downstream monomials.
 factorRemove :: Poly -> Poly -> Poly
-factorRemove result _ = result
+factorRemove p1@(Poly ar1 _ b1) (Poly ar2 _ b2) =
+  case tFactorRemove b1 b2 of
+    q | q `sameT` b1 -> p1
+      | otherwise    -> mkPoly (max ar1 ar2) q
+  where
+    -- Identity-compare to avoid re-wrapping when factor_remove is a no-op.
+    sameT TZero TZero = True
+    sameT a b         = a `seqEq` b
+    seqEq TZero TZero                         = True
+    seqEq (TConst a) (TConst b)               = a == b
+    seqEq (TNode x1 d1 c1 r1) (TNode x2 d2 c2 r2) =
+      x1 == x2 && d1 == d2 && seqEq c1 c2 && seqEq r1 r2
+    seqEq _ _                                 = False
 
--- | Stub (see 'factorRemove').
+-- | Exact polynomial division. Returns 'Just q' when @p2@ divides @p1@
+-- exactly, 'Nothing' otherwise. Mirrors Java @PolyBasic.div@
+-- (PolyBasic.java:777).
 exactDiv :: Poly -> Poly -> Maybe Poly
-exactDiv _ _ = Nothing
+exactDiv (Poly ar1 _ b1) (Poly ar2 _ b2) =
+  fmap (mkPoly (max ar1 ar2)) (tDiv b1 b2)
+
+-- | Body of 'factorRemove'. Guards mirror Java:
+--
+--   * zero/length-1 divisor → bail
+--   * dividend > 1000 terms → bail (cost control)
+--   * same root var → bail (long division handled by @pseudoRemainder@)
+--   * either operand a bare constant → bail
+tFactorRemove :: TPoly -> TPoly -> TPoly
+tFactorRemove p1 p2
+  | tIsZero p1 || tIsZero p2       = p1
+  | tIsConst p1 || tIsConst p2     = p1
+  | tNumTerms p1 > 1000            = p1
+  | tRootVar p1 == tRootVar p2     = p1
+  | tNumTerms p2 <= 1              = p1
+  | otherwise =
+      let p1' = tCoefGcd (tFactor1 p1)
+          p2' = tCoefGcd (tFactor1 p2)
+      in case tDiv p1' p2' of
+           Just q  -> q
+           Nothing -> p1
+
+tIsZero :: TPoly -> Bool
+tIsZero TZero = True
+tIsZero _     = False
+
+tIsConst :: TPoly -> Bool
+tIsConst (TConst _) = True
+tIsConst _          = False
+
+tRootVar :: TPoly -> Int
+tRootVar (TNode x _ _ _) = x
+tRootVar _               = maxBound
+
+tNumTerms :: TPoly -> Int
+tNumTerms TZero           = 0
+tNumTerms (TConst _)      = 1
+tNumTerms (TNode _ _ c r) = tNumTerms c + tNumTerms r
+
+-- | Exact polynomial division at the 'TPoly' level.
+--
+-- Structural port of @PolyBasic.div@ with the convention flipped: Java's
+-- @m.x > d.x@ (m has a variable bigger than any in d, so recurse on m's
+-- per-monomial coefficients) corresponds to Haskell's @mx < dx@ since
+-- the Haskell root is the /smallest/ variable and its @coef@ spans vars
+-- strictly greater.
+tDiv :: TPoly -> TPoly -> Maybe TPoly
+tDiv TZero _           = Just TZero
+tDiv _     TZero       = Nothing
+tDiv (TConst a) (TConst b) =
+  case a `quotRem` b of
+    (q, 0) -> Just (if q == 0 then TZero else TConst q)
+    _      -> Nothing
+tDiv (TConst _) (TNode {}) = Nothing
+tDiv m (TConst c) = tDivByInt c m
+tDiv m@(TNode mx _ _ _) d@(TNode dx dd dCoef dRest)
+  | mx >  dx = Nothing
+  | mx <  dx = tDivViaCoefs mx m d
+  | otherwise = tDivSameVar mx dd dCoef dRest m
+
+-- | Divide every integer coefficient of @p@ by @c@, failing if any
+-- remainder is non-zero.
+tDivByInt :: Integer -> TPoly -> Maybe TPoly
+tDivByInt _ TZero      = Just TZero
+tDivByInt c (TConst n) =
+  case n `quotRem` c of
+    (q, 0) -> Just (if q == 0 then TZero else TConst q)
+    _      -> Nothing
+tDivByInt c (TNode x d coef r) = do
+  coef' <- tDivByInt c coef
+  r'    <- tDivByInt c r
+  pure (tNode x d coef' r')
+
+-- | Handles the @mx < dx@ case: m is a polynomial in variable @mx@ whose
+-- coefficients live in the vars-@>mx@ namespace, which is exactly where
+-- @d@ lives. Walk m's same-root chain and divide each coefficient by @d@.
+tDivViaCoefs :: Int -> TPoly -> TPoly -> Maybe TPoly
+tDivViaCoefs mx p0 d = go p0
+  where
+    go (TNode x deg c r) | x == mx = do
+      qC   <- tDiv c d
+      rest <- go r
+      pure (tadd (shiftVarDeg mx deg qC) rest)
+    go t = tDiv t d
+
+-- | Handles the @mx == dx == v@ case: classical univariate long division
+-- in @v@ with coefficients in the vars-@>v@ namespace.
+tDivSameVar :: Int -> Int -> TPoly -> TPoly -> TPoly -> Maybe TPoly
+tDivSameVar v dDeg dCoef dRest = go
+  where
+    go TZero      = Just TZero
+    go (TConst _) = Nothing
+    go (TNode mx mDeg mc mr)
+      | mx /= v    = Nothing
+      | mDeg < dDeg = Nothing
+      | otherwise = do
+          q <- tDiv mc dCoef
+          let delta = mDeg - dDeg
+              q1    = if delta == 0 then q else shiftVarDeg v delta q
+              newM  = tsub mr (tmul q1 dRest)
+          rest <- go newM
+          pure (tadd q1 rest)
 
 -- ---------------------------------------------------------------------------
 -- Pseudo-remainder — Java PolyBasic.prem / prem1
@@ -437,8 +555,20 @@ pseudoRemainder (Poly arF _ f) (Poly arG _ g) v =
       -- every step.
       gLo = tsub g (shiftVarDeg v m d)
       r0  = findQR v m d gLo f
-      r1  = tCoefGcd (tFactor1 r0)
-  in (zeroPoly, mkPoly ar r1)
+      -- factor_remove pass (Java PolyBasic.java:381-382): after prem1
+      -- multiplies the dividend by the divisor's leading coef (and vice
+      -- versa via the inner loop), cancel those factors back out by
+      -- exact polynomial division. Skipped when the reduction was a
+      -- no-op (m == 0 or f had no v), because then r0 == f and the
+      -- "divide by fLead" would corrupt.
+      fM   = tClassVarDeg f v
+      r2   = if m > 0 && fM > 0
+               then let fLead = tLeadingCoeff f v
+                        r1a   = tFactorRemove r0 fLead
+                    in tFactorRemove r1a d
+               else r0
+      r3   = tCoefGcd (tFactor1 r2)
+  in (zeroPoly, mkPoly ar r3)
 
 -- | Inner loop of pseudo-remainder. @v@ is the class variable, @m@ the
 -- degree of the divisor in @v@, @d@ its leading coefficient (in @v@),

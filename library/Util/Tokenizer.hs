@@ -2,8 +2,9 @@
 
 module Util.Tokenizer where
 
-import Data.List (nub, sort, (\\))
+import Data.List (nub, sortBy, (\\))
 import Data.Maybe (fromJust)
+import Data.Ord (comparing)
 import Polynomial.Poly
 import Polynomial.Prelude (Poly)
 
@@ -37,14 +38,36 @@ generatePolynomials hypotheses conclusion freeVars =
     statements = conclusion : hypotheses
 
 -- | Assign each point-coordinate variable a monic 'Poly' of the appropriate
--- arity. Ordering: dependent-in-conclusion first, then dependent-not-in-
--- conclusion, then free U-parameters — this is the elimination order Wu's
--- method expects.
+-- arity.
+--
+-- Ordering (matches the Java reference @PolyBasic@ / @CharSet@ convention).
+-- Java's elimination direction, set in @DrawProcess.java:1872-1890@, inserts
+-- new polys into @polylist@ so that it is sorted /ascending/ by @lv@, then
+-- @CharSet.charset@ processes the head first — i.e. eliminates the /smallest/
+-- @lv@ (earliest-constructed point's coordinate) first. Haskell's 'rootVar'
+-- is the /smallest/ variable present, and 'charSet' also processes smallest
+-- rootVar first. For the two conventions to produce the same chain we need
+-- each constraint poly to be rooted (in its own convention) at the same
+-- construction-order position: Java uses largest = latest, Haskell uses
+-- smallest = earliest. A poly tying point_k to earlier points therefore
+-- wants class index @k@ in /both/ systems, which means Haskell should assign
+-- ascending class indices in construction order — smallest suffix → index 0.
+--
+--   1. Dependent variables /not/ in the conclusion, ascending by suffix.
+--      Index 0 goes to the earliest-constructed non-conclusion dep var.
+--   2. Dependent variables /in/ the conclusion, ascending by suffix.
+--      These come /after/ the non-conclusion deps so they're eliminated
+--      last among class variables, leaving 'remWithChain' with the
+--      conclusion points at the tip of the chain.
+--   3. Free U-parameters last (passive coefficients).
+--
+-- Numeric (not lex) sort of suffixes is required so that @x10@ sorts after
+-- @x2@ rather than before it.
 generateVariables :: [Point] -> Conclusion -> [Coord] -> [(Coord, Poly)]
 generateVariables points conclusion freeVars = zip finalVariables monicPolys
   where
     allCoords = concatMap (\(Point c1 c2) -> [c1, c2]) points
-    allVars = nub $ sort $ filter isVar allCoords
+    allVars = nub $ sortBy (comparing varIndex) (filter isVar allCoords)
 
     pointsConclusion =
       nub $ concatMap (\(Point c1 c2) -> [c1, c2]) (flatten conclusion)
@@ -54,9 +77,17 @@ generateVariables points conclusion freeVars = zip finalVariables monicPolys
     depConclusion = filter (`elem` depVars) pointsConclusion
     depNotConclusion = depVars \\ depConclusion
 
-    finalVariables = depConclusion ++ depNotConclusion ++ freePresent
+    finalVariables = depNotConclusion ++ depConclusion ++ freePresent
     nTotal = length finalVariables
     monicPolys = [var nTotal i | i <- [0 .. nTotal - 1]]
+
+-- | Numeric index of a coordinate variable: the integer suffix of its
+-- name (@"x42"@ -> @42@). Non-@X@ or un-parseable names sort as @-1@.
+varIndex :: Coord -> Int
+varIndex (X name) = case reads (drop 1 name) :: [(Int, String)] of
+  [(n, "")] -> n
+  _         -> -1
+varIndex (Const _) = -1
 
 isVar :: Coord -> Bool
 isVar (X _) = True
@@ -79,12 +110,11 @@ geomToAlg (Collinear a b c) dict =
         (x2, y2) = getCoords b dict
         (x3, y3) = getCoords c dict
     in (y2 - y1) * (x3 - x2) - (y3 - y2) * (x2 - x1)
-geomToAlg (Parallel l1 l2) dict =
-    let [p1, p2, p3, p4] = flatten (Parallel l1 l2)
-        (x1, y1) = getCoords p1 dict
-        (x2, y2) = getCoords p2 dict
-        (x3, y3) = getCoords p3 dict
-        (x4, y4) = getCoords p4 dict
+geomToAlg (Parallel (Line pt1 pt2) (Line pt3 pt4)) dict =
+    let (x1, y1) = getCoords pt1 dict
+        (x2, y2) = getCoords pt2 dict
+        (x3, y3) = getCoords pt3 dict
+        (x4, y4) = getCoords pt4 dict
     in (y2 - y1) * (x4 - x3) - (y4 - y3) * (x2 - x1)
 geomToAlg (SameLen (Line pt1 pt2) (Line pt3 pt4)) dict =
     let (x1, y1) = getCoords pt1 dict

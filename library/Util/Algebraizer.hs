@@ -54,6 +54,17 @@ data GeoStep
     -- ^ @cong A B C D@: |AB| = |CD|
   | GEqAngle String String String String String String
     -- ^ @eqangle A B C D E F@: angle(ABC) = angle(DEF)
+  -- AlphaGeometry-style loose constructors (semi-free point + 1 constraint)
+  | GOnTLine String String String String
+    -- ^ @on_tline P Q A B@: P is on the line through Q perpendicular to AB (1 DOF)
+  | GOnPLine String String String String
+    -- ^ @on_pline P Q A B@: P is on the line through Q parallel to AB (1 DOF)
+  | GOnBLine String String String
+    -- ^ @on_bline P A B@: P is on the perpendicular bisector of AB (1 DOF)
+  | GAngleBisector String String String String
+    -- ^ @angle_bisector R C A B@: R is on the bisector of angle CAB (1 DOF)
+  | GSym String String String String
+    -- ^ @sym X P A B@: X is the reflection of P across line AB (0 DOF)
   deriving (Show, Eq)
 
 -- | What to prove
@@ -64,6 +75,8 @@ data GeoConclusion
   | GProvePara String String String String
   | GProvePerp String String String String
   | GProveEqAngle String String String String String String
+  | GProveMidpoint String String String
+    -- ^ @prove_midpoint M A B@: M is the midpoint of segment AB
   deriving (Show, Eq)
 
 -- | A complete geometry problem
@@ -87,12 +100,19 @@ data AlgState = AlgState
   , asHyps      :: [Hypothesis]
   , asNextX     :: Int      -- ^ Next X variable index
   , asFreeVars  :: [Coord]  -- ^ Accumulated free coordinates
+  , asFrameUsed :: Int      -- ^ How many frame slots used (0, 1, or 2)
   } deriving (Show)
 
--- | Create initial state with coordinate frame fixed:
--- First triangle vertex at origin, second on x-axis.
+-- | Create initial state. The coordinate frame is fixed lazily as the
+-- first 'GTriangle' / 'GFreePoint' points are processed: the first
+-- anchor goes to the origin, the second to @(0, u)@ (y-axis) with a
+-- single free parameter, and from the third onward points are fully
+-- free. This matches the Java reference, which uses @A=(0,0), B=(0,x4)@
+-- and relies on the implicit WLOG invariance of Wu's method under
+-- rigid motions — it saves three free variables up front and keeps
+-- every hypothesis involving @A@ or @B@ much smaller.
 initState :: AlgState
-initState = AlgState Map.empty [] 1 []
+initState = AlgState Map.empty [] 1 [] 0
 
 -- | Create a fresh X coordinate
 freshX :: AlgState -> (Coord, AlgState)
@@ -146,7 +166,9 @@ addHyps hs st = st { asHyps = asHyps st ++ hs }
 -- | Process a single construction step
 processStep :: GeoStep -> AlgState -> AlgState
 
--- Triangle: A at origin, B on x-axis (1 free coord), C free (2 free coords)
+-- Triangle: A at origin, B on x-axis (1 free coord), C free (2 free coords).
+-- Marks the frame as fully consumed so any subsequent 'GFreePoint' gets
+-- full 2-DOF coordinates rather than clashing with A/B.
 processStep (GTriangle a b c) st =
   let st1 = fixedPoint a (Const 0) (Const 0) st
       (bx, st2) = freshX st1
@@ -157,7 +179,7 @@ processStep (GTriangle a b c) st =
       (cy, st7) = freshX st6
       st8 = markFree cy st7
       st9 = fixedPoint c cx cy st8
-  in st9
+  in st9 { asFrameUsed = 2 }
 
 -- Circumcenter: 2 constraints (equidistant from vertices)
 processStep (GCircumcenter o a b c) st =
@@ -277,10 +299,28 @@ processStep (GOnLine p a b) st =
       h1 = Collinear ptA ptP ptB
   in addHyps [h1] st1
 
--- Free point (0 constraints, 2 DOF)
+-- Free point (0 constraints, 2 DOF).
+--
+-- The first two free points in a problem are consumed as frame anchors
+-- rather than getting full 2-DOF coordinate pairs: the first goes to
+-- the origin @(0,0)@ (0 free vars), the second to @(0, u)@ on the
+-- y-axis (1 free var). From the third free point onward, points are
+-- fully free. This mirrors Java's canonical embedding and is what
+-- lets perpendicularities like @PERP (A G1) (B A)@ collapse from
+-- 8-term polynomials to 2 terms.
 processStep (GFreePoint p) st =
-  let (_, st1) = freshPointFreeFree p st
-  in st1
+  case asFrameUsed st of
+    0 ->
+      let st1 = fixedPoint p (Const 0) (Const 0) st
+      in st1 { asFrameUsed = 1 }
+    1 ->
+      let (uy, st1) = freshX st
+          st2       = markFree uy st1
+          st3       = fixedPoint p (Const 0) uy st2
+      in st3 { asFrameUsed = 2 }
+    _ ->
+      let (_, st1) = freshPointFreeFree p st
+      in st1
 
 -- Dependent point (0 constraints here, 2 X coords — constraints added separately)
 processStep (GDepPoint p) st =
@@ -329,6 +369,46 @@ processStep (GEqAngle a b c d e f) st =
       ptF = lookupPt f st
   in addHyps [SameAcAngle (Angle ptA ptB ptC) (Angle ptD ptE ptF)] st
 
+-- AG-style loose constructors: new semi-free point + 1 constraint.
+processStep (GOnTLine p q a b) st =
+  let (ptP, st1) = freshPointFreeX p st
+      ptQ = lookupPt q st1
+      ptA = lookupPt a st1
+      ptB = lookupPt b st1
+  in addHyps [Perpendicular (Line ptQ ptP) (Line ptA ptB)] st1
+
+processStep (GOnPLine p q a b) st =
+  let (ptP, st1) = freshPointFreeX p st
+      ptQ = lookupPt q st1
+      ptA = lookupPt a st1
+      ptB = lookupPt b st1
+  in addHyps [Parallel (Line ptQ ptP) (Line ptA ptB)] st1
+
+processStep (GOnBLine p a b) st =
+  let (ptP, st1) = freshPointFreeX p st
+      ptA = lookupPt a st1
+      ptB = lookupPt b st1
+  in addHyps [SameLen (Line ptP ptA) (Line ptP ptB)] st1
+
+processStep (GAngleBisector r c a b) st =
+  let (ptR, st1) = freshPointFreeX r st
+      ptC = lookupPt c st1
+      ptA = lookupPt a st1
+      ptB = lookupPt b st1
+  in addHyps [SameAcAngle (Angle ptC ptA ptR) (Angle ptR ptA ptB)] st1
+
+-- Line reflection: X is the reflection of P across line AB.
+-- Encoded as "A and B are both equidistant from X and P" (they lie on the
+-- perpendicular bisector of XP, which is line AB).
+processStep (GSym x p a b) st =
+  let (ptX, st1) = freshPointXX x st
+      ptP = lookupPt p st1
+      ptA = lookupPt a st1
+      ptB = lookupPt b st1
+      h1 = SameLen (Line ptA ptX) (Line ptA ptP)
+      h2 = SameLen (Line ptB ptX) (Line ptB ptP)
+  in addHyps [h1, h2] st1
+
 
 -- | Convert a GeoConclusion to a Hypothesis (same type, used as conclusion)
 conclusionToHyp :: GeoConclusion -> AlgState -> Conclusion
@@ -346,6 +426,8 @@ conclusionToHyp (GProvePerp a b c d) st =
 conclusionToHyp (GProveEqAngle a b c d e f) st =
   SameAcAngle (Angle (lookupPt a st) (lookupPt b st) (lookupPt c st))
               (Angle (lookupPt d st) (lookupPt e st) (lookupPt f st))
+conclusionToHyp (GProveMidpoint m a b) st =
+  MidPoint (lookupPt m st) (lookupPt a st) (lookupPt b st)
 conclusionToHyp (GProveCyclic [a, b, c, d]) st =
   -- Cyclic: use the fact that |OA|=|OB|=|OC|=|OD| for some center O.
   -- But since we don't have a Cyclic hypothesis type, we use the
@@ -447,6 +529,11 @@ parseStep line = case words line of
   ("para":a:b:c:d:_)         -> GPara a b c d
   ("cong":a:b:c:d:_)         -> GCong a b c d
   ("eqangle":a:b:c:d:e:f:_)  -> GEqAngle a b c d e f
+  ("on_tline":p:q:a:b:_)     -> GOnTLine p q a b
+  ("on_pline":p:q:a:b:_)     -> GOnPLine p q a b
+  ("on_bline":p:a:b:_)       -> GOnBLine p a b
+  ("angle_bisector":r:c:a:b:_) -> GAngleBisector r c a b
+  ("sym":x:p:a:b:_)          -> GSym x p a b
   _ -> error $ "Cannot parse step: " ++ line
 
 parseConclusion :: String -> Maybe GeoConclusion
@@ -457,6 +544,7 @@ parseConclusion line = case words line of
   ("prove_para":a:b:c:d:_)       -> Just $ GProvePara a b c d
   ("prove_perp":a:b:c:d:_)       -> Just $ GProvePerp a b c d
   ("prove_eqangle":a:b:c:d:e:f:_)-> Just $ GProveEqAngle a b c d e f
+  ("prove_midpoint":m:a:b:_)     -> Just $ GProveMidpoint m a b
   _ -> Nothing
 
 
